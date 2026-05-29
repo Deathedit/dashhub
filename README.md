@@ -12,7 +12,7 @@ A lightweight, self-hosted dashboard for tracking GitHub branch status — lates
 - **Mobile responsive** — full-width header bar with slide-out overlay sidebar on small screens
 - **GitHub PAT support** — optional token increases API rate limit from 60 to 5,000 requests/hour
 - **Auto-refresh** — optional 5-minute polling interval
-- **In-memory caching** — commit history cached for 5 minutes to avoid redundant API calls
+- **In-memory caching** — commit history cached for 60 minutes to avoid redundant API calls
 - **Single URL input** — paste a GitHub URL or use `owner/repo/branch` format; default branch is auto-detected
 
 ## Tech Stack
@@ -70,7 +70,7 @@ All tunable constants are defined at the top of their respective files:
 |---|---|---|---|
 | `MAX_BRANCHES` | `src/pages/SettingsPage.tsx` | `50` | Maximum number of tracked branches |
 | `COMMITS_PER_PAGE` | `src/pages/BranchPage.tsx` | `13` | Number of commits shown on branch detail page |
-| `CACHE_TTL_MS` | `src/services/cache.ts` | `300000` (5 min) | How long commit data is cached in memory |
+| `CACHE_TTL_MS` | `src/services/cache.ts` | `3600000` (60 min) | How long commit data is cached in memory |
 | Auto-refresh interval | `src/App.tsx` | `300000` (5 min) | Polling interval when auto-refresh is enabled |
 
 ## Project Structure

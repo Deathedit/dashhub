@@ -1,6 +1,6 @@
 import type { CommitDetail } from "../types";
 
-const CACHE_TTL_MS = 5 * 60 * 1000;
+const CACHE_TTL_MS = 60 * 60 * 1000;
 
 const commitCache = new Map<string, { data: CommitDetail[]; timestamp: number }>();
 
