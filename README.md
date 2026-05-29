@@ -29,22 +29,11 @@ A lightweight, self-hosted dashboard for tracking GitHub branch status — lates
 ## Deploy with Docker
 
 ```bash
-docker compose up -d --build
+docker compose up -d --build    # Build and start
+docker compose down              # Stop
 ```
 
 The app is available at `http://localhost:3000`.
-
-To rebuild after changes:
-
-```bash
-docker compose up -d --build
-```
-
-To stop:
-
-```bash
-docker compose down
-```
 
 ## Development
 
