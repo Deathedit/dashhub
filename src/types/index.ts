@@ -1,0 +1,59 @@
+export interface TrackedBranch {
+  id: string;
+  owner: string;
+  repo: string;
+  branch: string;
+}
+
+export interface CommitInfo {
+  message: string;
+  author: string;
+  date: string;
+  avatarUrl: string;
+}
+
+export interface CommitDetail {
+  sha: string;
+  message: string;
+  author: string;
+  date: string;
+  avatarUrl: string;
+  url: string;
+}
+
+export type WorkflowStatusValue = "success" | "failure" | "in_progress" | "queued" | "completed";
+
+export interface WorkflowStatus {
+  status: WorkflowStatusValue;
+  conclusion: string | null;
+  name: string;
+  url: string;
+}
+
+export interface BranchData {
+  key: TrackedBranch;
+  commit: CommitInfo | null;
+  workflow: WorkflowStatus | null;
+  loading: boolean;
+  error: string | null;
+}
+
+export function makeBranchId(owner: string, repo: string, branch: string): string {
+  return `${owner}/${repo}/${branch}`;
+}
+
+export function parseGitHubUrl(input: string): { owner: string; repo: string; branch: string | undefined } | null {
+  const trimmed = input.trim();
+  const stripped = trimmed.replace(/^https?:\/\//, "").replace(/^github\.com\//, "").replace(/\/+$/, "");
+  const parts = stripped.split("/");
+  if (parts.length < 2 || !parts[0] || !parts[1]) return null;
+  const owner = parts[0];
+  const repo = parts[1];
+  if (parts[2] === "tree" && parts[3]) {
+    return { owner, repo, branch: parts[3] };
+  }
+  if (parts[2] && parts[2] !== "tree") {
+    return { owner, repo, branch: parts[2] };
+  }
+  return { owner, repo, branch: undefined };
+}
