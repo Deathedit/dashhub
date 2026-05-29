@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useApp } from "../App";
 import { parseGitHubUrl } from "../types";
 import { fetchDefaultBranch, verifyToken } from "../services/github";
-import { Plus, Trash2, Loader2, CheckCircle2, XCircle, Moon, Sun } from "lucide-react";
+import { Plus, Trash2, Loader2, CheckCircle2, XCircle, Moon, Sun, Check, X } from "lucide-react";
 
 const MAX_BRANCHES = 50;
 
@@ -11,6 +11,7 @@ export default function SettingsPage() {
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
   const [adding, setAdding] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
   const [tokenInput, setTokenInput] = useState(token);
   const [verifying, setVerifying] = useState(false);
@@ -205,12 +206,29 @@ export default function SettingsPage() {
                 <span className="text-gray-400 dark:text-gray-500"> / </span>
                 <span className="text-blue-600 dark:text-blue-400">{b.branch}</span>
               </span>
-              <button
-                onClick={() => handleRemove(b.id)}
-                className="ml-3 shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
+              {pendingDelete === b.id ? (
+                <div className="ml-3 flex shrink-0 gap-1">
+                  <button
+                    onClick={() => { handleRemove(b.id); setPendingDelete(null); }}
+                    className="rounded-md bg-red-600 p-1.5 text-white transition-colors hover:bg-red-700"
+                  >
+                    <Check className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => setPendingDelete(null)}
+                    className="rounded-md bg-gray-200 p-1.5 text-gray-600 transition-colors hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setPendingDelete(b.id)}
+                  className="ml-3 shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              )}
             </li>
           ))}
         </ul>
