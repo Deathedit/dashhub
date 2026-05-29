@@ -197,7 +197,7 @@ npm run preview      # Preview production build locally
 | File | Purpose |
 |---|---|
 | `Dockerfile` | Multi-stage: `node:22-alpine` build → `nginx:alpine` serve |
-| `docker-compose.yml` | Single service, port 3000:80, restart unless-stopped |
+| `compose.yaml` | Single service, port 3000:80, restart unless-stopped |
 | `nginx.conf` | Serves static files, gzip, caches `/assets/` for 1 year, no-cache on `index.html` |
 | `.dockerignore` | Excludes `node_modules`, `dist`, `.git`, `*.md`, `Dockerfile`, etc. |
 

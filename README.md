@@ -104,7 +104,7 @@ This project was developed with significant assistance from AI tools, specifical
 
 - **Code generation**: All React components, hooks, services, and configuration files were written or refined through AI-assisted development sessions. Human direction guided architecture decisions, feature requirements, and styling preferences, while the AI produced the implementation code.
 - **Architecture & design**: Project structure, data flow patterns (localStorage → context → hooks → components), caching strategy, and state management approach were discussed and planned collaboratively between the developer and the AI assistant.
-- **Docker & deployment**: The `Dockerfile`, `docker-compose.yml`, `nginx.conf`, and `.dockerignore` were generated with AI assistance, following multi-stage build and static serving best practices.
+- **Docker & deployment**: The `Dockerfile`, `compose.yaml`, `nginx.conf`, and `.dockerignore` were generated with AI assistance, following multi-stage build and static serving best practices.
 - **Documentation**: This `README.md` and the `AGENTS.md` reference document were written by the AI assistant based on the project's current codebase and the developer's direction.
 - **Iterative refinement**: Features were built incrementally — the AI would produce initial implementations, the developer would review and request changes (e.g., moving sidebar controls to settings, swapping card grid for list rows, adding branch limits and caching), and the AI would iterate on the code.
 

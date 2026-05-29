@@ -1,5 +1,6 @@
 services:
   dashhub:
+    container_name: dashhub
     build: .
     ports:
       - "3000:80"
