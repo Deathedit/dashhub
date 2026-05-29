@@ -43,6 +43,7 @@ export default function App() {
   const [token, setToken] = useLocalStorage<string>("dashhub-github-token", "");
 
   const { data } = useBranchData(branches, autoRefresh ? 60000 : 0, token || undefined);
+  const isFetching = data.length > 0 && data.some((d) => d.loading);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
@@ -66,6 +67,13 @@ export default function App() {
     <HashRouter>
       <AppCtx.Provider value={value}>
         <div className="min-h-screen">
+          <div
+            className={`fixed inset-x-0 top-0 z-[60] h-1 bg-blue-500 transition-opacity duration-300 ${
+              isFetching ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <div className="h-full w-1/3 animate-pulse rounded-r-full bg-blue-400" />
+          </div>
           <Sidebar />
           <main
             className={`pt-14 transition-[margin] duration-300 md:pt-0 ${
