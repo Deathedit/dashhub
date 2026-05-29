@@ -129,7 +129,7 @@ Provided by `App.tsx`, consumed via `useApp()` hook:
 | `MAX_BRANCHES` | `src/pages/SettingsPage.tsx` | `50` | Hard limit on tracked branches |
 | `COMMITS_PER_PAGE` | `src/pages/BranchPage.tsx` | `13` | Number of commits on branch detail page |
 | `CACHE_TTL_MS` | `src/services/cache.ts` | `5 * 60 * 1000` | In-memory commit cache TTL (5 min) |
-| Auto-refresh interval | `src/App.tsx` | `60000` | Polling interval when auto-refresh is on (60s) |
+| Auto-refresh interval | `src/App.tsx` | `300000` | Polling interval when auto-refresh is on (5 min) |
 
 To change a constant, edit the value at the top of the file. No config file is used — all values are inline for simplicity.
 

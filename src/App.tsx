@@ -42,7 +42,7 @@ export default function App() {
   const [collapsed, setCollapsed] = useLocalStorage<boolean>("dashhub-sidebar-collapsed", true);
   const [token, setToken] = useLocalStorage<string>("dashhub-github-token", "");
 
-  const { data } = useBranchData(branches, autoRefresh ? 60000 : 0, token || undefined);
+  const { data } = useBranchData(branches, autoRefresh ? 300000 : 0, token || undefined);
   const isFetching = data.length > 0 && data.some((d) => d.loading);
 
   useEffect(() => {
