@@ -3,7 +3,7 @@ import type { TrackedBranch, BranchData } from "../types";
 import { fetchLatestCommit, fetchLatestWorkflowRun } from "../services/github";
 import { clearCommitCache } from "../services/cache";
 
-function fetchBranchData(branch: TrackedBranch, token?: string): Promise<BranchData> {
+function fetchBranchData(branch: TrackedBranch, token: string): Promise<BranchData> {
   const base: BranchData = { key: branch, commit: null, workflow: null, loading: true, error: null };
   return Promise.all([
     fetchLatestCommit(branch.owner, branch.repo, branch.branch, token),
@@ -13,7 +13,7 @@ function fetchBranchData(branch: TrackedBranch, token?: string): Promise<BranchD
     .catch((err: Error) => ({ ...base, loading: false, error: err.message }));
 }
 
-export function useBranchData(branches: TrackedBranch[], autoRefreshInterval: number, token?: string) {
+export function useBranchData(branches: TrackedBranch[], autoRefreshInterval: number, token: string) {
   const [data, setData] = useState<BranchData[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);

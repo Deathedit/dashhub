@@ -2,9 +2,8 @@ import type { CommitInfo, CommitDetail, WorkflowStatus, WorkflowStatusValue } fr
 
 const API = "https://api.github.com";
 
-async function fetchJSON<T>(url: string, token?: string): Promise<T> {
-  const headers: Record<string, string> = { Accept: "application/vnd.github+json" };
-  if (token) headers.Authorization = `token ${token}`;
+async function fetchJSON<T>(url: string, token: string): Promise<T> {
+  const headers: Record<string, string> = { Accept: "application/vnd.github+json", Authorization: `token ${token}` };
   const res = await fetch(url, { headers });
   if (!res.ok) {
     const text = await res.text().catch(() => "Unknown error");
@@ -13,7 +12,7 @@ async function fetchJSON<T>(url: string, token?: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export async function fetchLatestCommit(owner: string, repo: string, branch: string, token?: string): Promise<CommitInfo> {
+export async function fetchLatestCommit(owner: string, repo: string, branch: string, token: string): Promise<CommitInfo> {
   const data = await fetchJSON<Record<string, unknown>[]>(
     `${API}/repos/${owner}/${repo}/commits?sha=${encodeURIComponent(branch)}&per_page=1`,
     token,
@@ -34,7 +33,7 @@ export async function fetchLatestWorkflowRun(
   owner: string,
   repo: string,
   branch: string,
-  token?: string,
+  token: string,
 ): Promise<WorkflowStatus | null> {
   try {
     const data = await fetchJSON<Record<string, unknown>>(
@@ -66,7 +65,7 @@ export function getWorkflowDisplayStatus(
   return "unknown";
 }
 
-export async function fetchDefaultBranch(owner: string, repo: string, token?: string): Promise<string> {
+export async function fetchDefaultBranch(owner: string, repo: string, token: string): Promise<string> {
   const data = await fetchJSON<Record<string, unknown>>(
     `${API}/repos/${owner}/${repo}`,
     token,
@@ -91,7 +90,7 @@ export async function fetchCommits(
   repo: string,
   branch: string,
   perPage: number,
-  token?: string,
+  token: string,
 ): Promise<CommitDetail[]> {
   const data = await fetchJSON<Record<string, unknown>[]>(
     `${API}/repos/${owner}/${repo}/commits?sha=${encodeURIComponent(branch)}&per_page=${perPage}`,

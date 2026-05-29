@@ -32,7 +32,7 @@ export default function SettingsPage() {
       resolvedBranch = branch;
     } else {
       try {
-        resolvedBranch = await fetchDefaultBranch(owner, repo, token || undefined);
+        resolvedBranch = await fetchDefaultBranch(owner, repo, token);
       } catch (err) {
         setAdding(false);
         const msg = (err as Error).message ?? "";
@@ -110,7 +110,7 @@ export default function SettingsPage() {
 
       <section className="mb-6 sm:mb-8 rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-700 dark:bg-gray-900">
         <h2 className="mb-3 sm:mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
-          GitHub Token
+          GitHub Token (required)
         </h2>
         <div className="flex flex-col gap-2 sm:flex-row">
           <input
@@ -147,7 +147,7 @@ export default function SettingsPage() {
           </div>
         )}
         <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-          Optional. A Personal Access Token increases the API rate limit from 60 to 5,000 requests/hour. No scopes are needed for public repos.{" "}
+          Required. A Personal Access Token is needed to access the GitHub API. No scopes are needed for public repos.{" "}
           <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
             Create one here
           </a>.

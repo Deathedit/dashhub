@@ -98,7 +98,7 @@ export default function BranchPage() {
     }
     setLoading(true);
     setError(null);
-    fetchCommits(owner, repo, branch, COMMITS_PER_PAGE, token || undefined)
+    fetchCommits(owner, repo, branch, COMMITS_PER_PAGE, token)
       .then((data) => {
         setCachedCommits(cacheKey, data);
         setCommits(data);

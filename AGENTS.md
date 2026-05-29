@@ -23,7 +23,7 @@ DashHub is a single-page, self-hosted GitHub branch status dashboard. It has no 
 - **Dark mode**: Class-based via `@custom-variant dark (&:where(.dark, .dark *))` in `src/index.css`. Toggled by adding/removing `dark` class on `<html>`.
 - **Routing**: `HashRouter` from react-router-dom. Routes: `/` (Dashboard), `/settings` (Settings), `/:owner/:repo/:branch` (Branch detail).
 - **State**: React context (`AppCtx`) for global state; `useLocalStorage` hook for persistence. No external state library.
-- **API calls**: All GitHub API calls go through `fetchJSON` in `src/services/github.ts`, which optionally attaches an `Authorization: token ...` header.
+- **API calls**: All GitHub API calls go through `fetchJSON` in `src/services/github.ts`, which requires a `token: string` parameter and always attaches an `Authorization: token ...` header.
 - **No comments in code**: Do not add comments unless explicitly asked.
 
 ## Architecture
@@ -51,6 +51,7 @@ localStorage ──→ useLocalStorage hooks ──→ AppCtx (React Context)
 App (HashRouter + AppCtx.Provider)
 ├── Sidebar (nav links, collapse toggle, mobile overlay)
 └── Main content area (margin shifts with sidebar)
+    ├── TokenRequired (shown when no token is set, links to Settings)
     ├── DashboardPage → BranchRow / BranchRowSkeleton
     ├── SettingsPage (add branch, token, general settings)
     └── BranchPage (commit list, CI status badge)
@@ -78,7 +79,8 @@ App (HashRouter + AppCtx.Provider)
 ### Error Handling
 
 - **404**: "Repository not found" or "Repository or branch not found" depending on context.
-- **403**: Shows message linking to Settings to add a token.
+- **403**: Shows message about GitHub API rate limit or invalid token.
+- **No token set**: App shows a `TokenRequired` component with a link to Settings instead of dashboard/routes.
 - **fetchLatestWorkflowRun**: Errors are silently caught and return `null` (no CI data is acceptable).
 - **fetchDefaultBranch**: Errors are surfaced to the user in SettingsPage with specific messages for 404/403.
 
@@ -86,9 +88,9 @@ App (HashRouter + AppCtx.Provider)
 
 | Path | Component | Description |
 |---|---|---|
-| `/` | `DashboardPage` | Lists all tracked branches as rows |
+| `/` | `DashboardPage` | Lists all tracked branches as rows (token required) |
 | `/settings` | `SettingsPage` | General settings, GitHub token, add/remove branches |
-| `/:owner/:repo/:branch` | `BranchPage` | Branch detail: CI status badge, last 13 commits |
+| `/:owner/:repo/:branch` | `BranchPage` | Branch detail: CI status badge, last 13 commits (token required) |
 
 All routes use hash-based URLs (`/#/...`) via `HashRouter`.
 
@@ -120,7 +122,7 @@ Provided by `App.tsx`, consumed via `useApp()` hook:
 | `dashhub-auto-refresh` | `false` | Auto-refresh toggle |
 | `dashhub-dark-mode` | System preference | Dark mode (lazy initializer checks `prefers-color-scheme`) |
 | `dashhub-sidebar-collapsed` | `true` | Sidebar collapsed by default |
-| `dashhub-github-token` | `""` | GitHub PAT (stored as plaintext, same model as browser extensions like Octotree) |
+| `dashhub-github-token` | `""` | GitHub PAT (required to use the app; stored as plaintext in localStorage) |
 
 ## Tunable Constants
 
@@ -153,7 +155,7 @@ To change a constant, edit the value at the top of the file. No config file is u
 ### Add a New GitHub API Call
 
 1. Add the function in `src/services/github.ts`. Follow the existing pattern:
-   - Accept `token?: string` as the last parameter.
+   - Accept `token: string` as the last parameter (required).
    - Use `fetchJSON<T>(url, token)` for the request.
    - Return a typed object, not raw API data.
 2. Import and call from a hook (`useBranchData.ts`) or a page component.
@@ -201,9 +203,9 @@ npm run preview      # Preview production build locally
 
 ## Known Limitations
 
-- **API rate limit**: 60 requests/hour without a PAT; 5,000/hour with one. Each tracked branch uses 2-3 API calls per refresh cycle.
-- **Public repos only**: The PAT is stored in localStorage and sent as a query parameter. No OAuth flow. Private repos require a PAT with `repo` scope but the token is visible in browser DevTools.
+- **API rate limit**: 5,000 requests/hour with a PAT (required). Each tracked branch uses 2-3 API calls per refresh cycle.
+- **Public repos only**: The PAT is stored in localStorage and sent as an Authorization header. No OAuth flow. Private repos require a PAT with `repo` scope but the token is visible in browser DevTools.
 - **Browser-only storage**: All state (branches, settings, token) lives in localStorage. Clearing browser data resets everything. There is no server-side persistence.
 - **Maximum 50 branches**: Hard limit defined by `MAX_BRANCHES` constant.
-- **No real-time updates**: Data refreshes on auto-refresh (60s interval) or when navigating to a branch page with a stale cache. No WebSocket or polling beyond the auto-refresh interval.
+- **No real-time updates**: Data refreshes on auto-refresh (5 min interval) or when navigating to a branch page with a stale cache. No WebSocket or polling beyond the auto-refresh interval.
 - **Cache is in-memory**: Commit history cache resets on page reload. Dashboard data always fetches fresh on load.

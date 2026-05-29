@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect } from "react";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route, Link } from "react-router-dom";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { useBranchData } from "./hooks/useBranchData";
 import type { TrackedBranch } from "./types";
@@ -7,6 +7,7 @@ import Sidebar from "./components/Sidebar";
 import DashboardPage from "./pages/DashboardPage";
 import SettingsPage from "./pages/SettingsPage";
 import BranchPage from "./pages/BranchPage";
+import { KeyRound } from "lucide-react";
 
 type BranchDataItem = ReturnType<typeof useBranchData>["data"][number];
 
@@ -32,6 +33,29 @@ export function useApp() {
   return ctx;
 }
 
+function TokenRequired() {
+  return (
+    <div className="flex min-h-screen items-center justify-center px-4 pt-14 md:pt-0">
+      <div className="mx-auto max-w-md text-center">
+        <KeyRound className="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
+        <h2 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
+          GitHub Token Required
+        </h2>
+        <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+          A Personal Access Token is required to use DashHub. Add one in Settings to get started.
+        </p>
+        <Link
+          to="/settings"
+          className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+        >
+          <KeyRound className="h-4 w-4" />
+          Go to Settings
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [branches, setBranches] = useLocalStorage<TrackedBranch[]>("dashhub-branches", []);
   const [autoRefresh, setAutoRefresh] = useLocalStorage<boolean>("dashhub-auto-refresh", false);
@@ -42,7 +66,7 @@ export default function App() {
   const [collapsed, setCollapsed] = useLocalStorage<boolean>("dashhub-sidebar-collapsed", true);
   const [token, setToken] = useLocalStorage<string>("dashhub-github-token", "");
 
-  const { data } = useBranchData(branches, autoRefresh ? 300000 : 0, token || undefined);
+  const { data } = useBranchData(branches, autoRefresh ? 300000 : 0, token || "");
   const isFetching = data.length > 0 && data.some((d) => d.loading);
 
   useEffect(() => {
@@ -63,6 +87,8 @@ export default function App() {
     setToken,
   };
 
+  const hasToken = token.trim().length > 0;
+
   return (
     <HashRouter>
       <AppCtx.Provider value={value}>
@@ -80,11 +106,18 @@ export default function App() {
               collapsed ? "md:ml-20" : "md:ml-72"
             }`}
           >
-            <Routes>
-              <Route path="/" element={<DashboardPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/:owner/:repo/:branch" element={<BranchPage />} />
-            </Routes>
+            {hasToken ? (
+              <Routes>
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/:owner/:repo/:branch" element={<BranchPage />} />
+              </Routes>
+            ) : (
+              <Routes>
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="*" element={<TokenRequired />} />
+              </Routes>
+            )}
           </main>
         </div>
       </AppCtx.Provider>

@@ -10,7 +10,7 @@ A lightweight, self-hosted dashboard for tracking GitHub branch status — lates
 - **Dark mode** — class-based toggle with system preference detection, persisted in localStorage
 - **Collapsible sidebar** — remembers collapsed/expanded state across sessions
 - **Mobile responsive** — full-width header bar with slide-out overlay sidebar on small screens
-- **GitHub PAT support** — optional token increases API rate limit from 60 to 5,000 requests/hour
+- **GitHub PAT (required)** — a Personal Access Token is required to access the GitHub API (5,000 requests/hour)
 - **Auto-refresh** — optional 5-minute polling interval
 - **In-memory caching** — commit history cached for 60 minutes to avoid redundant API calls
 - **Single URL input** — paste a GitHub URL or use `owner/repo/branch` format; default branch is auto-detected
