@@ -1,17 +1,20 @@
 import { useState } from "react";
-import { useApp } from "../App";
-import { parseGitHubUrl } from "../types";
-import { BG_OPTIONS } from "../components/Background";
-import { useGlass } from "../hooks/useGlass";
-import { fetchDefaultBranch, verifyToken } from "../services/github";
-import { text } from "../text";
+import { useApp } from "@/App";
+import { parseGitHubUrl } from "@/types";
+import { BG_OPTIONS } from "@/components/Background";
+import { useGlassActive, cardClass, subtleClass } from "@/hooks/useGlass";
+import { fetchDefaultBranch, verifyToken } from "@/services/github";
+import { text } from "@/text";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Plus, Trash2, Loader2, CheckCircle2, XCircle, Moon, Sun, Check, X } from "lucide-react";
 
 const MAX_BRANCHES = 50;
 
 export default function SettingsPage() {
   const { branches, setBranches, token, setToken, autoRefresh, onToggleAutoRefresh, darkMode, onToggleDarkMode, animatedBg, setAnimatedBg } = useApp();
-  const glass = useGlass();
+  const isGlass = useGlassActive();
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
   const [adding, setAdding] = useState(false);
@@ -86,178 +89,188 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
-      <h1 className="mb-6 text-xl font-bold text-gray-900 sm:mb-8 sm:text-2xl dark:text-white">{text.settings.title}</h1>
+      <h1 className="mb-6 text-xl font-bold sm:mb-8 sm:text-2xl">{text.settings.title}</h1>
 
-      <section className={`mb-6 sm:mb-8 rounded-lg border border-gray-200 p-4 sm:p-6 dark:border-gray-700 ${glass.card}`}>
-        <h2 className="mb-3 sm:mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
-          {text.settings.general}
-        </h2>
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <button
+      <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.general}</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3 sm:flex-row">
+          <Button
+            variant={autoRefresh ? "default" : "secondary"}
+            size="default"
             onClick={onToggleAutoRefresh}
-            className={`inline-flex items-center justify-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-              autoRefresh
-                ? "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-400 dark:hover:bg-green-900/60"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
-            }`}
           >
             {autoRefresh ? text.settings.autoRefreshOn : text.settings.autoRefreshOff}
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="secondary"
+            size="default"
             onClick={onToggleDarkMode}
-            className="inline-flex items-center justify-center gap-1.5 rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
           >
             {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             {darkMode ? text.settings.lightMode : text.settings.darkMode}
-          </button>
-        </div>
-      </section>
+          </Button>
+        </CardContent>
+      </Card>
 
-      <section className={`mb-6 sm:mb-8 rounded-lg border border-gray-200 p-4 sm:p-6 dark:border-gray-700 ${glass.card}`}>
-        <h2 className="mb-3 sm:mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
-{text.settings.background}
-        </h2>
-        <div className="flex gap-2">
+      <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.background}</CardTitle>
+        </CardHeader>
+        <CardContent className="flex gap-2">
           {BG_OPTIONS.map((opt) => (
-            <button
+            <Button
               key={opt.value}
+              variant={animatedBg === opt.value ? "default" : "secondary"}
+              size="default"
               onClick={() => setAnimatedBg(opt.value)}
-              className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                animatedBg === opt.value
-                  ? "bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-400 dark:hover:bg-blue-900/60"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
-              }`}
             >
               {opt.label}
-            </button>
+            </Button>
           ))}
-        </div>
-      </section>
+        </CardContent>
+      </Card>
 
-      <section className={`mb-6 sm:mb-8 rounded-lg border border-gray-200 p-4 sm:p-6 dark:border-gray-700 ${glass.card}`}>
-        <h2 className="mb-3 sm:mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
-          {text.settings.tokenTitle}
-        </h2>
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <input
-            type="password"
-            placeholder={text.settings.tokenPlaceholder}
-            value={tokenInput}
-            onChange={(e) => { setTokenInput(e.target.value); setVerifyResult(null); }}
-            className="min-w-0 flex-1 rounded-md border border-gray-300 bg-white px-3 py-2 font-mono text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:border-blue-400 dark:focus:ring-blue-400"
-          />
-          <div className="flex gap-2">
-            <button
-              onClick={handleVerifyToken}
-              disabled={!tokenInput.trim() || verifying}
-              className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200 disabled:opacity-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-            >
-              {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-{text.settings.verify}
-            </button>
-            <button
-              onClick={handleSaveToken}
-              className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-            >
-{text.settings.save}
-            </button>
+      <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.tokenTitle}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <div className="min-w-0 flex-1">
+              <Input
+                type="password"
+                placeholder={text.settings.tokenPlaceholder}
+                value={tokenInput}
+                onChange={(e) => { setTokenInput(e.target.value); setVerifyResult(null); }}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="default"
+                onClick={handleVerifyToken}
+                disabled={!tokenInput.trim() || verifying}
+              >
+                {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                {text.settings.verify}
+              </Button>
+              <Button
+                variant="default"
+                size="default"
+                onClick={handleSaveToken}
+              >
+                {text.settings.save}
+              </Button>
+            </div>
           </div>
-        </div>
-        {verifyResult && (
-          <div className={`mt-2 flex items-center gap-1.5 text-sm ${
-            verifyResult.valid ? "text-green-700 dark:text-green-400" : "text-red-600 dark:text-red-400"
-          }`}>
-            {verifyResult.valid
-              ? <><CheckCircle2 className="h-4 w-4" /> {text.settings.validAs} <span className="font-mono font-medium">{verifyResult.login}</span></>
-              : <><XCircle className="h-4 w-4" /> {verifyResult.error}</>}
-          </div>
-        )}
-        <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-          {text.settings.tokenHelp}{" "}
-          <a href={text.settings.createTokenUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-            {text.settings.createToken}
-          </a>.
-        </p>
-      </section>
-
-      <section className={`mb-6 sm:mb-8 rounded-lg border border-gray-200 p-4 sm:p-6 dark:border-gray-700 ${glass.card}`}>
-        <h2 className="mb-3 sm:mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
-          {text.settings.addBranch}
-        </h2>
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <input
-            type="text"
-            placeholder={text.settings.branchPlaceholder}
-            value={input}
-            onChange={(e) => { setInput(e.target.value); setError(""); }}
-            onKeyDown={(e) => e.key === "Enter" && !adding && handleAdd()}
-            disabled={adding}
-            className="min-w-0 flex-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:border-blue-400 dark:focus:ring-blue-400"
-          />
-          <button
-            onClick={handleAdd}
-            disabled={!input.trim() || adding}
-            className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-            {adding ? text.settings.resolving : text.settings.add}
-          </button>
-        </div>
-        <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-          {text.settings.branchHelpPrefix} <span className="font-mono">{text.settings.branchHelpFormat}</span> {text.settings.branchHelpSuffix}
-        </p>
-        {error && (
-          <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
-        )}
-      </section>
-
-      <section className={`rounded-lg border border-gray-200 p-4 sm:p-6 dark:border-gray-700 ${glass.card}`}>
-        <h2 className="mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
-          {text.settings.trackedBranches(branches.length)}
-        </h2>
-        {branches.length === 0 && (
-          <p className="text-sm text-gray-400 dark:text-gray-500">
-            {text.settings.noBranches}
+          {verifyResult && (
+            <div className={`mt-2 flex items-center gap-1.5 text-sm ${
+              verifyResult.valid ? "text-green-600 dark:text-green-400" : "text-destructive"
+            }`}>
+              {verifyResult.valid
+                ? <><CheckCircle2 className="h-4 w-4" /> {text.settings.validAs} <span className="font-mono font-medium">{verifyResult.login}</span></>
+                : <><XCircle className="h-4 w-4" /> {verifyResult.error}</>}
+            </div>
+          )}
+          <p className="mt-2 text-xs text-muted-foreground">
+            {text.settings.tokenHelp}{" "}
+            <a href={text.settings.createTokenUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+              {text.settings.createToken}
+            </a>.
           </p>
-        )}
-        <ul className="space-y-2">
-          {branches.map((b) => (
-            <li
-              key={b.id}
-              className={`flex items-center justify-between rounded-md border border-gray-100 px-4 py-3 dark:border-gray-800 ${glass.cardSubtle}`}
+        </CardContent>
+      </Card>
+
+      <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.addBranch}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <div className="min-w-0 flex-1">
+              <Input
+                type="text"
+                placeholder={text.settings.branchPlaceholder}
+                value={input}
+                onChange={(e) => { setInput(e.target.value); setError(""); }}
+                onKeyDown={(e) => e.key === "Enter" && !adding && handleAdd()}
+                disabled={adding}
+              />
+            </div>
+            <Button
+              variant="default"
+              size="default"
+              onClick={handleAdd}
+              disabled={!input.trim() || adding}
             >
-              <span className="min-w-0 truncate text-sm text-gray-800 dark:text-gray-200">
-                <span className="font-medium">{b.owner}/{b.repo}</span>
-                <span className="text-gray-400 dark:text-gray-500"> / </span>
-                <span className="text-blue-600 dark:text-blue-400">{b.branch}</span>
-              </span>
-              {pendingDelete === b.id ? (
-                <div className="ml-3 flex shrink-0 gap-1">
-                  <button
-                    onClick={() => { handleRemove(b.id); setPendingDelete(null); }}
-                    className="rounded-md bg-red-600 p-1.5 text-white transition-colors hover:bg-red-700"
+              {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+              {adding ? text.settings.resolving : text.settings.add}
+            </Button>
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            {text.settings.branchHelpPrefix} <span className="font-mono">{text.settings.branchHelpFormat}</span> {text.settings.branchHelpSuffix}
+          </p>
+          {error && (
+            <p className="mt-2 text-sm text-destructive">{error}</p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className={cardClass(isGlass)}>
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.trackedBranches(branches.length)}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {branches.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              {text.settings.noBranches}
+            </p>
+          )}
+          <ul className="space-y-2">
+            {branches.map((b) => (
+              <li
+                key={b.id}
+                className={`flex items-center justify-between rounded-md border p-3 ${subtleClass(isGlass)}`}
+              >
+                <span className="min-w-0 truncate text-sm">
+                  <span className="font-medium">{b.owner}/{b.repo}</span>
+                  <span className="text-muted-foreground"> / </span>
+                  <span className="text-primary">{b.branch}</span>
+                </span>
+                {pendingDelete === b.id ? (
+                  <div className="ml-3 flex shrink-0 gap-1">
+                    <Button
+                      variant="destructive"
+                      size="icon-xs"
+                      onClick={() => { handleRemove(b.id); setPendingDelete(null); }}
+                    >
+                      <Check className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon-xs"
+                      onClick={() => setPendingDelete(null)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="icon-xs"
+                    className="ml-3 shrink-0 text-muted-foreground hover:text-destructive"
+                    onClick={() => setPendingDelete(b.id)}
                   >
-                    <Check className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => setPendingDelete(null)}
-                    className="rounded-md bg-gray-200 p-1.5 text-gray-600 transition-colors hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setPendingDelete(b.id)}
-                  className="ml-3 shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              )}
-            </li>
-          ))}
-        </ul>
-      </section>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
     </div>
   );
 }

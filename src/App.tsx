@@ -1,15 +1,17 @@
 import { createContext, useContext, useEffect } from "react";
 import { HashRouter, Routes, Route, Link } from "react-router-dom";
-import { useLocalStorage } from "./hooks/useLocalStorage";
-import { useBranchData } from "./hooks/useBranchData";
-import type { TrackedBranch, AnimatedBg } from "./types";
-import { text } from "./text";
-import Sidebar from "./components/Sidebar";
-import Background from "./components/Background";
-import DashboardPage from "./pages/DashboardPage";
-import SettingsPage from "./pages/SettingsPage";
-import BranchPage from "./pages/BranchPage";
-import { useGlass } from "./hooks/useGlass";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useBranchData } from "@/hooks/useBranchData";
+import type { TrackedBranch, AnimatedBg } from "@/types";
+import { text } from "@/text";
+import Sidebar from "@/components/Sidebar";
+import Background from "@/components/Background";
+import DashboardPage from "@/pages/DashboardPage";
+import SettingsPage from "@/pages/SettingsPage";
+import BranchPage from "@/pages/BranchPage";
+import { GlassProvider, useGlassActive, cardClass } from "@/hooks/useGlass";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { KeyRound } from "lucide-react";
 
 type BranchDataItem = ReturnType<typeof useBranchData>["data"][number];
@@ -39,25 +41,24 @@ export function useApp() {
 }
 
 function TokenRequired() {
-  const glass = useGlass();
+  const isGlass = useGlassActive();
   return (
     <div className="flex min-h-screen items-center justify-center px-4 pt-14 md:pt-0">
-      <div className={`mx-auto max-w-md rounded-lg border border-gray-200 p-8 text-center dark:border-gray-700 ${glass.card}`}>
-        <KeyRound className="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
-        <h2 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
-          {text.app.tokenRequired.title}
-        </h2>
-        <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
-          {text.app.tokenRequired.description}
-        </p>
-        <Link
-          to="/settings"
-          className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-        >
-          <KeyRound className="h-4 w-4" />
-          {text.app.tokenRequired.goToSettings}
-        </Link>
-      </div>
+      <Card className={`mx-auto max-w-md ${cardClass(isGlass)}`}>
+        <CardContent className="p-8 text-center">
+          <KeyRound className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+          <h2 className="mb-2 text-xl font-bold">
+            {text.app.tokenRequired.title}
+          </h2>
+          <p className="mb-6 text-sm text-muted-foreground">
+            {text.app.tokenRequired.description}
+          </p>
+          <Button render={<Link to="/settings" />}>
+              <KeyRound className="h-4 w-4" />
+              {text.app.tokenRequired.goToSettings}
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -101,35 +102,37 @@ export default function App() {
   return (
     <HashRouter>
       <AppCtx.Provider value={value}>
-        <div className="min-h-screen">
-          <Background variant={animatedBg} />
-          <div
-            className={`fixed inset-x-0 top-0 z-[60] h-1 bg-blue-500 transition-opacity duration-300 ${
-              isFetching ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <div className="h-full w-1/3 animate-pulse rounded-r-full bg-blue-400" />
+        <GlassProvider>
+          <div className="min-h-screen">
+            <Background variant={animatedBg} />
+            <div
+              className={`fixed inset-x-0 top-0 z-[60] h-1 bg-primary transition-opacity duration-300 ${
+                isFetching ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <div className="h-full w-1/3 animate-pulse rounded-r-full bg-primary/70" />
+            </div>
+            <Sidebar />
+            <main
+              className={`pt-14 transition-[margin] duration-300 md:pt-0 ${
+                collapsed ? "md:ml-20" : "md:ml-72"
+              }`}
+            >
+              {hasToken ? (
+                <Routes>
+                  <Route path="/" element={<DashboardPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/:owner/:repo/:branch" element={<BranchPage />} />
+                </Routes>
+              ) : (
+                <Routes>
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="*" element={<TokenRequired />} />
+                </Routes>
+              )}
+            </main>
           </div>
-          <Sidebar />
-          <main
-            className={`pt-14 transition-[margin] duration-300 md:pt-0 ${
-              collapsed ? "md:ml-20" : "md:ml-72"
-            }`}
-          >
-            {hasToken ? (
-              <Routes>
-                <Route path="/" element={<DashboardPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/:owner/:repo/:branch" element={<BranchPage />} />
-              </Routes>
-            ) : (
-              <Routes>
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="*" element={<TokenRequired />} />
-              </Routes>
-            )}
-          </main>
-        </div>
+        </GlassProvider>
       </AppCtx.Provider>
     </HashRouter>
   );

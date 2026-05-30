@@ -1,26 +1,30 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { LayoutDashboard, Settings, ChevronsLeft, ChevronsRight, Menu, X, GitBranch } from "lucide-react";
-import { useApp } from "../App";
-import { useGlass } from "../hooks/useGlass";
-import { text } from "../text";
+import { useApp } from "@/App";
+import { useGlassActive, sidebarClass } from "@/hooks/useGlass";
+import { text } from "@/text";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 export default function Sidebar() {
   const { collapsed, onToggleCollapse } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const glass = useGlass();
+  const isGlass = useGlassActive();
 
   const sidebarContent = (
     <div className="flex h-full flex-col">
-      <div className={`flex h-14 items-center gap-2.5 border-b border-gray-200 px-4 dark:border-gray-800 ${collapsed && !mobileOpen ? "justify-center" : ""}`}>
-        <GitBranch className="h-6 w-6 shrink-0 text-blue-500" />
-        {(!collapsed || mobileOpen) && <h1 className="text-lg font-bold text-gray-900 dark:text-white">{text.app.name}</h1>}
-        <button
+      <div className={`flex h-14 items-center gap-2.5 border-b border-border px-4 ${collapsed && !mobileOpen ? "justify-center" : ""}`}>
+        <GitBranch className="h-6 w-6 shrink-0 text-primary" />
+        {(!collapsed || mobileOpen) && <h1 className="text-lg font-bold">{text.app.name}</h1>}
+        <Button
+          variant="ghost"
+          size="icon-xs"
           onClick={() => setMobileOpen(false)}
-          className="ml-auto rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300 md:hidden"
+          className="ml-auto md:hidden"
         >
           <X className="h-5 w-5" />
-        </button>
+        </Button>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-2 py-3">
@@ -30,8 +34,8 @@ export default function Sidebar() {
           className={({ isActive }) =>
             `flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
               isActive
-                ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+                ? "bg-primary/10 text-primary"
+                : "text-muted-foreground hover:bg-accent hover:text-foreground"
             } ${collapsed && !mobileOpen ? "justify-center" : ""}`
           }
           title={collapsed && !mobileOpen ? text.nav.dashboard : undefined}
@@ -41,15 +45,17 @@ export default function Sidebar() {
         </NavLink>
       </nav>
 
-      <div className="border-t border-gray-200 px-2 py-2 dark:border-gray-800">
+      <Separator />
+
+      <div className="px-2 py-2">
         <NavLink
           to="/settings"
           onClick={() => setMobileOpen(false)}
           className={({ isActive }) =>
             `flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
               isActive
-                ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+                ? "bg-primary/10 text-primary"
+                : "text-muted-foreground hover:bg-accent hover:text-foreground"
             } ${collapsed && !mobileOpen ? "justify-center" : ""}`
           }
           title={collapsed && !mobileOpen ? text.nav.settings : undefined}
@@ -58,13 +64,15 @@ export default function Sidebar() {
           {((!collapsed) || mobileOpen) && text.nav.settings}
         </NavLink>
         <div className="hidden md:block">
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={onToggleCollapse}
             title={collapsed ? text.nav.expandSidebar : text.nav.collapseSidebar}
-            className="flex w-full items-center justify-center rounded-md p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+            className="w-full"
           >
             {collapsed ? <ChevronsRight className="h-5 w-5" /> : <ChevronsLeft className="h-5 w-5" />}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -72,14 +80,15 @@ export default function Sidebar() {
 
   return (
     <>
-      <header className={`fixed inset-x-0 top-0 z-40 flex h-14 items-center gap-3 border-b border-gray-200 px-4 dark:border-gray-800 ${glass.header} md:hidden`}>
-        <button
+      <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center gap-3 border-b border-bg px-4 md:hidden">
+        <Button
+          variant="ghost"
+          size="icon-xs"
           onClick={() => setMobileOpen(true)}
-          className="rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
         >
           <Menu className="h-5 w-5" />
-        </button>
-        <span className="text-sm font-semibold text-gray-900 dark:text-white">{text.app.name}</span>
+        </Button>
+        <span className="text-sm font-semibold">{text.app.name}</span>
       </header>
 
       {mobileOpen && (
@@ -87,7 +96,7 @@ export default function Sidebar() {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 shadow-xl transition-all duration-300 ease-in-out ${glass.sidebar} ${
+        className={`fixed inset-y-0 left-0 z-50 shadow-xl transition-all duration-300 ease-in-out ${sidebarClass(isGlass)} ${
           mobileOpen
             ? "w-72 translate-x-0"
             : collapsed

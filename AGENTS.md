@@ -2,7 +2,7 @@
 
 ## Project
 
-DashHub — single-page GitHub branch status dashboard. No backend; all state in localStorage, all data from GitHub REST API. Deployed as static assets via Docker + nginx.
+DashHub — single-page GitHub branch status dashboard. No backend; all state in localStorage, all data from GitHub REST API. Deployed as static assets via Docker + nginx. Built with React 19, TypeScript, Vite 8, shadcn/ui (base-nova style), and Tailwind CSS v4.
 
 ## Commands
 
@@ -11,6 +11,7 @@ npm run dev       # Vite dev server with HMR
 npm run build     # tsc -b && vite build (type-check + production build)
 npm run lint      # ESLint
 npm run preview   # Preview production build locally
+npm run add-ui    # npx shadcn@latest add <component>
 ```
 
 No test suite exists. `npm run build` is the primary verification step (includes type-check).
@@ -22,20 +23,24 @@ No test suite exists. `npm run build` is the primary verification step (includes
 - **Persistence**: `useLocalStorage` hook with keys prefixed `dashhub-`. Values: branches, auto-refresh, dark mode, sidebar collapsed, animated bg, GitHub token.
 - **Token gate**: All routes show `TokenRequired` unless `token` is set. Settings page is always accessible.
 - **API**: All GitHub calls go through `fetchJSON(url, token)` in `src/services/github.ts`. Token is always required (`Authorization: token ...` header).
+- **UI components**: shadcn/ui (base-nova style, `@base-ui/react` primitives) with CSS variable theming. Add new components via `npx shadcn@latest add <component>`.
+- **Path alias**: `@/*` maps to `./src/*` (configured in vite.config.ts, tsconfig.json, tsconfig.app.json, components.json).
 
 ## Key Conventions
 
 - **No comments in code** unless explicitly asked.
 - **Dark mode**: Class-based via `@custom-variant dark (&:where(.dark, .dark *))` in `src/index.css`. Toggle `dark` class on `<html>` via `useEffect` in `App.tsx`. Do not use Tailwind's `dark:` media-query variant.
-- **Tailwind CSS v4** with `@tailwindcss/vite` plugin. All styles are inline Tailwind classes — no CSS modules or global classes beyond `body` in `index.css`.
-- **Glassmorphism**: `useGlass()` hook returns context-aware class strings (`card`, `cardSubtle`, `sidebar`, `header`) that switch between solid and translucent+backdrop-blur based on `animatedBg === "matrix"`. Used by Sidebar, BranchRow, BranchRowSkeleton, BranchPage, SettingsPage, TokenRequired.
-- **Animated backgrounds**: `AnimatedBg` type is `"none" | "matrix"`. Matrix is canvas-based with multi-drop per column for seamless loop, blue-tinted (`#3b82f6`/`#93c5fd` in dark, `#94a3b8`/`#64748b` in light), CSS `filter: blur(2px)`. Canvas class: `bg-animated-matrix` (defined in `index.css`).
+- **Tailwind CSS v4** with `@tailwindcss/vite` plugin. CSS variable theming via shadcn/ui — use semantic tokens (`bg-card`, `text-foreground`, `bg-primary`, `border`, etc.) instead of hardcoded color classes. The color palette is blue-accent with neutral grays.
+- **Glassmorphism**: `GlassProvider` wraps the app. When `animatedBg === "matrix"`, a `.glass` class is applied to the root which overrides CSS variables (`--card`, `--sidebar`, etc.) to translucent+backdrop-blur values. Components use `cardClass(isGlass)`, `sidebarClass(isGlass)`, `subtleClass(isGlass)` from `useGlass.tsx` to apply the right border/bg classes.
+- **Animated backgrounds**: `AnimatedBg` type is `"none" | "matrix"`. Matrix is canvas-based with multi-drop per column for seamless loop, blue-tinted, CSS `filter: blur(2px)`. Canvas class: `bg-animated-matrix` (defined in `index.css`).
 - **Delete confirmation**: Inline swap — trash icon replaced with confirm (✓) and cancel (✗) icons. No browser `confirm()`.
-- **Fetching indicator**: Thin animated blue bar fixed at top of viewport, opacity toggled by `isFetching`.
+- **Fetching indicator**: Thin animated bar fixed at top of viewport, uses `bg-primary` semantic token.
 
 ## Adding New Features
 
-**New page**: Create `src/pages/NewPage.tsx`, add `<Route>` in `App.tsx`, add nav link in `Sidebar.tsx`, consume `useApp()` for global state. Apply `useGlass()` for glassmorphism support.
+**New page**: Create `src/pages/NewPage.tsx`, add `<Route>` in `App.tsx`, add nav link in `Sidebar.tsx`, consume `useApp()` for global state. Use shadcn/ui components (`Card`, `Button`, etc.) and semantic color tokens. Use `useGlassActive()` + `cardClass(isGlass)` for glassmorphism.
+
+**New shadcn/ui component**: Run `npx shadcn@latest add <component>`. This writes to `src/components/ui/<component>.tsx` and may update `src/index.css` or install dependencies. Follow existing patterns — use `@/` imports.
 
 **New GitHub API call**: Add to `src/services/github.ts`. Always accept `token: string` as last param, use `fetchJSON<T>(url, token)`, return typed object. Call from `useBranchData.ts` or page component. Add cache support in `src/services/cache.ts` if needed.
 
