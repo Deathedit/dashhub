@@ -39,10 +39,6 @@ export interface BranchData {
   error: string | null;
 }
 
-export function makeBranchId(owner: string, repo: string, branch: string): string {
-  return `${owner}/${repo}/${branch}`;
-}
-
 export function parseGitHubUrl(input: string): { owner: string; repo: string; branch: string | undefined } | null {
   const trimmed = input.trim();
   const stripped = trimmed.replace(/^https?:\/\//, "").replace(/^github\.com\//, "").replace(/\/+$/, "");
