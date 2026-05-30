@@ -18,10 +18,19 @@ export default function DashboardPage() {
     );
   }
 
+  const sorted = [...data].sort((a, b) => {
+    if (a.loading) return -1;
+    if (b.loading) return 1;
+    if (!a.commit && !b.commit) return 0;
+    if (!a.commit) return 1;
+    if (!b.commit) return -1;
+    return new Date(b.commit.date).getTime() - new Date(a.commit.date).getTime();
+  });
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
       <div className="space-y-3">
-        {data.map((branch) =>
+        {sorted.map((branch) =>
           branch.loading ? (
             <BranchRowSkeleton key={branch.key.id} />
           ) : (
