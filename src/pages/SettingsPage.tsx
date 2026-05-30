@@ -114,23 +114,25 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
-        <CardHeader>
-          <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.background}</CardTitle>
-        </CardHeader>
-        <CardContent className="flex gap-2">
-          {BG_OPTIONS.map((opt) => (
-            <Button
-              key={opt.value}
-              variant={animatedBg === opt.value ? "default" : "secondary"}
-              size="default"
-              onClick={() => setAnimatedBg(opt.value)}
-            >
-              {opt.label}
-            </Button>
-          ))}
-        </CardContent>
-      </Card>
+      {darkMode && (
+        <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
+          <CardHeader>
+            <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.background}</CardTitle>
+          </CardHeader>
+          <CardContent className="flex gap-2">
+            {BG_OPTIONS.map((opt) => (
+              <Button
+                key={opt.value}
+                variant={animatedBg === opt.value ? "default" : "secondary"}
+                size="default"
+                onClick={() => setAnimatedBg(opt.value)}
+              >
+                {opt.label}
+              </Button>
+            ))}
+          </CardContent>
+        </Card>
+      )}
 
       <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
         <CardHeader>

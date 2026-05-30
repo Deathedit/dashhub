@@ -104,7 +104,7 @@ export default function App() {
       <AppCtx.Provider value={value}>
         <GlassProvider>
           <div className="min-h-screen">
-            <Background variant={animatedBg} />
+            <Background variant={darkMode ? animatedBg : "none"} />
             <div
               className={`fixed inset-x-0 top-0 z-[60] h-1 bg-primary transition-opacity duration-300 ${
                 isFetching ? "opacity-100" : "opacity-0"

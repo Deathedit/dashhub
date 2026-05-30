@@ -8,8 +8,8 @@ export function useGlassActive() {
 }
 
 export function GlassProvider({ children }: { children: React.ReactNode }) {
-  const { animatedBg } = useApp();
-  const isGlass = animatedBg === "matrix";
+  const { animatedBg, darkMode } = useApp();
+  const isGlass = animatedBg === "matrix" && darkMode;
 
   return (
     <GlassCtx.Provider value={isGlass}>
