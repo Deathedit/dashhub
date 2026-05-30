@@ -5,14 +5,16 @@ import { useGlassActive, cardClass } from "@/hooks/useGlass";
 import { text, relativeTime } from "@/text";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 import { ExternalLink, GitBranch, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 
-const statusConfig: Record<string, { border: string; icon: React.ReactNode; label: string; variant: "default" | "destructive" | "secondary" | "outline" }> = {
+const statusConfig: Record<string, { border: string; icon: React.ReactNode; label: string; variant: "default" | "destructive" | "secondary" | "outline"; className?: string }> = {
   success: {
     border: "border-l-green-500 dark:border-l-green-400",
     icon: <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />,
     label: text.status.passing,
-    variant: "default",
+    variant: "outline",
+    className: "text-green-600 dark:text-green-400",
   },
   failure: {
     border: "border-l-red-500 dark:border-l-red-400",
@@ -59,7 +61,7 @@ export default function BranchRow({ branch }: { branch: BranchData }) {
             <GitBranch className="h-3 w-3" />
             {key.branch}
           </Badge>
-          <span className="inline-flex items-center gap-1 text-xs font-medium">
+          <span className={cn("inline-flex items-center gap-1 text-xs font-medium", cfg.className)}>
             {cfg.icon}
             {cfg.label}
           </span>

@@ -10,15 +10,17 @@ import { text, relativeTime } from "@/text";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 import { ArrowLeft, GitBranch, CheckCircle2, XCircle, Loader2, ExternalLink } from "lucide-react";
 
 const COMMITS_PER_PAGE = 13;
 
-const statusConfig: Record<string, { icon: React.ReactNode; label: string; variant: "default" | "destructive" | "secondary" | "outline" }> = {
+const statusConfig: Record<string, { icon: React.ReactNode; label: string; variant: "default" | "destructive" | "secondary" | "outline"; className?: string }> = {
   success: {
     icon: <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />,
     label: text.status.passing,
-    variant: "default",
+    variant: "outline",
+    className: "text-green-600 dark:text-green-400",
   },
   failure: {
     icon: <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />,
@@ -121,7 +123,7 @@ export default function BranchPage() {
             {branch}
           </Badge>
           {branchData && (
-            <Badge variant={cfg.variant} className="gap-1.5">
+            <Badge variant={cfg.variant} className={cn("gap-1.5", cfg.className)}>
               {cfg.icon}
               {cfg.label}
               {workflow?.url && (
