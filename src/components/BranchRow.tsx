@@ -8,12 +8,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { ExternalLink, GitBranch, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 
-const statusConfig: Record<string, { border: string; icon: React.ReactNode; label: string; variant: "default" | "destructive" | "secondary" | "outline"; className?: string }> = {
+const statusConfig: Record<string, { border: string; icon: React.ReactNode; label: string; variant: "default" | "destructive" | "secondary" | "outline" | "ghost"; className?: string }> = {
   success: {
     border: "border-l-green-500 dark:border-l-green-400",
     icon: <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />,
     label: text.status.passing,
-    variant: "outline",
+    variant: "ghost",
     className: "text-green-600 dark:text-green-400",
   },
   failure: {

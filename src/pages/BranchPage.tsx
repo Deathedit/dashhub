@@ -15,11 +15,11 @@ import { ArrowLeft, GitBranch, CheckCircle2, XCircle, Loader2, ExternalLink } fr
 
 const COMMITS_PER_PAGE = 13;
 
-const statusConfig: Record<string, { icon: React.ReactNode; label: string; variant: "default" | "destructive" | "secondary" | "outline"; className?: string }> = {
+const statusConfig: Record<string, { icon: React.ReactNode; label: string; variant: "default" | "destructive" | "secondary" | "outline" | "ghost"; className?: string }> = {
   success: {
     icon: <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />,
     label: text.status.passing,
-    variant: "outline",
+    variant: "ghost",
     className: "text-green-600 dark:text-green-400",
   },
   failure: {
