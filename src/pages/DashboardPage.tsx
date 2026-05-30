@@ -1,5 +1,6 @@
 import { useApp } from "@/App";
 import { text } from "@/text";
+import type { BranchData } from "@/types";
 import BranchRow from "@/components/BranchRow";
 import BranchRowSkeleton from "@/components/BranchRowSkeleton";
 
@@ -19,14 +20,13 @@ export default function DashboardPage() {
     );
   }
 
-  const sorted = [...data].sort((a, b) => {
-    if (a.loading) return -1;
-    if (b.loading) return 1;
-    if (!a.commit && !b.commit) return 0;
-    if (!a.commit) return 1;
-    if (!b.commit) return -1;
-    return new Date(b.commit.date).getTime() - new Date(a.commit.date).getTime();
-  });
+  const sortPriority = (b: BranchData): number =>
+    b.loading ? 0 : b.error || !b.commit ? 2 : 1;
+
+  const sorted = data
+    .map(b => ({ ...b, _p: sortPriority(b), _d: b.commit ? new Date(b.commit.date).getTime() : 0 }))
+    .sort((a, b) => a._p - b._p || b._d - a._d)
+    .map(({ _p, _d, ...b }) => b);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
