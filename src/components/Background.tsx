@@ -56,14 +56,9 @@ function MatrixRain() {
 
     function draw() {
       if (!ctx || !canvas) return;
-      const currentDark = document.documentElement.classList.contains("dark");
       const maxRow = canvas.height / fontSize + 50 / fontSize;
 
-      if (currentDark) {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
-      } else {
-        ctx.fillStyle = "rgba(249, 250, 251, 0.08)";
-      }
+      ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.font = `${fontSize}px monospace`;
@@ -74,24 +69,14 @@ function MatrixRain() {
           const yPx = drop.y * fontSize;
           const xPx = col * fontSize;
 
-          if (currentDark) {
-            ctx.fillStyle = "#3b82f6";
-            ctx.globalAlpha = 0.3;
-          } else {
-            ctx.fillStyle = "#94a3b8";
-            ctx.globalAlpha = 0.08;
-          }
+          ctx.fillStyle = "#3b82f6";
+          ctx.globalAlpha = 0.3;
           ctx.fillText(MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)], xPx, yPx);
 
           const headY = (drop.y + 1) * fontSize;
           if (headY < canvas.height && headY > 0) {
-            if (currentDark) {
-              ctx.fillStyle = "#93c5fd";
-              ctx.globalAlpha = 0.6;
-            } else {
-              ctx.fillStyle = "#64748b";
-              ctx.globalAlpha = 0.15;
-            }
+            ctx.fillStyle = "#93c5fd";
+            ctx.globalAlpha = 0.6;
             ctx.fillText(MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)], xPx, headY);
           }
 
