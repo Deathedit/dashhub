@@ -1,4 +1,4 @@
-import type { CommitDetail } from "../types";
+import type { CommitDetail } from "@/types";
 
 const CACHE_TTL_MS = 60 * 60 * 1000;
 

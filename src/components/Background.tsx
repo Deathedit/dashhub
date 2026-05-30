@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
-import type { AnimatedBg } from "../types";
-import { text } from "../text";
+import type { AnimatedBg } from "@/types";
+import { text } from "@/text";
 
 const BG_OPTIONS: { value: AnimatedBg; label: string }[] = [
   { value: "none", label: text.settings.bgNone },

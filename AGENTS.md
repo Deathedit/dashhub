@@ -11,8 +11,8 @@ npm run dev       # Vite dev server + HMR
 npm run build     # tsc -b && vite build (type-check + prod)
 npm run lint      # ESLint
 npm run preview   # Preview prod build
-npm run add-ui    # npx shadcn@latest add <component>
 ```
+Add shadcn components: `npx shadcn@latest add <component>`
 
 No tests. `npm run build` is the primary verification step.
 
@@ -25,6 +25,7 @@ No tests. `npm run build` is the primary verification step.
 - **API**: `fetchJSON(url, token)` in `src/services/github.ts`. Token always required.
 - **Text**: `src/text.ts` — all UI strings in `text` object, plus `relativeTime()` utility.
 - **Cache**: In-memory `Map` with 60min TTL (`src/services/cache.ts`). Clears on branch/token/refresh changes.
+- **Dashboard sort**: Priority-based: loading (0) → loaded with commit (1) → error/no-commit (2), tiebreak by commit date descending.
 - **Layout**: Dashboard & branch page `max-w-3xl`, settings `max-w-2xl`. Mobile: `pt-14` offset, sidebar overlay below `md:`.
 
 ## Conventions
