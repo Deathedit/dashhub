@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { LayoutDashboard, Settings, ChevronsLeft, ChevronsRight, Menu, X, GitBranch } from "lucide-react";
 import { useApp } from "@/App";
@@ -11,6 +11,15 @@ export default function Sidebar() {
   const { collapsed, onToggleCollapse } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
   const isGlass = useGlassActive();
+
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 768px)");
+    const handler = (e: MediaQueryListEvent) => {
+      if (e.matches) setMobileOpen(false);
+    };
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
 
   const sidebarContent = (
     <div className="flex h-full flex-col">
@@ -97,12 +106,8 @@ export default function Sidebar() {
 
       <aside
         className={`fixed inset-y-0 left-0 z-50 shadow-xl transition-all duration-300 ease-in-out ${sidebarClass(isGlass)} ${
-          mobileOpen
-            ? "w-72 translate-x-0"
-            : collapsed
-              ? "w-20 -translate-x-0 md:translate-x-0"
-              : "w-72 -translate-x-full md:translate-x-0"
-        }`}
+          collapsed ? "w-20" : "w-72"
+        } ${mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
       >
         {sidebarContent}
       </aside>
