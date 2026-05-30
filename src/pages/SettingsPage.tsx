@@ -230,7 +230,7 @@ export default function SettingsPage() {
               {text.settings.noBranches}
             </p>
           )}
-          <ul className="space-y-2 max-h-80 overflow-y-auto">
+          <ul className="space-y-2 max-h-80 overflow-y-auto scrollbar-hidden">
             {branches.map((b) => (
               <li
                 key={b.id}
