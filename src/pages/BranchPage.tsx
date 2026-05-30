@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useApp } from "../App";
+import { useGlass } from "../hooks/useGlass";
 import { fetchCommits } from "../services/github";
 import { getWorkflowDisplayStatus } from "../services/github";
 import { getCachedCommits, setCachedCommits } from "../services/cache";
@@ -47,12 +48,13 @@ function relativeTime(dateStr: string): string {
 }
 
 function CommitRow({ commit }: { commit: CommitDetail }) {
+  const glass = useGlass();
   return (
     <a
       href={commit.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-start gap-3 rounded-lg border border-gray-100 bg-white p-4 transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
+      className={`flex items-start gap-3 rounded-lg border border-gray-100 p-4 transition-shadow hover:shadow-md dark:border-gray-800 ${glass.card}`}
     >
       {commit.avatarUrl ? (
         <img src={commit.avatarUrl} alt="" className="mt-0.5 h-8 w-8 shrink-0 rounded-full" />
@@ -86,6 +88,7 @@ export default function BranchPage() {
   const branchData = data.find(
     (d) => d.key.owner === owner && d.key.repo === repo && d.key.branch === branch,
   );
+  const glass = useGlass();
 
   useEffect(() => {
     if (!owner || !repo || !branch) return;
@@ -156,7 +159,7 @@ export default function BranchPage() {
       {loading && (
         <div className="space-y-3">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="animate-pulse flex items-start gap-3 rounded-lg border border-gray-100 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
+            <div key={i} className={`animate-pulse flex items-start gap-3 rounded-lg border border-gray-100 p-4 dark:border-gray-800 ${glass.card}`}>
               <div className="h-8 w-8 shrink-0 rounded-full bg-gray-200 dark:bg-gray-700" />
               <div className="flex-1 space-y-2">
                 <div className="h-4 w-3/4 rounded bg-gray-200 dark:bg-gray-700" />

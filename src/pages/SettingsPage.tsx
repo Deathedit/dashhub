@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useApp } from "../App";
 import { parseGitHubUrl } from "../types";
 import { BG_OPTIONS } from "../components/Background";
+import { useGlass } from "../hooks/useGlass";
 import { fetchDefaultBranch, verifyToken } from "../services/github";
 import { Plus, Trash2, Loader2, CheckCircle2, XCircle, Moon, Sun, Check, X } from "lucide-react";
 
@@ -9,6 +10,7 @@ const MAX_BRANCHES = 50;
 
 export default function SettingsPage() {
   const { branches, setBranches, token, setToken, autoRefresh, onToggleAutoRefresh, darkMode, onToggleDarkMode, animatedBg, setAnimatedBg } = useApp();
+  const glass = useGlass();
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
   const [adding, setAdding] = useState(false);
@@ -85,7 +87,7 @@ export default function SettingsPage() {
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
       <h1 className="mb-6 text-xl font-bold text-gray-900 sm:mb-8 sm:text-2xl dark:text-white">Settings</h1>
 
-      <section className="mb-6 sm:mb-8 rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-700 dark:bg-gray-900">
+      <section className={`mb-6 sm:mb-8 rounded-lg border border-gray-200 p-4 sm:p-6 dark:border-gray-700 ${glass.card}`}>
         <h2 className="mb-3 sm:mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
           General
         </h2>
@@ -110,7 +112,7 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      <section className="mb-6 sm:mb-8 rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-700 dark:bg-gray-900">
+      <section className={`mb-6 sm:mb-8 rounded-lg border border-gray-200 p-4 sm:p-6 dark:border-gray-700 ${glass.card}`}>
         <h2 className="mb-3 sm:mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
           Background
         </h2>
@@ -125,14 +127,13 @@ export default function SettingsPage() {
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
               }`}
             >
-              {opt.value === "matrix" && <span className="font-mono text-xs">01</span>}
               {opt.label}
             </button>
           ))}
         </div>
       </section>
 
-      <section className="mb-6 sm:mb-8 rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-700 dark:bg-gray-900">
+      <section className={`mb-6 sm:mb-8 rounded-lg border border-gray-200 p-4 sm:p-6 dark:border-gray-700 ${glass.card}`}>
         <h2 className="mb-3 sm:mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
           GitHub Token (required)
         </h2>
@@ -178,7 +179,7 @@ export default function SettingsPage() {
         </p>
       </section>
 
-      <section className="mb-6 sm:mb-8 rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-700 dark:bg-gray-900">
+      <section className={`mb-6 sm:mb-8 rounded-lg border border-gray-200 p-4 sm:p-6 dark:border-gray-700 ${glass.card}`}>
         <h2 className="mb-3 sm:mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
           Add Branch
         </h2>
@@ -209,7 +210,7 @@ export default function SettingsPage() {
         )}
       </section>
 
-      <section className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-700 dark:bg-gray-900">
+      <section className={`rounded-lg border border-gray-200 p-4 sm:p-6 dark:border-gray-700 ${glass.card}`}>
         <h2 className="mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
           Tracked Branches ({branches.length})
         </h2>
@@ -222,7 +223,7 @@ export default function SettingsPage() {
           {branches.map((b) => (
             <li
               key={b.id}
-              className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-800/50"
+              className={`flex items-center justify-between rounded-md border border-gray-100 px-4 py-3 dark:border-gray-800 ${glass.cardSubtle}`}
             >
               <span className="min-w-0 truncate text-sm text-gray-800 dark:text-gray-200">
                 <span className="font-medium">{b.owner}/{b.repo}</span>

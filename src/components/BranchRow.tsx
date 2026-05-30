@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import type { BranchData } from "../types";
 import { getWorkflowDisplayStatus } from "../services/github";
+import { useGlass } from "../hooks/useGlass";
 import { GitBranch, CheckCircle2, XCircle, Loader2, ExternalLink } from "lucide-react";
 
 const statusConfig: Record<string, { border: string; icon: React.ReactNode; label: string; textColor: string }> = {
@@ -44,6 +45,7 @@ export default function BranchRow({ branch }: { branch: BranchData }) {
   const { key, commit, workflow, loading, error } = branch;
   const displayStatus = getWorkflowDisplayStatus(workflow);
   const cfg = statusConfig[displayStatus];
+  const glass = useGlass();
 
   if (loading) return null;
 
@@ -53,7 +55,7 @@ export default function BranchRow({ branch }: { branch: BranchData }) {
   return (
     <Link
       to={detailPath}
-      className={`flex items-start gap-3 rounded-lg border border-gray-100 border-l-4 bg-white p-4 transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900 ${cfg.border}`}
+      className={`flex items-start gap-3 rounded-lg border border-gray-100 border-l-4 p-4 transition-shadow hover:shadow-md dark:border-gray-800 ${glass.card} ${cfg.border}`}
     >
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">

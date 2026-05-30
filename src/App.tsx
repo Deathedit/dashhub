@@ -8,6 +8,7 @@ import Background from "./components/Background";
 import DashboardPage from "./pages/DashboardPage";
 import SettingsPage from "./pages/SettingsPage";
 import BranchPage from "./pages/BranchPage";
+import { useGlass } from "./hooks/useGlass";
 import { KeyRound } from "lucide-react";
 
 type BranchDataItem = ReturnType<typeof useBranchData>["data"][number];
@@ -37,9 +38,10 @@ export function useApp() {
 }
 
 function TokenRequired() {
+  const glass = useGlass();
   return (
     <div className="flex min-h-screen items-center justify-center px-4 pt-14 md:pt-0">
-      <div className="mx-auto max-w-md text-center">
+      <div className={`mx-auto max-w-md rounded-lg border border-gray-200 p-8 text-center dark:border-gray-700 ${glass.card}`}>
         <KeyRound className="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
         <h2 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
           GitHub Token Required

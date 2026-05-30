@@ -2,10 +2,12 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { LayoutDashboard, Settings, ChevronsLeft, ChevronsRight, Menu, X, GitBranch } from "lucide-react";
 import { useApp } from "../App";
+import { useGlass } from "../hooks/useGlass";
 
 export default function Sidebar() {
   const { collapsed, onToggleCollapse } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const glass = useGlass();
 
   const sidebarContent = (
     <div className="flex h-full flex-col">
@@ -69,7 +71,7 @@ export default function Sidebar() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center gap-3 border-b border-gray-200 bg-white px-4 dark:border-gray-800 dark:bg-gray-900 md:hidden">
+      <header className={`fixed inset-x-0 top-0 z-40 flex h-14 items-center gap-3 border-b border-gray-200 px-4 dark:border-gray-800 ${glass.header} md:hidden`}>
         <button
           onClick={() => setMobileOpen(true)}
           className="rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
@@ -84,7 +86,7 @@ export default function Sidebar() {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 bg-white shadow-xl transition-all duration-300 ease-in-out dark:bg-gray-900 ${
+        className={`fixed inset-y-0 left-0 z-50 shadow-xl transition-all duration-300 ease-in-out ${glass.sidebar} ${
           mobileOpen
             ? "w-72 translate-x-0"
             : collapsed
