@@ -4,6 +4,7 @@ import { parseGitHubUrl } from "../types";
 import { BG_OPTIONS } from "../components/Background";
 import { useGlass } from "../hooks/useGlass";
 import { fetchDefaultBranch, verifyToken } from "../services/github";
+import { text } from "../text";
 import { Plus, Trash2, Loader2, CheckCircle2, XCircle, Moon, Sun, Check, X } from "lucide-react";
 
 const MAX_BRANCHES = 50;
@@ -24,7 +25,7 @@ export default function SettingsPage() {
     setError("");
     const parsed = parseGitHubUrl(input);
     if (!parsed) {
-      setError("Invalid format. Paste a GitHub URL or owner/repo/branch.");
+      setError(text.errors.invalidFormat);
       return;
     }
 
@@ -41,9 +42,9 @@ export default function SettingsPage() {
         setAdding(false);
         const msg = (err as Error).message ?? "";
         if (msg.includes("404")) {
-          setError("Repository not found. Check the owner/repo name.");
+          setError(text.errors.repoNotFound);
         } else if (msg.includes("403")) {
-          setError("GitHub API rate limit reached. Add a Personal Access Token above to continue.");
+          setError(text.errors.rateLimit);
         } else {
           setError(msg);
         }
@@ -53,13 +54,13 @@ export default function SettingsPage() {
     setAdding(false);
 
     if (branches.length >= MAX_BRANCHES) {
-      setError(`Limit of ${MAX_BRANCHES} branches reached.`);
+      setError(text.errors.branchLimit(MAX_BRANCHES));
       return;
     }
 
     const id = `${owner}/${repo}/${resolvedBranch}`;
     if (branches.some((b) => b.id === id)) {
-      setError("This branch is already being tracked.");
+      setError(text.errors.alreadyTracked);
       return;
     }
     setBranches((prev) => [...prev, { id, owner, repo, branch: resolvedBranch }]);
@@ -85,11 +86,11 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
-      <h1 className="mb-6 text-xl font-bold text-gray-900 sm:mb-8 sm:text-2xl dark:text-white">Settings</h1>
+      <h1 className="mb-6 text-xl font-bold text-gray-900 sm:mb-8 sm:text-2xl dark:text-white">{text.settings.title}</h1>
 
       <section className={`mb-6 sm:mb-8 rounded-lg border border-gray-200 p-4 sm:p-6 dark:border-gray-700 ${glass.card}`}>
         <h2 className="mb-3 sm:mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
-          General
+          {text.settings.general}
         </h2>
         <div className="flex flex-col gap-3 sm:flex-row">
           <button
@@ -100,21 +101,21 @@ export default function SettingsPage() {
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
             }`}
           >
-            {autoRefresh ? "Auto-refresh: On" : "Auto-refresh: Off"}
+            {autoRefresh ? text.settings.autoRefreshOn : text.settings.autoRefreshOff}
           </button>
           <button
             onClick={onToggleDarkMode}
             className="inline-flex items-center justify-center gap-1.5 rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
           >
             {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            {darkMode ? "Light Mode" : "Dark Mode"}
+            {darkMode ? text.settings.lightMode : text.settings.darkMode}
           </button>
         </div>
       </section>
 
       <section className={`mb-6 sm:mb-8 rounded-lg border border-gray-200 p-4 sm:p-6 dark:border-gray-700 ${glass.card}`}>
         <h2 className="mb-3 sm:mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
-          Background
+{text.settings.background}
         </h2>
         <div className="flex gap-2">
           {BG_OPTIONS.map((opt) => (
@@ -135,12 +136,12 @@ export default function SettingsPage() {
 
       <section className={`mb-6 sm:mb-8 rounded-lg border border-gray-200 p-4 sm:p-6 dark:border-gray-700 ${glass.card}`}>
         <h2 className="mb-3 sm:mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
-          GitHub Token (required)
+          {text.settings.tokenTitle}
         </h2>
         <div className="flex flex-col gap-2 sm:flex-row">
           <input
             type="password"
-            placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+            placeholder={text.settings.tokenPlaceholder}
             value={tokenInput}
             onChange={(e) => { setTokenInput(e.target.value); setVerifyResult(null); }}
             className="min-w-0 flex-1 rounded-md border border-gray-300 bg-white px-3 py-2 font-mono text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:border-blue-400 dark:focus:ring-blue-400"
@@ -152,13 +153,13 @@ export default function SettingsPage() {
               className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200 disabled:opacity-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-              Verify
+{text.settings.verify}
             </button>
             <button
               onClick={handleSaveToken}
               className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
             >
-              Save
+{text.settings.save}
             </button>
           </div>
         </div>
@@ -167,26 +168,26 @@ export default function SettingsPage() {
             verifyResult.valid ? "text-green-700 dark:text-green-400" : "text-red-600 dark:text-red-400"
           }`}>
             {verifyResult.valid
-              ? <><CheckCircle2 className="h-4 w-4" /> Valid — authenticated as <span className="font-mono font-medium">{verifyResult.login}</span></>
+              ? <><CheckCircle2 className="h-4 w-4" /> {text.settings.validAs} <span className="font-mono font-medium">{verifyResult.login}</span></>
               : <><XCircle className="h-4 w-4" /> {verifyResult.error}</>}
           </div>
         )}
         <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-          Required. A Personal Access Token is needed to access the GitHub API. No scopes are needed for public repos.{" "}
-          <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-            Create one here
+          {text.settings.tokenHelp}{" "}
+          <a href={text.settings.createTokenUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+            {text.settings.createToken}
           </a>.
         </p>
       </section>
 
       <section className={`mb-6 sm:mb-8 rounded-lg border border-gray-200 p-4 sm:p-6 dark:border-gray-700 ${glass.card}`}>
         <h2 className="mb-3 sm:mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
-          Add Branch
+          {text.settings.addBranch}
         </h2>
         <div className="flex flex-col gap-2 sm:flex-row">
           <input
             type="text"
-            placeholder="e.g. https://github.com/vitejs/vite/tree/main"
+            placeholder={text.settings.branchPlaceholder}
             value={input}
             onChange={(e) => { setInput(e.target.value); setError(""); }}
             onKeyDown={(e) => e.key === "Enter" && !adding && handleAdd()}
@@ -199,11 +200,11 @@ export default function SettingsPage() {
             className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-            {adding ? "Resolving…" : "Add"}
+            {adding ? text.settings.resolving : text.settings.add}
           </button>
         </div>
         <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-          Paste a GitHub URL or use <span className="font-mono">owner/repo/branch</span> format. The default branch is auto-detected if omitted.
+          {text.settings.branchHelpPrefix} <span className="font-mono">{text.settings.branchHelpFormat}</span> {text.settings.branchHelpSuffix}
         </p>
         {error && (
           <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
@@ -212,11 +213,11 @@ export default function SettingsPage() {
 
       <section className={`rounded-lg border border-gray-200 p-4 sm:p-6 dark:border-gray-700 ${glass.card}`}>
         <h2 className="mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
-          Tracked Branches ({branches.length})
+          {text.settings.trackedBranches(branches.length)}
         </h2>
         {branches.length === 0 && (
           <p className="text-sm text-gray-400 dark:text-gray-500">
-            No branches tracked yet. Add one above to get started.
+            {text.settings.noBranches}
           </p>
         )}
         <ul className="space-y-2">

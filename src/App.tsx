@@ -3,6 +3,7 @@ import { HashRouter, Routes, Route, Link } from "react-router-dom";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { useBranchData } from "./hooks/useBranchData";
 import type { TrackedBranch, AnimatedBg } from "./types";
+import { text } from "./text";
 import Sidebar from "./components/Sidebar";
 import Background from "./components/Background";
 import DashboardPage from "./pages/DashboardPage";
@@ -44,17 +45,17 @@ function TokenRequired() {
       <div className={`mx-auto max-w-md rounded-lg border border-gray-200 p-8 text-center dark:border-gray-700 ${glass.card}`}>
         <KeyRound className="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
         <h2 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
-          GitHub Token Required
+          {text.app.tokenRequired.title}
         </h2>
         <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
-          A Personal Access Token is required to use DashHub. Add one in Settings to get started.
+          {text.app.tokenRequired.description}
         </p>
         <Link
           to="/settings"
           className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
         >
           <KeyRound className="h-4 w-4" />
-          Go to Settings
+          {text.app.tokenRequired.goToSettings}
         </Link>
       </div>
     </div>

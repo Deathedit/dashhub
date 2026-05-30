@@ -1,9 +1,10 @@
 import { useRef, useEffect } from "react";
 import type { AnimatedBg } from "../types";
+import { text } from "../text";
 
 const BG_OPTIONS: { value: AnimatedBg; label: string }[] = [
-  { value: "none", label: "None" },
-  { value: "matrix", label: "Matrix" },
+  { value: "none", label: text.settings.bgNone },
+  { value: "matrix", label: text.settings.bgMatrix },
 ];
 
 const MATRIX_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ";

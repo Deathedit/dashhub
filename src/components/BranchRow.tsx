@@ -2,44 +2,35 @@ import { Link } from "react-router-dom";
 import type { BranchData } from "../types";
 import { getWorkflowDisplayStatus } from "../services/github";
 import { useGlass } from "../hooks/useGlass";
+import { text, relativeTime } from "../text";
 import { GitBranch, CheckCircle2, XCircle, Loader2, ExternalLink } from "lucide-react";
 
 const statusConfig: Record<string, { border: string; icon: React.ReactNode; label: string; textColor: string }> = {
   success: {
     border: "border-l-green-500 dark:border-l-green-400",
     icon: <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />,
-    label: "Passing",
+    label: text.status.passing,
     textColor: "text-green-700 dark:text-green-400",
   },
   failure: {
     border: "border-l-red-500 dark:border-l-red-400",
     icon: <XCircle className="h-4 w-4 text-red-600 dark:text-red-400" />,
-    label: "Failed",
+    label: text.status.failed,
     textColor: "text-red-700 dark:text-red-400",
   },
   in_progress: {
     border: "border-l-yellow-500 dark:border-l-yellow-400",
     icon: <Loader2 className="h-4 w-4 animate-spin text-yellow-600 dark:text-yellow-400" />,
-    label: "In Progress",
+    label: text.status.inProgress,
     textColor: "text-yellow-700 dark:text-yellow-400",
   },
   unknown: {
     border: "border-l-gray-300 dark:border-l-gray-600",
     icon: <GitBranch className="h-4 w-4 text-gray-400 dark:text-gray-500" />,
-    label: "No CI",
+    label: text.status.noCi,
     textColor: "text-gray-500 dark:text-gray-400",
   },
 };
-
-function relativeTime(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  return `${days}d ago`;
-}
 
 export default function BranchRow({ branch }: { branch: BranchData }) {
   const { key, commit, workflow, loading, error } = branch;
@@ -75,9 +66,9 @@ export default function BranchRow({ branch }: { branch: BranchData }) {
         {error && (
           <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">
             {error.includes("404")
-              ? "Repository or branch not found"
+              ? text.errors.repoOrBranchNotFound
               : error.includes("403")
-                ? <>API rate limit reached. <Link to="/settings" className="underline hover:text-red-800 dark:hover:text-red-300">Add a GitHub token</Link> to increase your limit.</>
+                ? <>API rate limit reached. <Link to="/settings" className="underline hover:text-red-800 dark:hover:text-red-300">{text.errors.addToken}</Link> to increase your limit.</>
                 : error}
           </p>
         )}
@@ -105,7 +96,7 @@ export default function BranchRow({ branch }: { branch: BranchData }) {
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
           className="rounded-md p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300"
-          title="Open on GitHub"
+          title={text.branch.openOnGitHub}
         >
           <ExternalLink className="h-4 w-4" />
         </a>

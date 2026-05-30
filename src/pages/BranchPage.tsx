@@ -6,6 +6,7 @@ import { fetchCommits } from "../services/github";
 import { getWorkflowDisplayStatus } from "../services/github";
 import { getCachedCommits, setCachedCommits } from "../services/cache";
 import type { CommitDetail } from "../types";
+import { text, relativeTime } from "../text";
 import { ArrowLeft, GitBranch, CheckCircle2, XCircle, Loader2, ExternalLink } from "lucide-react";
 
 const COMMITS_PER_PAGE = 13;
@@ -13,39 +14,29 @@ const COMMITS_PER_PAGE = 13;
 const statusConfig: Record<string, { icon: React.ReactNode; label: string; textColor: string; bgColor: string }> = {
   success: {
     icon: <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />,
-    label: "Passing",
+    label: text.status.passing,
     textColor: "text-green-700 dark:text-green-400",
     bgColor: "bg-green-50 dark:bg-green-950/40",
   },
   failure: {
     icon: <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />,
-    label: "Failed",
+    label: text.status.failed,
     textColor: "text-red-700 dark:text-red-400",
     bgColor: "bg-red-50 dark:bg-red-950/40",
   },
   in_progress: {
     icon: <Loader2 className="h-5 w-5 animate-spin text-yellow-600 dark:text-yellow-400" />,
-    label: "In Progress",
+    label: text.status.inProgress,
     textColor: "text-yellow-700 dark:text-yellow-400",
     bgColor: "bg-yellow-50 dark:bg-yellow-950/40",
   },
   unknown: {
     icon: <GitBranch className="h-5 w-5 text-gray-400 dark:text-gray-500" />,
-    label: "No CI",
+    label: text.status.noCi,
     textColor: "text-gray-500 dark:text-gray-400",
     bgColor: "bg-gray-50 dark:bg-gray-800/50",
   },
 };
-
-function relativeTime(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  return `${days}d ago`;
-}
 
 function CommitRow({ commit }: { commit: CommitDetail }) {
   const glass = useGlass();
@@ -121,7 +112,7 @@ export default function BranchPage() {
         className="mb-4 inline-flex items-center gap-1.5 text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
       >
         <ArrowLeft className="h-4 w-4" />
-        Dashboard
+        {text.branch.backToDashboard}
       </Link>
 
       <div className="mb-6">
@@ -153,7 +144,7 @@ export default function BranchPage() {
       </div>
 
       <h2 className="mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
-        Recent Commits
+        {text.branch.recentCommits}
       </h2>
 
       {loading && (
@@ -175,7 +166,7 @@ export default function BranchPage() {
       )}
 
       {!loading && !error && commits.length === 0 && (
-        <p className="text-sm text-gray-400 dark:text-gray-500">No commits found for this branch.</p>
+        <p className="text-sm text-gray-400 dark:text-gray-500">{text.branch.noCommits}</p>
       )}
 
       {!loading && !error && commits.length > 0 && (

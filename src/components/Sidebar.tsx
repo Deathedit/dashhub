@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { LayoutDashboard, Settings, ChevronsLeft, ChevronsRight, Menu, X, GitBranch } from "lucide-react";
 import { useApp } from "../App";
 import { useGlass } from "../hooks/useGlass";
+import { text } from "../text";
 
 export default function Sidebar() {
   const { collapsed, onToggleCollapse } = useApp();
@@ -13,7 +14,7 @@ export default function Sidebar() {
     <div className="flex h-full flex-col">
       <div className={`flex h-14 items-center gap-2.5 border-b border-gray-200 px-4 dark:border-gray-800 ${collapsed && !mobileOpen ? "justify-center" : ""}`}>
         <GitBranch className="h-6 w-6 shrink-0 text-blue-500" />
-        {(!collapsed || mobileOpen) && <h1 className="text-lg font-bold text-gray-900 dark:text-white">DashHub</h1>}
+        {(!collapsed || mobileOpen) && <h1 className="text-lg font-bold text-gray-900 dark:text-white">{text.app.name}</h1>}
         <button
           onClick={() => setMobileOpen(false)}
           className="ml-auto rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300 md:hidden"
@@ -33,10 +34,10 @@ export default function Sidebar() {
                 : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
             } ${collapsed && !mobileOpen ? "justify-center" : ""}`
           }
-          title={collapsed && !mobileOpen ? "Dashboard" : undefined}
+          title={collapsed && !mobileOpen ? text.nav.dashboard : undefined}
         >
           <LayoutDashboard className="h-5 w-5 shrink-0" />
-          {((!collapsed) || mobileOpen) && "Dashboard"}
+          {((!collapsed) || mobileOpen) && text.nav.dashboard}
         </NavLink>
       </nav>
 
@@ -51,15 +52,15 @@ export default function Sidebar() {
                 : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
             } ${collapsed && !mobileOpen ? "justify-center" : ""}`
           }
-          title={collapsed && !mobileOpen ? "Settings" : undefined}
+          title={collapsed && !mobileOpen ? text.nav.settings : undefined}
         >
           <Settings className="h-5 w-5 shrink-0" />
-          {((!collapsed) || mobileOpen) && "Settings"}
+          {((!collapsed) || mobileOpen) && text.nav.settings}
         </NavLink>
         <div className="hidden md:block">
           <button
             onClick={onToggleCollapse}
-            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={collapsed ? text.nav.expandSidebar : text.nav.collapseSidebar}
             className="flex w-full items-center justify-center rounded-md p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
           >
             {collapsed ? <ChevronsRight className="h-5 w-5" /> : <ChevronsLeft className="h-5 w-5" />}
@@ -78,7 +79,7 @@ export default function Sidebar() {
         >
           <Menu className="h-5 w-5" />
         </button>
-        <span className="text-sm font-semibold text-gray-900 dark:text-white">DashHub</span>
+        <span className="text-sm font-semibold text-gray-900 dark:text-white">{text.app.name}</span>
       </header>
 
       {mobileOpen && (
