@@ -11,10 +11,10 @@ import { ExternalLink, GitBranch, CheckCircle2, XCircle, Loader2 } from "lucide-
 const statusConfig: Record<string, { border: string; icon: React.ReactNode; label: string; variant: "default" | "destructive" | "secondary" | "outline" | "ghost"; className?: string }> = {
   success: {
     border: "border-l-green-500 dark:border-l-green-400",
-    icon: <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />,
+    icon: <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 transition-colors hover:text-green-700 dark:hover:text-green-300" />,
     label: text.status.passing,
     variant: "ghost",
-    className: "text-green-600 dark:text-green-400",
+    className: "text-green-600 dark:text-green-400 hover:bg-transparent hover:text-green-600 dark:hover:text-green-400",
   },
   failure: {
     border: "border-l-red-500 dark:border-l-red-400",

@@ -17,10 +17,10 @@ const COMMITS_PER_PAGE = 13;
 
 const statusConfig: Record<string, { icon: React.ReactNode; label: string; variant: "default" | "destructive" | "secondary" | "outline" | "ghost"; className?: string }> = {
   success: {
-    icon: <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />,
+    icon: <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 transition-colors hover:text-green-700 dark:hover:text-green-300" />,
     label: text.status.passing,
     variant: "ghost",
-    className: "text-green-600 dark:text-green-400",
+    className: "text-green-600 dark:text-green-400 hover:bg-transparent hover:text-green-600 dark:hover:text-green-400",
   },
   failure: {
     icon: <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />,
