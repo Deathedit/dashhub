@@ -1,0 +1,130 @@
+import { useRef, useEffect } from "react";
+import type { AnimatedBg } from "../types";
+
+const BG_OPTIONS: { value: AnimatedBg; label: string }[] = [
+  { value: "none", label: "None" },
+  { value: "matrix", label: "Matrix" },
+];
+
+const MATRIX_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ";
+
+interface Drop {
+  y: number;
+  speed: number;
+}
+
+function makeDrop(maxRow: number): Drop {
+  return {
+    y: Math.random() * maxRow - 30,
+    speed: 0.3 + Math.random() * 0.5,
+  };
+}
+
+function MatrixRain() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const fontSize = 14;
+    let columns = 0;
+    let drops: Drop[][] = [];
+
+    function initDrops(numCols: number) {
+      const maxRow = Math.max(1, canvas!.height / fontSize);
+      columns = numCols;
+      drops = Array.from({ length: columns }, () => {
+        const count = 2 + Math.floor(Math.random() * 2);
+        return Array.from({ length: count }, () => makeDrop(maxRow));
+      });
+    }
+
+    function resize() {
+      if (!canvas) return;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const numCols = Math.floor(canvas.width / fontSize);
+      if (numCols !== columns) {
+        initDrops(numCols);
+      }
+    }
+
+    function draw() {
+      if (!ctx || !canvas) return;
+      const currentDark = document.documentElement.classList.contains("dark");
+      const maxRow = canvas.height / fontSize + 50 / fontSize;
+
+      if (currentDark) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+      } else {
+        ctx.fillStyle = "rgba(249, 250, 251, 0.08)";
+      }
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.font = `${fontSize}px monospace`;
+
+      for (let col = 0; col < drops.length; col++) {
+        for (let d = drops[col].length - 1; d >= 0; d--) {
+          const drop = drops[col][d];
+          const yPx = drop.y * fontSize;
+          const xPx = col * fontSize;
+
+          if (currentDark) {
+            ctx.fillStyle = "#3b82f6";
+            ctx.globalAlpha = 0.3;
+          } else {
+            ctx.fillStyle = "#94a3b8";
+            ctx.globalAlpha = 0.08;
+          }
+          ctx.fillText(MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)], xPx, yPx);
+
+          const headY = (drop.y + 1) * fontSize;
+          if (headY < canvas.height && headY > 0) {
+            if (currentDark) {
+              ctx.fillStyle = "#93c5fd";
+              ctx.globalAlpha = 0.6;
+            } else {
+              ctx.fillStyle = "#64748b";
+              ctx.globalAlpha = 0.15;
+            }
+            ctx.fillText(MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)], xPx, headY);
+          }
+
+          ctx.globalAlpha = 1;
+
+          drop.y += drop.speed;
+
+          if (drop.y * fontSize > canvas.height + 50) {
+            drops[col][d] = makeDrop(maxRow);
+          }
+        }
+      }
+    }
+
+    resize();
+    window.addEventListener("resize", resize);
+
+    const interval = setInterval(draw, 65);
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      clearInterval(interval);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="bg-animated-matrix" aria-hidden="true" />;
+}
+
+export default function Background({ variant }: { variant: AnimatedBg }) {
+  if (variant === "matrix") {
+    return <MatrixRain />;
+  }
+
+  return null;
+}
+
+export { BG_OPTIONS };

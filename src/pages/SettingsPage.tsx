@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useApp } from "../App";
 import { parseGitHubUrl } from "../types";
+import { BG_OPTIONS } from "../components/Background";
 import { fetchDefaultBranch, verifyToken } from "../services/github";
 import { Plus, Trash2, Loader2, CheckCircle2, XCircle, Moon, Sun, Check, X } from "lucide-react";
 
 const MAX_BRANCHES = 50;
 
 export default function SettingsPage() {
-  const { branches, setBranches, token, setToken, autoRefresh, onToggleAutoRefresh, darkMode, onToggleDarkMode } = useApp();
+  const { branches, setBranches, token, setToken, autoRefresh, onToggleAutoRefresh, darkMode, onToggleDarkMode, animatedBg, setAnimatedBg } = useApp();
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
   const [adding, setAdding] = useState(false);
@@ -106,6 +107,28 @@ export default function SettingsPage() {
             {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             {darkMode ? "Light Mode" : "Dark Mode"}
           </button>
+        </div>
+      </section>
+
+      <section className="mb-6 sm:mb-8 rounded-lg border border-gray-200 bg-white p-4 sm:p-6 dark:border-gray-700 dark:bg-gray-900">
+        <h2 className="mb-3 sm:mb-4 text-sm font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
+          Background
+        </h2>
+        <div className="flex gap-2">
+          {BG_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setAnimatedBg(opt.value)}
+              className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+                animatedBg === opt.value
+                  ? "bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-400 dark:hover:bg-blue-900/60"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+              }`}
+            >
+              {opt.value === "matrix" && <span className="font-mono text-xs">01</span>}
+              {opt.label}
+            </button>
+          ))}
         </div>
       </section>
 

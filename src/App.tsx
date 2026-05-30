@@ -2,8 +2,9 @@ import { createContext, useContext, useEffect } from "react";
 import { HashRouter, Routes, Route, Link } from "react-router-dom";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { useBranchData } from "./hooks/useBranchData";
-import type { TrackedBranch } from "./types";
+import type { TrackedBranch, AnimatedBg } from "./types";
 import Sidebar from "./components/Sidebar";
+import Background from "./components/Background";
 import DashboardPage from "./pages/DashboardPage";
 import SettingsPage from "./pages/SettingsPage";
 import BranchPage from "./pages/BranchPage";
@@ -21,6 +22,8 @@ export type AppContext = {
   onToggleAutoRefresh: () => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
+  animatedBg: AnimatedBg;
+  setAnimatedBg: (value: AnimatedBg | ((prev: AnimatedBg) => AnimatedBg)) => void;
   token: string;
   setToken: (value: string | ((prev: string) => string)) => void;
 };
@@ -64,6 +67,7 @@ export default function App() {
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
   const [collapsed, setCollapsed] = useLocalStorage<boolean>("dashhub-sidebar-collapsed", true);
+  const [animatedBg, setAnimatedBg] = useLocalStorage<AnimatedBg>("dashhub-animated-bg", "none");
   const [token, setToken] = useLocalStorage<string>("dashhub-github-token", "");
 
   const { data } = useBranchData(branches, autoRefresh ? 300000 : 0, token || "");
@@ -83,6 +87,8 @@ export default function App() {
     onToggleAutoRefresh: () => setAutoRefresh((a) => !a),
     darkMode,
     onToggleDarkMode: () => setDarkMode((d) => !d),
+    animatedBg,
+    setAnimatedBg,
     token,
     setToken,
   };
@@ -93,6 +99,7 @@ export default function App() {
     <HashRouter>
       <AppCtx.Provider value={value}>
         <div className="min-h-screen">
+          <Background variant={animatedBg} />
           <div
             className={`fixed inset-x-0 top-0 z-[60] h-1 bg-blue-500 transition-opacity duration-300 ${
               isFetching ? "opacity-100" : "opacity-0"
