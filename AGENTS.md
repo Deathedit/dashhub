@@ -14,7 +14,7 @@ npm run preview   # Preview prod build
 ```
 Add shadcn components: `npx shadcn@latest add <component>`
 
-No tests. `npm run build` is the primary verification step.
+No tests. Always `npm run build` before committing; must pass type-check + build.
 
 ## Architecture
 
