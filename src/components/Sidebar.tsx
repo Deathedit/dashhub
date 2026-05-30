@@ -106,7 +106,7 @@ export default function Sidebar() {
 
       <aside
         className={`fixed inset-y-0 left-0 z-50 shadow-xl transition-all duration-300 ease-in-out ${sidebarClass(isGlass)} ${
-          collapsed ? "w-20" : "w-72"
+          mobileOpen ? "w-72" : collapsed ? "w-20" : "w-72"
         } ${mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
       >
         {sidebarContent}
