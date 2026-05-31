@@ -22,7 +22,7 @@ export interface CommitDetail {
 }
 
 export type AnimatedBg = "none" | "matrix";
-export type WorkflowStatusValue = "success" | "failure" | "in_progress" | "queued" | "completed";
+export type WorkflowStatusValue = "queued" | "in_progress" | "completed" | "waiting" | "pending" | "requested";
 
 export interface WorkflowStatus {
   status: WorkflowStatusValue;
