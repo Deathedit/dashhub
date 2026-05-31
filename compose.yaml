@@ -1,7 +1,7 @@
 services:
   dashhub:
     container_name: dashhub
-    build: .
+    image: ghcr.io/deathedit/dashhub:latest
     ports:
       - "3000:80"
     restart: unless-stopped
