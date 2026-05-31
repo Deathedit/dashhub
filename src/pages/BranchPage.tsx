@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useApp } from "@/App";
 import { useGlassActive, cardClass } from "@/hooks/useGlass";
-import { fetchCommits } from "@/services/github";
-import { getWorkflowDisplayStatus } from "@/services/github";
+import { fetchCommits, getWorkflowDisplayStatus } from "@/services/github";
 import { getCachedCommits, setCachedCommits } from "@/services/cache";
 import type { CommitDetail } from "@/types";
 import { text, relativeTime } from "@/text";
+import { STATUS_META, type DisplayStatus } from "@/lib/status";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,28 +15,11 @@ import { ArrowLeft, GitBranch, CheckCircle2, XCircle, Loader2, ExternalLink } fr
 
 const COMMITS_PER_PAGE = 13;
 
-const statusConfig: Record<string, { icon: React.ReactNode; label: string; variant: "default" | "destructive" | "secondary" | "outline" | "ghost"; className?: string }> = {
-  success: {
-    icon: <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 transition-colors hover:text-green-700 dark:hover:text-green-300" />,
-    label: text.status.passing,
-    variant: "ghost",
-    className: "text-green-600 dark:text-green-400 hover:bg-transparent hover:text-green-600 dark:hover:text-green-400",
-  },
-  failure: {
-    icon: <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />,
-    label: text.status.failed,
-    variant: "destructive",
-  },
-  in_progress: {
-    icon: <Loader2 className="h-5 w-5 animate-spin text-yellow-600 dark:text-yellow-400" />,
-    label: text.status.inProgress,
-    variant: "secondary",
-  },
-  unknown: {
-    icon: <GitBranch className="h-5 w-5 text-muted-foreground" />,
-    label: text.status.noCi,
-    variant: "outline",
-  },
+const statusIcons: Record<DisplayStatus, React.ReactNode> = {
+  success: <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 transition-colors hover:text-green-700 dark:hover:text-green-300" />,
+  failure: <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />,
+  in_progress: <Loader2 className="h-5 w-5 animate-spin text-yellow-600 dark:text-yellow-400" />,
+  unknown: <GitBranch className="h-5 w-5 text-muted-foreground" />,
 };
 
 function CommitRow({ commit }: { commit: CommitDetail }) {
@@ -104,7 +87,7 @@ export default function BranchPage() {
   }, [owner, repo, branch, token]);
 
   const displayStatus = branchData ? getWorkflowDisplayStatus(branchData.workflow) : "unknown";
-  const cfg = statusConfig[displayStatus];
+  const cfg = STATUS_META[displayStatus];
   const workflow = branchData?.workflow;
 
   return (
@@ -128,7 +111,7 @@ export default function BranchPage() {
           </Badge>
           {branchData && (
             <Badge variant={cfg.variant} className={cn("gap-1.5", cfg.className)}>
-              {cfg.icon}
+              {statusIcons[displayStatus]}
               {cfg.label}
               {workflow?.url && (
                 <a

@@ -3,44 +3,24 @@ import { Link } from "react-router-dom";
 import type { BranchData } from "@/types";
 import { getWorkflowDisplayStatus } from "@/services/github";
 import { useGlassActive, cardClass } from "@/hooks/useGlass";
-import { text, relativeTime } from "@/text";
+import { relativeTime, text } from "@/text";
+import { STATUS_META, type DisplayStatus } from "@/lib/status";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { ExternalLink, GitBranch, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 
-const statusConfig: Record<string, { border: string; icon: React.ReactNode; label: string; variant: "default" | "destructive" | "secondary" | "outline" | "ghost"; className?: string }> = {
-  success: {
-    border: "border-l-green-500 dark:border-l-green-400",
-    icon: <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 transition-colors hover:text-green-700 dark:hover:text-green-300" />,
-    label: text.status.passing,
-    variant: "ghost",
-    className: "text-green-600 dark:text-green-400 hover:bg-transparent hover:text-green-600 dark:hover:text-green-400",
-  },
-  failure: {
-    border: "border-l-red-500 dark:border-l-red-400",
-    icon: <XCircle className="h-4 w-4 text-red-600 dark:text-red-400" />,
-    label: text.status.failed,
-    variant: "destructive",
-  },
-  in_progress: {
-    border: "border-l-yellow-500 dark:border-l-yellow-400",
-    icon: <Loader2 className="h-4 w-4 animate-spin text-yellow-600 dark:text-yellow-400" />,
-    label: text.status.inProgress,
-    variant: "secondary",
-  },
-  unknown: {
-    border: "border-l-border",
-    icon: <GitBranch className="h-4 w-4 text-muted-foreground" />,
-    label: text.status.noCi,
-    variant: "outline",
-  },
+const statusIcons: Record<DisplayStatus, React.ReactNode> = {
+  success: <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 transition-colors hover:text-green-700 dark:hover:text-green-300" />,
+  failure: <XCircle className="h-4 w-4 text-red-600 dark:text-red-400" />,
+  in_progress: <Loader2 className="h-4 w-4 animate-spin text-yellow-600 dark:text-yellow-400" />,
+  unknown: <GitBranch className="h-4 w-4 text-muted-foreground" />,
 };
 
 function BranchRowInner({ branch }: { branch: BranchData }) {
   const { key, commit, workflow, error } = branch;
   const displayStatus = getWorkflowDisplayStatus(workflow);
-  const cfg = statusConfig[displayStatus];
+  const cfg = STATUS_META[displayStatus];
   const isGlass = useGlassActive();
 
   const detailPath = `/${key.owner}/${key.repo}/${key.branch}`;
@@ -61,7 +41,7 @@ function BranchRowInner({ branch }: { branch: BranchData }) {
             {key.branch}
           </Badge>
           <span className={cn("inline-flex items-center gap-1 text-xs font-medium", cfg.className)}>
-            {cfg.icon}
+            {statusIcons[displayStatus]}
             {cfg.label}
           </span>
         </div>
