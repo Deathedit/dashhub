@@ -1,42 +1,20 @@
-import { createContext, useContext, useEffect, useMemo, useCallback } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import { HashRouter, Routes, Route, Link } from "react-router-dom";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useBranchData } from "@/hooks/useBranchData";
-import type { TrackedBranch, AnimatedBg, BranchData } from "@/types";
+import type { TrackedBranch, AnimatedBg } from "@/types";
+import { AppCtx, type AppContext } from "@/app-context";
 import { text } from "@/text";
 import Sidebar from "@/components/Sidebar";
 import Background from "@/components/Background";
 import DashboardPage from "@/pages/DashboardPage";
 import SettingsPage from "@/pages/SettingsPage";
 import BranchPage from "@/pages/BranchPage";
-import { GlassProvider, useGlassActive, cardClass } from "@/hooks/useGlass";
+import { GlassProvider } from "@/hooks/useGlass";
+import { useGlassActive, cardClass } from "@/lib/glass";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { KeyRound } from "lucide-react";
-
-export type AppContext = {
-  branches: TrackedBranch[];
-  setBranches: (value: TrackedBranch[] | ((prev: TrackedBranch[]) => TrackedBranch[])) => void;
-  data: BranchData[];
-  collapsed: boolean;
-  onToggleCollapse: () => void;
-  autoRefresh: boolean;
-  onToggleAutoRefresh: () => void;
-  darkMode: boolean;
-  onToggleDarkMode: () => void;
-  animatedBg: AnimatedBg;
-  setAnimatedBg: (value: AnimatedBg | ((prev: AnimatedBg) => AnimatedBg)) => void;
-  token: string;
-  setToken: (value: string | ((prev: string) => string)) => void;
-};
-
-export const AppCtx = createContext<AppContext | null>(null);
-
-export function useApp() {
-  const ctx = useContext(AppCtx);
-  if (!ctx) throw new Error("useApp must be used within AppProvider");
-  return ctx;
-}
 
 function TokenRequired() {
   const isGlass = useGlassActive();

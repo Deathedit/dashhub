@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useApp } from "@/App";
+import { useApp } from "@/app-context";
 import { text } from "@/text";
 import type { BranchData } from "@/types";
 import BranchRow from "@/components/BranchRow";

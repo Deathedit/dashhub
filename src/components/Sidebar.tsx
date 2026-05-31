@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { LayoutDashboard, Settings, ChevronsLeft, ChevronsRight, Menu, X, GitBranch } from "lucide-react";
-import { useApp } from "@/App";
-import { useGlassActive, sidebarClass } from "@/hooks/useGlass";
+import { useApp } from "@/app-context";
+import { useGlassActive, sidebarClass } from "@/lib/glass";
 import { text } from "@/text";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";

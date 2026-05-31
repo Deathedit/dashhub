@@ -2,7 +2,7 @@ import { memo } from "react";
 import { Link } from "react-router-dom";
 import type { BranchData } from "@/types";
 import { getWorkflowDisplayStatus } from "@/services/github";
-import { useGlassActive, cardClass } from "@/hooks/useGlass";
+import { useGlassActive, cardClass } from "@/lib/glass";
 import { relativeTime, text } from "@/text";
 import { STATUS_META, type DisplayStatus } from "@/lib/status";
 import { Badge } from "@/components/ui/badge";

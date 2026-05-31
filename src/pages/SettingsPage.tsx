@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useApp } from "@/App";
+import { useApp } from "@/app-context";
 import { parseGitHubUrl } from "@/types";
 import { BG_OPTIONS } from "@/components/Background";
-import { useGlassActive, cardClass, subtleClass } from "@/hooks/useGlass";
+import { useGlassActive, cardClass, subtleClass } from "@/lib/glass";
 import { fetchDefaultBranch, verifyToken } from "@/services/github";
 import { text } from "@/text";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
