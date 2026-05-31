@@ -8,6 +8,7 @@ const BG_OPTIONS: { value: AnimatedBg; label: string }[] = [
 ];
 
 const MATRIX_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ";
+const FRAME_MS = 65;
 
 interface Drop {
   y: number;
@@ -95,9 +96,12 @@ function MatrixRain() {
     window.addEventListener("resize", resize);
 
     let animId: number;
-    function loop() {
-      draw();
+    let lastFrame = 0;
+    function loop(now: number) {
       animId = requestAnimationFrame(loop);
+      if (now - lastFrame < FRAME_MS) return;
+      lastFrame = now;
+      draw();
     }
     animId = requestAnimationFrame(loop);
 
