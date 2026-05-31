@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { useGlassActive, cardClass } from "@/hooks/useGlass";
+import { useGlassActive, cardClass } from "@/lib/glass";
 import { Skeleton } from "@/components/ui/skeleton";
 
 function BranchRowSkeletonInner() {

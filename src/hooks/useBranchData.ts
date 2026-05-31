@@ -46,6 +46,7 @@ export function useBranchData(branches: TrackedBranch[], autoRefreshInterval: nu
 
   useEffect(() => {
     if (!branches.length) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setData([]);
       return;
     }

@@ -2,7 +2,7 @@ import { text } from "@/text";
 
 export type DisplayStatus = "success" | "failure" | "in_progress" | "unknown";
 
-export interface StatusMeta {
+interface StatusMeta {
   label: string;
   variant: "default" | "destructive" | "secondary" | "outline" | "ghost";
   className?: string;

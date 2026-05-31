@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useApp } from "@/App";
-import { useGlassActive, cardClass } from "@/hooks/useGlass";
+import { useApp } from "@/app-context";
+import { useGlassActive, cardClass } from "@/lib/glass";
 import { fetchCommits, getWorkflowDisplayStatus } from "@/services/github";
 import { getCachedCommits, setCachedCommits } from "@/services/cache";
 import type { CommitDetail } from "@/types";
@@ -53,9 +53,13 @@ function CommitRow({ commit }: { commit: CommitDetail }) {
 export default function BranchPage() {
   const { owner, repo, "*": branch } = useParams<{ owner: string; repo: string; "*": string }>();
   const { data, token } = useApp();
-  const [commits, setCommits] = useState<CommitDetail[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const cacheKey = owner && repo && branch ? `${owner}/${repo}/${branch}` : null;
+  const cached = cacheKey ? getCachedCommits(cacheKey) : null;
+  const [fetchState, setFetchState] = useState<{ key: string; commits: CommitDetail[] | null; error: string | null }>({
+    key: "",
+    commits: null,
+    error: null,
+  });
 
   const branchData = data.find(
     (d) => d.key.owner === owner && d.key.repo === repo && d.key.branch === branch,
@@ -63,28 +67,24 @@ export default function BranchPage() {
   const isGlass = useGlassActive();
 
   useEffect(() => {
-    if (!owner || !repo || !branch) return;
+    if (!cacheKey || cached) return;
     let ignore = false;
-    const cacheKey = `${owner}/${repo}/${branch}`;
-    const cached = getCachedCommits(cacheKey);
-    if (cached) {
-      setCommits(cached);
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    fetchCommits(owner, repo, branch, COMMITS_PER_PAGE, token)
+    fetchCommits(owner!, repo!, branch!, COMMITS_PER_PAGE, token)
       .then((result) => {
-        if (!ignore) {
-          setCachedCommits(cacheKey, result);
-          setCommits(result);
-        }
+        if (ignore) return;
+        setCachedCommits(cacheKey, result);
+        setFetchState({ key: cacheKey, commits: result, error: null });
       })
-      .catch((err: Error) => { if (!ignore) setError(err.message); })
-      .finally(() => { if (!ignore) setLoading(false); });
+      .catch((err: Error) => {
+        if (!ignore) setFetchState({ key: cacheKey, commits: null, error: err.message });
+      });
     return () => { ignore = true; };
-  }, [owner, repo, branch, token]);
+  }, [cacheKey, cached, owner, repo, branch, token]);
+
+  const settledForKey = fetchState.key === cacheKey;
+  const commits = cached ?? (settledForKey ? fetchState.commits ?? [] : []);
+  const error = settledForKey ? fetchState.error : null;
+  const loading = cacheKey !== null && cached === null && !settledForKey;
 
   const displayStatus = branchData ? getWorkflowDisplayStatus(branchData.workflow) : "unknown";
   const cfg = STATUS_META[displayStatus];
