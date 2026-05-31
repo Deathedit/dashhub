@@ -73,8 +73,8 @@ export default function App() {
   const [token, setToken] = useLocalStorage<string>("dashhub-github-token", "");
 
   const hasToken = token.trim().length > 0;
-  const { data } = useBranchData(hasToken ? branches : [], autoRefresh ? 300000 : 0, token);
-  const isFetching = data.length > 0 && data.some((d) => d.loading);
+  const { data, isRefreshing } = useBranchData(hasToken ? branches : [], autoRefresh ? 300000 : 0, token);
+  const isFetching = (data.length > 0 && data.some((d) => d.loading)) || isRefreshing;
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);

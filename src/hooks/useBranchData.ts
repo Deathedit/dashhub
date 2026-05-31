@@ -9,11 +9,11 @@ type FetchResult = {
   workflowToCache: { key: string; value: WorkflowStatus | null } | null;
 };
 
-function fetchBranchData(branch: TrackedBranch, token: string): Promise<FetchResult> {
+function fetchBranchData(branch: TrackedBranch, token: string, force = false): Promise<FetchResult> {
   const base: BranchData = { key: branch, commit: null, workflow: null, loading: true, error: null };
   const cacheKey = `${branch.owner}/${branch.repo}/${branch.branch}`;
-  const cachedCommit = getCachedCommitInfo(cacheKey);
-  const cachedWorkflow = getCachedWorkflow(cacheKey);
+  const cachedCommit = force ? undefined : getCachedCommitInfo(cacheKey);
+  const cachedWorkflow = force ? undefined : getCachedWorkflow(cacheKey);
   if (cachedCommit !== undefined && cachedWorkflow !== undefined) {
     return Promise.resolve({ data: { ...base, commit: cachedCommit, workflow: cachedWorkflow, loading: false }, commitToCache: null, workflowToCache: null });
   }
@@ -39,8 +39,10 @@ function fetchBranchData(branch: TrackedBranch, token: string): Promise<FetchRes
 export function useBranchData(branches: TrackedBranch[], autoRefreshInterval: number, token: string) {
   const [data, setData] = useState<BranchData[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const prevTokenRef = useRef(token);
+  const refreshingRef = useRef(false);
 
   useEffect(() => {
     if (!branches.length) {
@@ -51,16 +53,30 @@ export function useBranchData(branches: TrackedBranch[], autoRefreshInterval: nu
       prevTokenRef.current = token;
       clearDashboardCache();
     }
+    const isRefresh = refreshingRef.current;
+    refreshingRef.current = false;
     let ignore = false;
-    setData(branches.map((b) => ({ key: b, commit: null, workflow: null, loading: true, error: null })));
-    Promise.all(branches.map((b) => fetchBranchData(b, token))).then((results) => {
-      if (!ignore) {
-        results.forEach(({ commitToCache, workflowToCache }) => {
-          if (commitToCache) setCachedCommitInfo(commitToCache.key, commitToCache.value);
-          if (workflowToCache) setCachedWorkflow(workflowToCache.key, workflowToCache.value);
-        });
-        setData(results.map((r) => r.data));
-      }
+    if (isRefresh) {
+      setRefreshing(true);
+    } else {
+      setRefreshing(false);
+      setData(branches.map((b) => ({ key: b, commit: null, workflow: null, loading: true, error: null })));
+    }
+    Promise.all(branches.map((b) => fetchBranchData(b, token, isRefresh))).then((results) => {
+      if (ignore) return;
+      results.forEach(({ commitToCache, workflowToCache }) => {
+        if (commitToCache) setCachedCommitInfo(commitToCache.key, commitToCache.value);
+        if (workflowToCache) setCachedWorkflow(workflowToCache.key, workflowToCache.value);
+      });
+      // On a background refresh, keep the last-known-good row if its refetch errored.
+      setData((prev) =>
+        results.map((r) =>
+          isRefresh && r.data.error
+            ? (prev.find((d) => d.key.id === r.data.key.id && !d.error && d.commit) ?? r.data)
+            : r.data,
+        ),
+      );
+      if (isRefresh) setRefreshing(false);
     });
     return () => { ignore = true; };
   }, [branches, refreshKey, token]);
@@ -69,7 +85,7 @@ export function useBranchData(branches: TrackedBranch[], autoRefreshInterval: nu
     if (timerRef.current) clearInterval(timerRef.current);
     if (autoRefreshInterval > 0) {
       timerRef.current = setInterval(() => {
-        clearDashboardCache();
+        refreshingRef.current = true;
         setRefreshKey((k) => k + 1);
       }, autoRefreshInterval);
     }
@@ -78,5 +94,5 @@ export function useBranchData(branches: TrackedBranch[], autoRefreshInterval: nu
     };
   }, [autoRefreshInterval]);
 
-  return { data };
+  return { data, isRefreshing: refreshing };
 }
