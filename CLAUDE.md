@@ -18,13 +18,15 @@ No tests. Always `npm run build` before committing; must pass type-check + build
 
 ## Architecture
 
-- **Routing**: `HashRouter` (react-router-dom). `/#/` (Dashboard), `/#/settings`, `/#/:owner/:repo/:branch`
+- **Routing**: `HashRouter` (react-router-dom). `/#/` (Dashboard), `/#/settings`, `/#/:owner/:repo/*` (wildcard so branch names with slashes work)
 - **State**: `AppCtx` in `App.tsx`, consumed via `useApp()`. No external state lib.
 - **Persistence**: `useLocalStorage` with `dashhub-` prefix. Keys: branches, auto-refresh, dark mode, sidebar collapsed, animated bg, token.
 - **Token gate**: `TokenRequired` shown unless `token` is set. Settings always accessible.
 - **API**: `fetchJSON(url, token)` in `src/services/github.ts`. Token always required.
 - **Text**: `src/text.ts` — all UI strings in `text` object, plus `relativeTime()` utility.
-- **Cache**: In-memory `Map` with 60min TTL (`src/services/cache.ts`). Clears on branch/token/refresh changes.
+- **Cache**: In-memory `Map`, 60min TTL (`src/services/cache.ts`). Token change calls `clearAllCache`; auto-refresh bypasses reads via a `force` flag.
+- **Auto-refresh**: `useBranchData` refetches silently on the 5min tick — no skeleton flash, and a row that errors mid-refresh keeps its last-known-good data. Activity surfaces via the returned `isRefreshing` flag (drives the top bar).
+- **Status styling**: `STATUS_META` in `src/lib/status.ts` — shared label/variant/className/border keyed by display status; consumed by `BranchRow` and `BranchPage` (status icons stay local since sizes differ).
 - **Dashboard sort**: Priority-based: loading (0) → loaded with commit (1) → error/no-commit (2), tiebreak by commit date descending.
 - **Layout**: Dashboard & branch page `max-w-3xl`, settings `max-w-2xl`. Mobile: `pt-14` offset, sidebar overlay below `md:`.
 
@@ -56,6 +58,7 @@ No tests. Always `npm run build` before committing; must pass type-check + build
 | `COMMITS_PER_PAGE` | `BranchPage.tsx` | 13 |
 | `CACHE_TTL_MS` | `cache.ts` | 60min |
 | Auto-refresh interval | `App.tsx` | 5min |
+| `FRAME_MS` (matrix throttle) | `Background.tsx` | 65ms |
 
 ## Docker
 
