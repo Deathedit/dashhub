@@ -1,23 +1,56 @@
-import type { CommitDetail } from "@/types";
+import type { CommitInfo, CommitDetail, WorkflowStatus } from "@/types";
 
 const CACHE_TTL_MS = 60 * 60 * 1000;
 
-const commitCache = new Map<string, { data: CommitDetail[]; timestamp: number }>();
+const commitDetailCache = new Map<string, { data: CommitDetail[]; timestamp: number }>();
+const commitInfoCache = new Map<string, { data: CommitInfo; timestamp: number }>();
+const workflowCache = new Map<string, { data: WorkflowStatus | null; timestamp: number }>();
 
-export function getCachedCommits(key: string): CommitDetail[] | null {
-  const entry = commitCache.get(key);
-  if (!entry) return null;
+function get<T>(map: Map<string, { data: T; timestamp: number }>, key: string): T | undefined {
+  const entry = map.get(key);
+  if (!entry) return undefined;
   if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
-    commitCache.delete(key);
-    return null;
+    map.delete(key);
+    return undefined;
   }
   return entry.data;
 }
 
+function set<T>(map: Map<string, { data: T; timestamp: number }>, key: string, data: T): void {
+  map.set(key, { data, timestamp: Date.now() });
+}
+
+export function getCachedCommits(key: string): CommitDetail[] | null {
+  return get(commitDetailCache, key) ?? null;
+}
+
 export function setCachedCommits(key: string, data: CommitDetail[]): void {
-  commitCache.set(key, { data, timestamp: Date.now() });
+  set(commitDetailCache, key, data);
+}
+
+export function getCachedCommitInfo(key: string): CommitInfo | undefined {
+  return get(commitInfoCache, key);
+}
+
+export function setCachedCommitInfo(key: string, data: CommitInfo): void {
+  set(commitInfoCache, key, data);
+}
+
+export function getCachedWorkflow(key: string): WorkflowStatus | null | undefined {
+  return get(workflowCache, key);
+}
+
+export function setCachedWorkflow(key: string, data: WorkflowStatus | null): void {
+  set(workflowCache, key, data);
 }
 
 export function clearCommitCache(): void {
-  commitCache.clear();
+  commitDetailCache.clear();
+  commitInfoCache.clear();
+  workflowCache.clear();
+}
+
+export function clearDashboardCache(): void {
+  commitInfoCache.clear();
+  workflowCache.clear();
 }

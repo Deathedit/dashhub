@@ -47,10 +47,10 @@ export function parseGitHubUrl(input: string): { owner: string; repo: string; br
   const owner = parts[0];
   const repo = parts[1];
   if (parts[2] === "tree" && parts[3]) {
-    return { owner, repo, branch: parts[3] };
+    return { owner, repo, branch: parts.slice(3).join("/") };
   }
   if (parts[2] && parts[2] !== "tree") {
-    return { owner, repo, branch: parts[2] };
+    return { owner, repo, branch: parts.slice(2).join("/") };
   }
   return { owner, repo, branch: undefined };
 }

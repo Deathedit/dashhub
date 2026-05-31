@@ -61,6 +61,10 @@ export const text = {
     invalidFormat: "Invalid format. Paste a GitHub URL or owner/repo/branch.",
     repoNotFound: "Repository not found. Check the owner/repo name.",
     rateLimit: "GitHub API rate limit reached. Add a Personal Access Token above to continue.",
+    rateLimitReached: "API rate limit reached.",
+    rateLimitSuffix: "to increase your limit.",
+    githubApiError: "GitHub API error",
+    noCommits: "No commits found",
     branchLimit: (n: number) => `Limit of ${n} branches reached.`,
     alreadyTracked: "This branch is already being tracked.",
     repoOrBranchNotFound: "Repository or branch not found",
@@ -71,6 +75,7 @@ export const text = {
 export function relativeTime(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
+  if (!Number.isFinite(diff) || diff < 0) return "";
   if (mins < 60) return `${mins}m ago`;
   const hrs = Math.floor(mins / 60);
   if (hrs < 24) return `${hrs}h ago`;

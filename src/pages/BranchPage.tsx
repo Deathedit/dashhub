@@ -68,7 +68,7 @@ function CommitRow({ commit }: { commit: CommitDetail }) {
 }
 
 export default function BranchPage() {
-  const { owner, repo, branch } = useParams<{ owner: string; repo: string; branch: string }>();
+  const { owner, repo, "*": branch } = useParams<{ owner: string; repo: string; "*": string }>();
   const { data, token } = useApp();
   const [commits, setCommits] = useState<CommitDetail[]>([]);
   const [loading, setLoading] = useState(true);
@@ -81,6 +81,7 @@ export default function BranchPage() {
 
   useEffect(() => {
     if (!owner || !repo || !branch) return;
+    let ignore = false;
     const cacheKey = `${owner}/${repo}/${branch}`;
     const cached = getCachedCommits(cacheKey);
     if (cached) {
@@ -91,12 +92,15 @@ export default function BranchPage() {
     setLoading(true);
     setError(null);
     fetchCommits(owner, repo, branch, COMMITS_PER_PAGE, token)
-      .then((data) => {
-        setCachedCommits(cacheKey, data);
-        setCommits(data);
+      .then((result) => {
+        if (!ignore) {
+          setCachedCommits(cacheKey, result);
+          setCommits(result);
+        }
       })
-      .catch((err: Error) => setError(err.message))
-      .finally(() => setLoading(false));
+      .catch((err: Error) => { if (!ignore) setError(err.message); })
+      .finally(() => { if (!ignore) setLoading(false); });
+    return () => { ignore = true; };
   }, [owner, repo, branch, token]);
 
   const displayStatus = branchData ? getWorkflowDisplayStatus(branchData.workflow) : "unknown";

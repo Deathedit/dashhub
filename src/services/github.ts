@@ -1,13 +1,15 @@
-import type { CommitInfo, CommitDetail, WorkflowStatus, WorkflowStatusValue } from "../types";
+import type { CommitInfo, CommitDetail, WorkflowStatus, WorkflowStatusValue } from "@/types";
+import { text } from "@/text";
 
 const API = "https://api.github.com";
 
 async function fetchJSON<T>(url: string, token: string): Promise<T> {
-  const headers: Record<string, string> = { Accept: "application/vnd.github+json", Authorization: `token ${token}` };
+  const headers: Record<string, string> = { Accept: "application/vnd.github+json" };
+  if (token) headers.Authorization = `token ${token}`;
   const res = await fetch(url, { headers });
   if (!res.ok) {
-    const text = await res.text().catch(() => "Unknown error");
-    throw new Error(`GitHub API ${res.status}: ${text}`);
+    const body = await res.text().catch(() => "Unknown error");
+    throw new Error(`${text.errors.githubApiError} ${res.status}: ${body}`);
   }
   return res.json() as Promise<T>;
 }
@@ -17,7 +19,7 @@ export async function fetchLatestCommit(owner: string, repo: string, branch: str
     `${API}/repos/${owner}/${repo}/commits?sha=${encodeURIComponent(branch)}&per_page=1`,
     token,
   );
-  if (!data.length) throw new Error("No commits found");
+  if (!data.length) throw new Error(text.errors.noCommits);
   const c = data[0];
   const commit = c.commit as Record<string, unknown>;
   const author = commit.author as Record<string, unknown> | undefined;
@@ -35,23 +37,19 @@ export async function fetchLatestWorkflowRun(
   branch: string,
   token: string,
 ): Promise<WorkflowStatus | null> {
-  try {
-    const data = await fetchJSON<Record<string, unknown>>(
-      `${API}/repos/${owner}/${repo}/actions/runs?branch=${encodeURIComponent(branch)}&per_page=1`,
-      token,
-    );
-    const runs = data.workflow_runs as Record<string, unknown>[] | undefined;
-    if (!runs || runs.length === 0) return null;
-    const run = runs[0];
-    return {
-      status: (run.status as WorkflowStatusValue) ?? "queued",
-      conclusion: (run.conclusion as string | null) ?? null,
-      name: (run.name as string) ?? "CI",
-      url: (run.html_url as string) ?? "",
-    };
-  } catch {
-    return null;
-  }
+  const data = await fetchJSON<Record<string, unknown>>(
+    `${API}/repos/${owner}/${repo}/actions/runs?branch=${encodeURIComponent(branch)}&per_page=1`,
+    token,
+  );
+  const runs = data.workflow_runs as Record<string, unknown>[] | undefined;
+  if (!runs || runs.length === 0) return null;
+  const run = runs[0];
+  return {
+    status: (run.status as WorkflowStatusValue) ?? "queued",
+    conclusion: (run.conclusion as string | null) ?? null,
+    name: (run.name as string) ?? "CI",
+    url: (run.html_url as string) ?? "",
+  };
 }
 
 export function getWorkflowDisplayStatus(
@@ -59,7 +57,9 @@ export function getWorkflowDisplayStatus(
 ): "success" | "failure" | "in_progress" | "unknown" {
   if (!workflow) return "unknown";
   if (workflow.status === "completed") {
-    return workflow.conclusion === "success" ? "success" : "failure";
+    if (workflow.conclusion === "success") return "success";
+    if (workflow.conclusion === "cancelled" || workflow.conclusion === "skipped" || workflow.conclusion === "neutral") return "unknown";
+    return "failure";
   }
   if (workflow.status === "in_progress" || workflow.status === "queued") return "in_progress";
   return "unknown";

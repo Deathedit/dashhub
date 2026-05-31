@@ -49,7 +49,7 @@ export default function SettingsPage() {
         } else if (msg.includes("403")) {
           setError(text.errors.rateLimit);
         } else {
-          setError(msg);
+          setError(text.errors.githubApiError);
         }
         return;
       }

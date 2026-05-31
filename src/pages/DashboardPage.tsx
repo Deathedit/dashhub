@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useApp } from "@/App";
 import { text } from "@/text";
 import type { BranchData } from "@/types";
@@ -6,6 +7,20 @@ import BranchRowSkeleton from "@/components/BranchRowSkeleton";
 
 export default function DashboardPage() {
   const { branches, data } = useApp();
+
+  const sorted = useMemo(() => {
+    const sortPriority = (b: BranchData): number =>
+      b.loading ? 0 : b.error || !b.commit ? 2 : 1;
+
+    return [...data].sort((a, b) => {
+      const pa = sortPriority(a);
+      const pb = sortPriority(b);
+      if (pa !== pb) return pa - pb;
+      const da = a.commit ? new Date(a.commit.date).getTime() : 0;
+      const db = b.commit ? new Date(b.commit.date).getTime() : 0;
+      return db - da;
+    });
+  }, [data]);
 
   if (branches.length === 0) {
     return (
@@ -19,14 +34,6 @@ export default function DashboardPage() {
       </div>
     );
   }
-
-  const sortPriority = (b: BranchData): number =>
-    b.loading ? 0 : b.error || !b.commit ? 2 : 1;
-
-  const sorted = data
-    .map(b => ({ ...b, _p: sortPriority(b), _d: b.commit ? new Date(b.commit.date).getTime() : 0 }))
-    .sort((a, b) => a._p - b._p || b._d - a._d)
-    .map(({ _p, _d, ...b }) => b);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">

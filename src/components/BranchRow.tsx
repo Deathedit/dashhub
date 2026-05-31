@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Link } from "react-router-dom";
 import type { BranchData } from "@/types";
 import { getWorkflowDisplayStatus } from "@/services/github";
@@ -36,13 +37,11 @@ const statusConfig: Record<string, { border: string; icon: React.ReactNode; labe
   },
 };
 
-export default function BranchRow({ branch }: { branch: BranchData }) {
-  const { key, commit, workflow, loading, error } = branch;
+function BranchRowInner({ branch }: { branch: BranchData }) {
+  const { key, commit, workflow, error } = branch;
   const displayStatus = getWorkflowDisplayStatus(workflow);
   const cfg = statusConfig[displayStatus];
   const isGlass = useGlassActive();
-
-  if (loading) return null;
 
   const detailPath = `/${key.owner}/${key.repo}/${key.branch}`;
   const githubUrl = `https://github.com/${key.owner}/${key.repo}/tree/${key.branch}`;
@@ -72,8 +71,8 @@ export default function BranchRow({ branch }: { branch: BranchData }) {
             {error.includes("404")
               ? text.errors.repoOrBranchNotFound
               : error.includes("403")
-                ? <>API rate limit reached. <Link to="/settings" className="underline hover:text-destructive/80">{text.errors.addToken}</Link> to increase your limit.</>
-                : error}
+                ? <>{text.errors.rateLimitReached} <Link to="/settings" className="underline hover:text-destructive/80">{text.errors.addToken}</Link> {text.errors.rateLimitSuffix}</>
+                : text.errors.githubApiError}
           </p>
         )}
 
@@ -109,3 +108,5 @@ export default function BranchRow({ branch }: { branch: BranchData }) {
     </Link>
   );
 }
+
+export default memo(BranchRowInner);

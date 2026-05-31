@@ -1,8 +1,8 @@
-import { createContext, useContext, useEffect } from "react";
+import { createContext, useContext, useEffect, useMemo, useCallback } from "react";
 import { HashRouter, Routes, Route, Link } from "react-router-dom";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useBranchData } from "@/hooks/useBranchData";
-import type { TrackedBranch, AnimatedBg } from "@/types";
+import type { TrackedBranch, AnimatedBg, BranchData } from "@/types";
 import { text } from "@/text";
 import Sidebar from "@/components/Sidebar";
 import Background from "@/components/Background";
@@ -14,12 +14,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { KeyRound } from "lucide-react";
 
-type BranchDataItem = ReturnType<typeof useBranchData>["data"][number];
-
 export type AppContext = {
   branches: TrackedBranch[];
   setBranches: (value: TrackedBranch[] | ((prev: TrackedBranch[]) => TrackedBranch[])) => void;
-  data: BranchDataItem[];
+  data: BranchData[];
   collapsed: boolean;
   onToggleCollapse: () => void;
   autoRefresh: boolean;
@@ -74,30 +72,33 @@ export default function App() {
   const [animatedBg, setAnimatedBg] = useLocalStorage<AnimatedBg>("dashhub-animated-bg", "none");
   const [token, setToken] = useLocalStorage<string>("dashhub-github-token", "");
 
-  const { data } = useBranchData(branches, autoRefresh ? 300000 : 0, token || "");
+  const hasToken = token.trim().length > 0;
+  const { data } = useBranchData(hasToken ? branches : [], autoRefresh ? 300000 : 0, token);
   const isFetching = data.length > 0 && data.some((d) => d.loading);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
-  const value: AppContext = {
+  const onToggleCollapse = useCallback(() => setCollapsed((c) => !c), [setCollapsed]);
+  const onToggleAutoRefresh = useCallback(() => setAutoRefresh((a) => !a), [setAutoRefresh]);
+  const onToggleDarkMode = useCallback(() => setDarkMode((d) => !d), [setDarkMode]);
+
+  const value = useMemo<AppContext>(() => ({
     branches,
     setBranches,
     data,
     collapsed,
-    onToggleCollapse: () => setCollapsed((c) => !c),
+    onToggleCollapse,
     autoRefresh,
-    onToggleAutoRefresh: () => setAutoRefresh((a) => !a),
+    onToggleAutoRefresh,
     darkMode,
-    onToggleDarkMode: () => setDarkMode((d) => !d),
+    onToggleDarkMode,
     animatedBg,
     setAnimatedBg,
     token,
     setToken,
-  };
-
-  const hasToken = token.trim().length > 0;
+  }), [branches, setBranches, data, collapsed, onToggleCollapse, autoRefresh, onToggleAutoRefresh, darkMode, onToggleDarkMode, animatedBg, setAnimatedBg, token, setToken]);
 
   return (
     <HashRouter>
@@ -122,7 +123,7 @@ export default function App() {
                 <Routes>
                   <Route path="/" element={<DashboardPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
-                  <Route path="/:owner/:repo/:branch" element={<BranchPage />} />
+                  <Route path="/:owner/:repo/*" element={<BranchPage />} />
                 </Routes>
               ) : (
                 <Routes>

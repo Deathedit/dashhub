@@ -1,7 +1,8 @@
+import { memo } from "react";
 import { useGlassActive, cardClass } from "@/hooks/useGlass";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function BranchRowSkeleton() {
+function BranchRowSkeletonInner() {
   const isGlass = useGlassActive();
   return (
     <div className={`flex items-start gap-3 rounded-lg border p-4 ${cardClass(isGlass)}`}>
@@ -21,3 +22,5 @@ export default function BranchRowSkeleton() {
     </div>
   );
 }
+
+export default memo(BranchRowSkeletonInner);

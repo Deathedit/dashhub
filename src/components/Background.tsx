@@ -94,11 +94,16 @@ function MatrixRain() {
     resize();
     window.addEventListener("resize", resize);
 
-    const interval = setInterval(draw, 65);
+    let animId: number;
+    function loop() {
+      draw();
+      animId = requestAnimationFrame(loop);
+    }
+    animId = requestAnimationFrame(loop);
 
     return () => {
       window.removeEventListener("resize", resize);
-      clearInterval(interval);
+      cancelAnimationFrame(animId);
     };
   }, []);
 
