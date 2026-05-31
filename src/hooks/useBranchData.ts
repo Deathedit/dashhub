@@ -68,7 +68,10 @@ export function useBranchData(branches: TrackedBranch[], autoRefreshInterval: nu
   useEffect(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     if (autoRefreshInterval > 0) {
-      timerRef.current = setInterval(() => setRefreshKey((k) => k + 1), autoRefreshInterval);
+      timerRef.current = setInterval(() => {
+        clearDashboardCache();
+        setRefreshKey((k) => k + 1);
+      }, autoRefreshInterval);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
