@@ -68,7 +68,6 @@ export function useBranchData(branches: TrackedBranch[], autoRefreshInterval: nu
         if (commitToCache) setCachedCommitInfo(commitToCache.key, commitToCache.value);
         if (workflowToCache) setCachedWorkflow(workflowToCache.key, workflowToCache.value);
       });
-      // On a background refresh, keep the last-known-good row if its refetch errored.
       setData((prev) =>
         results.map((r) =>
           isRefresh && r.data.error
