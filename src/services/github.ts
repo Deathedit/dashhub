@@ -3,6 +3,36 @@ import { text } from "@/text";
 
 const API = "https://api.github.com";
 
+interface GitHubCommitItem {
+  sha?: string;
+  html_url?: string;
+  commit?: {
+    message?: string;
+    author?: { name?: string; date?: string };
+    committer?: { date?: string };
+  };
+  author?: { login?: string; avatar_url?: string };
+}
+
+interface GitHubRun {
+  status?: WorkflowStatusValue;
+  conclusion?: string | null;
+  name?: string;
+  html_url?: string;
+}
+
+interface GitHubRunsResponse {
+  workflow_runs?: GitHubRun[];
+}
+
+interface GitHubRepo {
+  default_branch?: string;
+}
+
+interface GitHubUser {
+  login?: string;
+}
+
 async function fetchJSON<T>(url: string, token: string): Promise<T> {
   const headers: Record<string, string> = { Accept: "application/vnd.github+json" };
   if (token) headers.Authorization = `token ${token}`;
@@ -14,21 +44,24 @@ async function fetchJSON<T>(url: string, token: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+function parseCommit(c: GitHubCommitItem): CommitInfo {
+  const commit = c.commit;
+  const author = commit?.author;
+  return {
+    message: commit?.message ?? "",
+    author: author?.name ?? c.author?.login ?? "unknown",
+    date: author?.date ?? commit?.committer?.date ?? "",
+    avatarUrl: c.author?.avatar_url ?? "",
+  };
+}
+
 export async function fetchLatestCommit(owner: string, repo: string, branch: string, token: string): Promise<CommitInfo> {
-  const data = await fetchJSON<Record<string, unknown>[]>(
+  const data = await fetchJSON<GitHubCommitItem[]>(
     `${API}/repos/${owner}/${repo}/commits?sha=${encodeURIComponent(branch)}&per_page=1`,
     token,
   );
   if (!data.length) throw new Error(text.errors.noCommits);
-  const c = data[0];
-  const commit = c.commit as Record<string, unknown>;
-  const author = commit.author as Record<string, unknown> | undefined;
-  return {
-    message: (commit.message as string) ?? "",
-    author: (author?.name as string) ?? ((c.author as Record<string, unknown>)?.login as string) ?? "unknown",
-    date: (author?.date as string) ?? ((commit.committer as Record<string, unknown>)?.date as string) ?? "",
-    avatarUrl: ((c.author as Record<string, unknown>)?.avatar_url as string) ?? "",
-  };
+  return parseCommit(data[0]);
 }
 
 export async function fetchLatestWorkflowRun(
@@ -37,18 +70,18 @@ export async function fetchLatestWorkflowRun(
   branch: string,
   token: string,
 ): Promise<WorkflowStatus | null> {
-  const data = await fetchJSON<Record<string, unknown>>(
+  const data = await fetchJSON<GitHubRunsResponse>(
     `${API}/repos/${owner}/${repo}/actions/runs?branch=${encodeURIComponent(branch)}&per_page=1`,
     token,
   );
-  const runs = data.workflow_runs as Record<string, unknown>[] | undefined;
+  const runs = data.workflow_runs;
   if (!runs || runs.length === 0) return null;
   const run = runs[0];
   return {
-    status: (run.status as WorkflowStatusValue) ?? "queued",
-    conclusion: (run.conclusion as string | null) ?? null,
-    name: (run.name as string) ?? "CI",
-    url: (run.html_url as string) ?? "",
+    status: run.status ?? "queued",
+    conclusion: run.conclusion ?? null,
+    name: run.name ?? "CI",
+    url: run.html_url ?? "",
   };
 }
 
@@ -66,20 +99,20 @@ export function getWorkflowDisplayStatus(
 }
 
 export async function fetchDefaultBranch(owner: string, repo: string, token: string): Promise<string> {
-  const data = await fetchJSON<Record<string, unknown>>(
+  const data = await fetchJSON<GitHubRepo>(
     `${API}/repos/${owner}/${repo}`,
     token,
   );
-  return (data.default_branch as string) ?? "main";
+  return data.default_branch ?? "main";
 }
 
 export async function verifyToken(token: string): Promise<{ valid: boolean; login?: string; error?: string }> {
   try {
-    const data = await fetchJSON<Record<string, unknown>>(
+    const data = await fetchJSON<GitHubUser>(
       `${API}/user`,
       token,
     );
-    return { valid: true, login: data.login as string };
+    return { valid: true, login: data.login };
   } catch (err) {
     return { valid: false, error: (err as Error).message };
   }
@@ -92,20 +125,17 @@ export async function fetchCommits(
   perPage: number,
   token: string,
 ): Promise<CommitDetail[]> {
-  const data = await fetchJSON<Record<string, unknown>[]>(
+  const data = await fetchJSON<GitHubCommitItem[]>(
     `${API}/repos/${owner}/${repo}/commits?sha=${encodeURIComponent(branch)}&per_page=${perPage}`,
     token,
   );
   return data.map((c) => {
-    const commit = c.commit as Record<string, unknown>;
-    const author = commit.author as Record<string, unknown> | undefined;
+    const base = parseCommit(c);
     return {
-      sha: (c.sha as string) ?? "",
-      message: ((commit.message as string) ?? "").split("\n")[0],
-      author: (author?.name as string) ?? ((c.author as Record<string, unknown>)?.login as string) ?? "unknown",
-      date: (author?.date as string) ?? ((commit.committer as Record<string, unknown>)?.date as string) ?? "",
-      avatarUrl: ((c.author as Record<string, unknown>)?.avatar_url as string) ?? "",
-      url: ((c.html_url as string) ?? ""),
+      ...base,
+      message: base.message.split("\n")[0],
+      sha: c.sha ?? "",
+      url: c.html_url ?? "",
     };
   });
 }
