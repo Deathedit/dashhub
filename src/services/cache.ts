@@ -44,13 +44,8 @@ export function setCachedWorkflow(key: string, data: WorkflowStatus | null): voi
   set(workflowCache, key, data);
 }
 
-export function clearCommitCache(): void {
+export function clearAllCache(): void {
   commitDetailCache.clear();
-  commitInfoCache.clear();
-  workflowCache.clear();
-}
-
-export function clearDashboardCache(): void {
   commitInfoCache.clear();
   workflowCache.clear();
 }

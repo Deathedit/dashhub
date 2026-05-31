@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { TrackedBranch, BranchData, CommitInfo, WorkflowStatus } from "@/types";
 import { fetchLatestCommit, fetchLatestWorkflowRun } from "@/services/github";
-import { getCachedCommitInfo, setCachedCommitInfo, getCachedWorkflow, setCachedWorkflow, clearDashboardCache } from "@/services/cache";
+import { getCachedCommitInfo, setCachedCommitInfo, getCachedWorkflow, setCachedWorkflow, clearAllCache } from "@/services/cache";
 
 type FetchResult = {
   data: BranchData;
@@ -51,7 +51,7 @@ export function useBranchData(branches: TrackedBranch[], autoRefreshInterval: nu
     }
     if (prevTokenRef.current !== token) {
       prevTokenRef.current = token;
-      clearDashboardCache();
+      clearAllCache();
     }
     const isRefresh = refreshingRef.current;
     refreshingRef.current = false;
