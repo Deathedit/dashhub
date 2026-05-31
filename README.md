@@ -28,4 +28,4 @@ Available at `http://localhost:3000`.
 
 ## AI Disclosure
 
-This project was developed with significant assistance from AI tools — specifically [opencode](https://opencode.ai) using the **GLM-5.1** model. Code, architecture, Docker config, and documentation were all produced through AI-assisted sessions with human direction. All final code was reviewed and accepted by the developer.
+This project was developed with significant assistance from AI tools — initially [opencode](https://opencode.ai) using the **GLM-5.1** model, with ongoing work also using [Claude Code](https://claude.com/claude-code) (Claude Opus 4.8). Code, architecture, Docker config, and documentation were all produced through AI-assisted sessions with human direction. All final code was reviewed and accepted by the developer.
