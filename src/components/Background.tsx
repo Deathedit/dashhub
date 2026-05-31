@@ -34,11 +34,13 @@ function MatrixRain() {
 
     const fontSize = 14;
     let columns = 0;
+    let height = 0;
     let drops: Drop[][] = [];
 
     function initDrops(numCols: number) {
       const maxRow = Math.max(1, canvas!.height / fontSize);
       columns = numCols;
+      height = canvas!.height;
       drops = Array.from({ length: columns }, () => {
         const count = 2 + Math.floor(Math.random() * 2);
         return Array.from({ length: count }, () => makeDrop(maxRow));
@@ -50,7 +52,7 @@ function MatrixRain() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       const numCols = Math.floor(canvas.width / fontSize);
-      if (numCols !== columns) {
+      if (numCols !== columns || canvas.height !== height) {
         initDrops(numCols);
       }
     }
