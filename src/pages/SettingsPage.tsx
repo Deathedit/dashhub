@@ -1,31 +1,56 @@
-import { useState } from "react";
-import { useApp } from "@/app-context";
-import { parseGitHubUrl } from "@/types";
-import { BG_OPTIONS } from "@/components/Background";
-import { useGlassActive, cardClass, subtleClass } from "@/lib/glass";
-import { fetchDefaultBranch, verifyToken } from "@/services/github";
-import { text } from "@/text";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Loader2, CheckCircle2, XCircle, Moon, Sun, Check, X } from "lucide-react";
+import { useState } from 'react';
+import { useApp } from '@/app-context';
+import { parseGitHubUrl } from '@/types';
+import { BG_OPTIONS } from '@/components/Background';
+import { useGlassActive, cardClass, subtleClass } from '@/lib/glass';
+import { fetchDefaultBranch, verifyToken } from '@/services/github';
+import { text } from '@/text';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Plus,
+  Trash2,
+  Loader2,
+  CheckCircle2,
+  XCircle,
+  Moon,
+  Sun,
+  Check,
+  X,
+} from 'lucide-react';
 
 const MAX_BRANCHES = 50;
 
 export default function SettingsPage() {
-  const { branches, setBranches, token, setToken, autoRefresh, onToggleAutoRefresh, darkMode, onToggleDarkMode, animatedBg, setAnimatedBg } = useApp();
+  const {
+    branches,
+    setBranches,
+    token,
+    setToken,
+    autoRefresh,
+    onToggleAutoRefresh,
+    darkMode,
+    onToggleDarkMode,
+    animatedBg,
+    setAnimatedBg,
+  } = useApp();
   const isGlass = useGlassActive();
-  const [input, setInput] = useState("");
-  const [error, setError] = useState("");
+  const [input, setInput] = useState('');
+  const [error, setError] = useState('');
   const [adding, setAdding] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
   const [tokenInput, setTokenInput] = useState(token);
   const [verifying, setVerifying] = useState(false);
-  const [verifyResult, setVerifyResult] = useState<{ valid: boolean; login?: string; error?: string } | null>(null);
+  const [verifyResult, setVerifyResult] = useState<{
+    valid: boolean;
+    login?: string;
+    error?: string;
+  } | null>(null);
 
   const handleAdd = async () => {
-    setError("");
+    setError('');
     const parsed = parseGitHubUrl(input);
     if (!parsed) {
       setError(text.errors.invalidFormat);
@@ -43,10 +68,10 @@ export default function SettingsPage() {
         resolvedBranch = await fetchDefaultBranch(owner, repo, token);
       } catch (err) {
         setAdding(false);
-        const msg = (err as Error).message ?? "";
-        if (msg.includes("404")) {
+        const msg = (err as Error).message ?? '';
+        if (msg.includes('404')) {
           setError(text.errors.repoNotFound);
-        } else if (msg.includes("403")) {
+        } else if (msg.includes('403')) {
           setError(text.errors.rateLimit);
         } else {
           setError(text.errors.githubApiError);
@@ -66,8 +91,11 @@ export default function SettingsPage() {
       setError(text.errors.alreadyTracked);
       return;
     }
-    setBranches((prev) => [...prev, { id, owner, repo, branch: resolvedBranch }]);
-    setInput("");
+    setBranches((prev) => [
+      ...prev,
+      { id, owner, repo, branch: resolvedBranch },
+    ]);
+    setInput('');
   };
 
   const handleRemove = (id: string) => {
@@ -89,26 +117,32 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
-      <h1 className="mb-6 text-xl font-bold sm:mb-8 sm:text-2xl">{text.settings.title}</h1>
+      <h1 className="mb-6 text-xl font-bold sm:mb-8 sm:text-2xl">
+        {text.settings.title}
+      </h1>
 
       <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
         <CardHeader>
-          <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.general}</CardTitle>
+          <CardTitle className="text-sm font-semibold tracking-wider uppercase">
+            {text.settings.general}
+          </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3 sm:flex-row">
           <Button
-            variant={autoRefresh ? "default" : "secondary"}
+            variant={autoRefresh ? 'default' : 'secondary'}
             size="default"
             onClick={onToggleAutoRefresh}
           >
-            {autoRefresh ? text.settings.autoRefreshOn : text.settings.autoRefreshOff}
+            {autoRefresh
+              ? text.settings.autoRefreshOn
+              : text.settings.autoRefreshOff}
           </Button>
-          <Button
-            variant="secondary"
-            size="default"
-            onClick={onToggleDarkMode}
-          >
-            {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          <Button variant="secondary" size="default" onClick={onToggleDarkMode}>
+            {darkMode ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
             {darkMode ? text.settings.lightMode : text.settings.darkMode}
           </Button>
         </CardContent>
@@ -117,13 +151,15 @@ export default function SettingsPage() {
       {darkMode && (
         <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
           <CardHeader>
-            <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.background}</CardTitle>
+            <CardTitle className="text-sm font-semibold tracking-wider uppercase">
+              {text.settings.background}
+            </CardTitle>
           </CardHeader>
           <CardContent className="flex gap-2">
             {BG_OPTIONS.map((opt) => (
               <Button
                 key={opt.value}
-                variant={animatedBg === opt.value ? "default" : "secondary"}
+                variant={animatedBg === opt.value ? 'default' : 'secondary'}
                 size="default"
                 onClick={() => setAnimatedBg(opt.value)}
               >
@@ -136,7 +172,9 @@ export default function SettingsPage() {
 
       <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
         <CardHeader>
-          <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.tokenTitle}</CardTitle>
+          <CardTitle className="text-sm font-semibold tracking-wider uppercase">
+            {text.settings.tokenTitle}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-2 sm:flex-row">
@@ -145,7 +183,10 @@ export default function SettingsPage() {
                 type="password"
                 placeholder={text.settings.tokenPlaceholder}
                 value={tokenInput}
-                onChange={(e) => { setTokenInput(e.target.value); setVerifyResult(null); }}
+                onChange={(e) => {
+                  setTokenInput(e.target.value);
+                  setVerifyResult(null);
+                }}
               />
             </div>
             <div className="flex gap-2">
@@ -155,7 +196,11 @@ export default function SettingsPage() {
                 onClick={handleVerifyToken}
                 disabled={!tokenInput.trim() || verifying}
               >
-                {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                {verifying ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <CheckCircle2 className="h-4 w-4" />
+                )}
                 {text.settings.verify}
               </Button>
               <Button
@@ -168,26 +213,47 @@ export default function SettingsPage() {
             </div>
           </div>
           {verifyResult && (
-            <div className={`mt-2 flex items-center gap-1.5 text-sm ${
-              verifyResult.valid ? "text-green-600 dark:text-green-400" : "text-destructive"
-            }`}>
-              {verifyResult.valid
-                ? <><CheckCircle2 className="h-4 w-4" /> {text.settings.validAs} <span className="font-mono font-medium">{verifyResult.login}</span></>
-                : <><XCircle className="h-4 w-4" /> {verifyResult.error}</>}
+            <div
+              className={`mt-2 flex items-center gap-1.5 text-sm ${
+                verifyResult.valid
+                  ? 'text-green-600 dark:text-green-400'
+                  : 'text-destructive'
+              }`}
+            >
+              {verifyResult.valid ? (
+                <>
+                  <CheckCircle2 className="h-4 w-4" /> {text.settings.validAs}{' '}
+                  <span className="font-mono font-medium">
+                    {verifyResult.login}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <XCircle className="h-4 w-4" /> {verifyResult.error}
+                </>
+              )}
             </div>
           )}
           <p className="mt-2 text-xs text-muted-foreground">
-            {text.settings.tokenHelp}{" "}
-            <a href={text.settings.createTokenUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+            {text.settings.tokenHelp}{' '}
+            <a
+              href={text.settings.createTokenUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
               {text.settings.createToken}
-            </a>.
+            </a>
+            .
           </p>
         </CardContent>
       </Card>
 
       <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
         <CardHeader>
-          <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.addBranch}</CardTitle>
+          <CardTitle className="text-sm font-semibold tracking-wider uppercase">
+            {text.settings.addBranch}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-2 sm:flex-row">
@@ -196,8 +262,11 @@ export default function SettingsPage() {
                 type="text"
                 placeholder={text.settings.branchPlaceholder}
                 value={input}
-                onChange={(e) => { setInput(e.target.value); setError(""); }}
-                onKeyDown={(e) => e.key === "Enter" && !adding && handleAdd()}
+                onChange={(e) => {
+                  setInput(e.target.value);
+                  setError('');
+                }}
+                onKeyDown={(e) => e.key === 'Enter' && !adding && handleAdd()}
                 disabled={adding}
               />
             </div>
@@ -207,22 +276,28 @@ export default function SettingsPage() {
               onClick={handleAdd}
               disabled={!input.trim() || adding}
             >
-              {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+              {adding ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Plus className="h-4 w-4" />
+              )}
               {adding ? text.settings.resolving : text.settings.add}
             </Button>
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            {text.settings.branchHelpPrefix} <span className="font-mono">{text.settings.branchHelpFormat}</span> {text.settings.branchHelpSuffix}
+            {text.settings.branchHelpPrefix}{' '}
+            <span className="font-mono">{text.settings.branchHelpFormat}</span>{' '}
+            {text.settings.branchHelpSuffix}
           </p>
-          {error && (
-            <p className="mt-2 text-sm text-destructive">{error}</p>
-          )}
+          {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
         </CardContent>
       </Card>
 
       <Card className={cardClass(isGlass)}>
         <CardHeader>
-          <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.trackedBranches(branches.length)}</CardTitle>
+          <CardTitle className="text-sm font-semibold tracking-wider uppercase">
+            {text.settings.trackedBranches(branches.length)}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {branches.length === 0 && (
@@ -237,7 +312,9 @@ export default function SettingsPage() {
                 className={`flex items-center justify-between rounded-md border p-3 ${subtleClass(isGlass)}`}
               >
                 <span className="min-w-0 truncate text-sm">
-                  <span className="font-medium">{b.owner}/{b.repo}</span>
+                  <span className="font-medium">
+                    {b.owner}/{b.repo}
+                  </span>
                   <span className="text-muted-foreground"> / </span>
                   <span className="text-primary">{b.branch}</span>
                 </span>
@@ -246,7 +323,10 @@ export default function SettingsPage() {
                     <Button
                       variant="destructive"
                       size="icon-xs"
-                      onClick={() => { handleRemove(b.id); setPendingDelete(null); }}
+                      onClick={() => {
+                        handleRemove(b.id);
+                        setPendingDelete(null);
+                      }}
                     >
                       <Check className="h-4 w-4" />
                     </Button>

@@ -10,12 +10,12 @@ Built with React 19, TypeScript, Vite 8, Tailwind CSS v4, and deployed via Docke
 npm install && npm run dev
 ```
 
-| Command | Purpose |
-|---|---|
-| `npm run dev` | Dev server with HMR |
-| `npm run build` | Type-check + production build |
-| `npm run lint` | ESLint |
-| `npm run preview` | Preview production build |
+| Command           | Purpose                       |
+| ----------------- | ----------------------------- |
+| `npm run dev`     | Dev server with HMR           |
+| `npm run build`   | Type-check + production build |
+| `npm run lint`    | ESLint                        |
+| `npm run preview` | Preview production build      |
 
 ## Deploy
 

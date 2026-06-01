@@ -1,13 +1,14 @@
-import { useRef, useEffect } from "react";
-import type { AnimatedBg } from "@/types";
-import { text } from "@/text";
+import { useRef, useEffect } from 'react';
+import type { AnimatedBg } from '@/types';
+import { text } from '@/text';
 
 const BG_OPTIONS: { value: AnimatedBg; label: string }[] = [
-  { value: "none", label: text.settings.bgNone },
-  { value: "matrix", label: text.settings.bgMatrix },
+  { value: 'none', label: text.settings.bgNone },
+  { value: 'matrix', label: text.settings.bgMatrix },
 ];
 
-const MATRIX_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ";
+const MATRIX_CHARS =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ';
 const FRAME_MS = 65;
 
 interface Drop {
@@ -29,7 +30,7 @@ function MatrixRain() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     const fontSize = 14;
@@ -61,7 +62,7 @@ function MatrixRain() {
       if (!ctx || !canvas) return;
       const maxRow = canvas.height / fontSize + 50 / fontSize;
 
-      ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.font = `${fontSize}px monospace`;
@@ -72,15 +73,23 @@ function MatrixRain() {
           const yPx = drop.y * fontSize;
           const xPx = col * fontSize;
 
-          ctx.fillStyle = "#3b82f6";
+          ctx.fillStyle = '#3b82f6';
           ctx.globalAlpha = 0.3;
-          ctx.fillText(MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)], xPx, yPx);
+          ctx.fillText(
+            MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)],
+            xPx,
+            yPx,
+          );
 
           const headY = (drop.y + 1) * fontSize;
           if (headY < canvas.height && headY > 0) {
-            ctx.fillStyle = "#93c5fd";
+            ctx.fillStyle = '#93c5fd';
             ctx.globalAlpha = 0.6;
-            ctx.fillText(MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)], xPx, headY);
+            ctx.fillText(
+              MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)],
+              xPx,
+              headY,
+            );
           }
 
           ctx.globalAlpha = 1;
@@ -95,7 +104,7 @@ function MatrixRain() {
     }
 
     resize();
-    window.addEventListener("resize", resize);
+    window.addEventListener('resize', resize);
 
     let animId: number;
     let lastFrame = 0;
@@ -108,16 +117,18 @@ function MatrixRain() {
     animId = requestAnimationFrame(loop);
 
     return () => {
-      window.removeEventListener("resize", resize);
+      window.removeEventListener('resize', resize);
       cancelAnimationFrame(animId);
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="bg-animated-matrix" aria-hidden="true" />;
+  return (
+    <canvas ref={canvasRef} className="bg-animated-matrix" aria-hidden="true" />
+  );
 }
 
 export default function Background({ variant }: { variant: AnimatedBg }) {
-  if (variant === "matrix") {
+  if (variant === 'matrix') {
     return <MatrixRain />;
   }
 

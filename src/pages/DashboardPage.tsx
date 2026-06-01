@@ -1,9 +1,9 @@
-import { useMemo } from "react";
-import { useApp } from "@/app-context";
-import { text } from "@/text";
-import type { BranchData } from "@/types";
-import BranchRow from "@/components/BranchRow";
-import BranchRowSkeleton from "@/components/BranchRowSkeleton";
+import { useMemo } from 'react';
+import { useApp } from '@/app-context';
+import { text } from '@/text';
+import type { BranchData } from '@/types';
+import BranchRow from '@/components/BranchRow';
+import BranchRowSkeleton from '@/components/BranchRowSkeleton';
 
 export default function DashboardPage() {
   const { branches, data } = useApp();
@@ -26,7 +26,9 @@ export default function DashboardPage() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <p className="mb-2 text-lg font-medium text-muted-foreground">{text.dashboard.noBranchesTitle}</p>
+          <p className="mb-2 text-lg font-medium text-muted-foreground">
+            {text.dashboard.noBranchesTitle}
+          </p>
           <p className="text-sm text-muted-foreground">
             {text.dashboard.noBranchesSubtitle}
           </p>

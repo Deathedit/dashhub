@@ -21,8 +21,14 @@ export interface CommitDetail {
   url: string;
 }
 
-export type AnimatedBg = "none" | "matrix";
-export type WorkflowStatusValue = "queued" | "in_progress" | "completed" | "waiting" | "pending" | "requested";
+export type AnimatedBg = 'none' | 'matrix';
+export type WorkflowStatusValue =
+  | 'queued'
+  | 'in_progress'
+  | 'completed'
+  | 'waiting'
+  | 'pending'
+  | 'requested';
 
 export interface WorkflowStatus {
   status: WorkflowStatusValue;
@@ -39,18 +45,23 @@ export interface BranchData {
   error: string | null;
 }
 
-export function parseGitHubUrl(input: string): { owner: string; repo: string; branch: string | undefined } | null {
+export function parseGitHubUrl(
+  input: string,
+): { owner: string; repo: string; branch: string | undefined } | null {
   const trimmed = input.trim();
-  const stripped = trimmed.replace(/^https?:\/\//, "").replace(/^github\.com\//, "").replace(/\/+$/, "");
-  const parts = stripped.split("/");
+  const stripped = trimmed
+    .replace(/^https?:\/\//, '')
+    .replace(/^github\.com\//, '')
+    .replace(/\/+$/, '');
+  const parts = stripped.split('/');
   if (parts.length < 2 || !parts[0] || !parts[1]) return null;
   const owner = parts[0];
   const repo = parts[1];
-  if (parts[2] === "tree" && parts[3]) {
-    return { owner, repo, branch: parts.slice(3).join("/") };
+  if (parts[2] === 'tree' && parts[3]) {
+    return { owner, repo, branch: parts.slice(3).join('/') };
   }
-  if (parts[2] && parts[2] !== "tree") {
-    return { owner, repo, branch: parts.slice(2).join("/") };
+  if (parts[2] && parts[2] !== 'tree') {
+    return { owner, repo, branch: parts.slice(2).join('/') };
   }
   return { owner, repo, branch: undefined };
 }

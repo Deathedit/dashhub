@@ -1,20 +1,20 @@
-import { useEffect, useMemo, useCallback } from "react";
-import { HashRouter, Routes, Route, Link } from "react-router-dom";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { useBranchData } from "@/hooks/useBranchData";
-import type { TrackedBranch, AnimatedBg } from "@/types";
-import { AppCtx, type AppContext } from "@/app-context";
-import { text } from "@/text";
-import Sidebar from "@/components/Sidebar";
-import Background from "@/components/Background";
-import DashboardPage from "@/pages/DashboardPage";
-import SettingsPage from "@/pages/SettingsPage";
-import BranchPage from "@/pages/BranchPage";
-import { GlassProvider } from "@/hooks/useGlass";
-import { useGlassActive, cardClass } from "@/lib/glass";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { KeyRound } from "lucide-react";
+import { useEffect, useMemo, useCallback } from 'react';
+import { HashRouter, Routes, Route, Link } from 'react-router-dom';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useBranchData } from '@/hooks/useBranchData';
+import type { TrackedBranch, AnimatedBg } from '@/types';
+import { AppCtx, type AppContext } from '@/app-context';
+import { text } from '@/text';
+import Sidebar from '@/components/Sidebar';
+import Background from '@/components/Background';
+import DashboardPage from '@/pages/DashboardPage';
+import SettingsPage from '@/pages/SettingsPage';
+import BranchPage from '@/pages/BranchPage';
+import { GlassProvider } from '@/hooks/useGlass';
+import { useGlassActive, cardClass } from '@/lib/glass';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { KeyRound } from 'lucide-react';
 
 function TokenRequired() {
   const isGlass = useGlassActive();
@@ -30,8 +30,8 @@ function TokenRequired() {
             {text.app.tokenRequired.description}
           </p>
           <Button render={<Link to="/settings" />}>
-              <KeyRound className="h-4 w-4" />
-              {text.app.tokenRequired.goToSettings}
+            <KeyRound className="h-4 w-4" />
+            {text.app.tokenRequired.goToSettings}
           </Button>
         </CardContent>
       </Card>
@@ -40,53 +40,99 @@ function TokenRequired() {
 }
 
 export default function App() {
-  const [branches, setBranches] = useLocalStorage<TrackedBranch[]>("dashhub-branches", []);
-  const [autoRefresh, setAutoRefresh] = useLocalStorage<boolean>("dashhub-auto-refresh", false);
-  const [darkMode, setDarkMode] = useLocalStorage<boolean>("dashhub-dark-mode", () => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  });
-  const [collapsed, setCollapsed] = useLocalStorage<boolean>("dashhub-sidebar-collapsed", true);
-  const [animatedBg, setAnimatedBg] = useLocalStorage<AnimatedBg>("dashhub-animated-bg", "none");
-  const [token, setToken] = useLocalStorage<string>("dashhub-github-token", "");
+  const [branches, setBranches] = useLocalStorage<TrackedBranch[]>(
+    'dashhub-branches',
+    [],
+  );
+  const [autoRefresh, setAutoRefresh] = useLocalStorage<boolean>(
+    'dashhub-auto-refresh',
+    false,
+  );
+  const [darkMode, setDarkMode] = useLocalStorage<boolean>(
+    'dashhub-dark-mode',
+    () => {
+      if (typeof window === 'undefined') return false;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    },
+  );
+  const [collapsed, setCollapsed] = useLocalStorage<boolean>(
+    'dashhub-sidebar-collapsed',
+    true,
+  );
+  const [animatedBg, setAnimatedBg] = useLocalStorage<AnimatedBg>(
+    'dashhub-animated-bg',
+    'none',
+  );
+  const [token, setToken] = useLocalStorage<string>('dashhub-github-token', '');
 
   const hasToken = token.trim().length > 0;
-  const { data, isRefreshing } = useBranchData(hasToken ? branches : [], autoRefresh ? 300000 : 0, token);
-  const isFetching = (data.length > 0 && data.some((d) => d.loading)) || isRefreshing;
+  const { data, isRefreshing } = useBranchData(
+    hasToken ? branches : [],
+    autoRefresh ? 300000 : 0,
+    token,
+  );
+  const isFetching =
+    (data.length > 0 && data.some((d) => d.loading)) || isRefreshing;
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
+    document.documentElement.classList.toggle('dark', darkMode);
   }, [darkMode]);
 
-  const onToggleCollapse = useCallback(() => setCollapsed((c) => !c), [setCollapsed]);
-  const onToggleAutoRefresh = useCallback(() => setAutoRefresh((a) => !a), [setAutoRefresh]);
-  const onToggleDarkMode = useCallback(() => setDarkMode((d) => !d), [setDarkMode]);
+  const onToggleCollapse = useCallback(
+    () => setCollapsed((c) => !c),
+    [setCollapsed],
+  );
+  const onToggleAutoRefresh = useCallback(
+    () => setAutoRefresh((a) => !a),
+    [setAutoRefresh],
+  );
+  const onToggleDarkMode = useCallback(
+    () => setDarkMode((d) => !d),
+    [setDarkMode],
+  );
 
-  const value = useMemo<AppContext>(() => ({
-    branches,
-    setBranches,
-    data,
-    collapsed,
-    onToggleCollapse,
-    autoRefresh,
-    onToggleAutoRefresh,
-    darkMode,
-    onToggleDarkMode,
-    animatedBg,
-    setAnimatedBg,
-    token,
-    setToken,
-  }), [branches, setBranches, data, collapsed, onToggleCollapse, autoRefresh, onToggleAutoRefresh, darkMode, onToggleDarkMode, animatedBg, setAnimatedBg, token, setToken]);
+  const value = useMemo<AppContext>(
+    () => ({
+      branches,
+      setBranches,
+      data,
+      collapsed,
+      onToggleCollapse,
+      autoRefresh,
+      onToggleAutoRefresh,
+      darkMode,
+      onToggleDarkMode,
+      animatedBg,
+      setAnimatedBg,
+      token,
+      setToken,
+    }),
+    [
+      branches,
+      setBranches,
+      data,
+      collapsed,
+      onToggleCollapse,
+      autoRefresh,
+      onToggleAutoRefresh,
+      darkMode,
+      onToggleDarkMode,
+      animatedBg,
+      setAnimatedBg,
+      token,
+      setToken,
+    ],
+  );
 
   return (
     <HashRouter>
       <AppCtx.Provider value={value}>
         <GlassProvider>
           <div className="min-h-screen">
-            <Background variant={darkMode ? animatedBg : "none"} />
+            <Background variant={darkMode ? animatedBg : 'none'} />
             <div
               className={`fixed inset-x-0 top-0 z-[60] h-1 bg-primary transition-opacity duration-300 ${
-                isFetching ? "opacity-100" : "opacity-0"
+                isFetching ? 'opacity-100' : 'opacity-0'
               }`}
             >
               <div className="h-full w-1/3 animate-pulse rounded-r-full bg-primary/70" />
@@ -94,7 +140,7 @@ export default function App() {
             <Sidebar />
             <main
               className={`pt-14 transition-[margin] duration-300 md:pt-0 ${
-                collapsed ? "md:ml-20" : "md:ml-72"
+                collapsed ? 'md:ml-20' : 'md:ml-72'
               }`}
             >
               {hasToken ? (

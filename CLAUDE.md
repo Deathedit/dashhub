@@ -12,6 +12,7 @@ npm run build     # tsc -b && vite build (type-check + prod)
 npm run lint      # ESLint
 npm run preview   # Preview prod build
 ```
+
 Add shadcn components: `npx shadcn@latest add <component>`
 
 No tests. Always `npm run build` before committing; must pass type-check + build.
@@ -53,13 +54,13 @@ No tests. Always `npm run build` before committing; must pass type-check + build
 
 ## Constants
 
-| Constant | File | Value |
-|---|---|---|
-| `MAX_BRANCHES` | `SettingsPage.tsx` | 50 |
-| `COMMITS_PER_PAGE` | `BranchPage.tsx` | 13 |
-| `CACHE_TTL_MS` | `cache.ts` | 60min |
-| Auto-refresh interval | `App.tsx` | 5min |
-| `FRAME_MS` (matrix throttle) | `Background.tsx` | 65ms |
+| Constant                     | File               | Value |
+| ---------------------------- | ------------------ | ----- |
+| `MAX_BRANCHES`               | `SettingsPage.tsx` | 50    |
+| `COMMITS_PER_PAGE`           | `BranchPage.tsx`   | 13    |
+| `CACHE_TTL_MS`               | `cache.ts`         | 60min |
+| Auto-refresh interval        | `App.tsx`          | 5min  |
+| `FRAME_MS` (matrix throttle) | `Background.tsx`   | 65ms  |
 
 ## Docker
 

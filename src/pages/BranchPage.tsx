@@ -1,24 +1,35 @@
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { useApp } from "@/app-context";
-import { useGlassActive, cardClass } from "@/lib/glass";
-import { fetchCommits, getWorkflowDisplayStatus } from "@/services/github";
-import { getCachedCommits, setCachedCommits } from "@/services/cache";
-import type { CommitDetail } from "@/types";
-import { text, relativeTime } from "@/text";
-import { STATUS_META, type DisplayStatus } from "@/lib/status";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
-import { ArrowLeft, GitBranch, CheckCircle2, XCircle, Loader2, ExternalLink } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { useApp } from '@/app-context';
+import { useGlassActive, cardClass } from '@/lib/glass';
+import { fetchCommits, getWorkflowDisplayStatus } from '@/services/github';
+import { getCachedCommits, setCachedCommits } from '@/services/cache';
+import type { CommitDetail } from '@/types';
+import { text, relativeTime } from '@/text';
+import { STATUS_META, type DisplayStatus } from '@/lib/status';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
+import {
+  ArrowLeft,
+  GitBranch,
+  CheckCircle2,
+  XCircle,
+  Loader2,
+  ExternalLink,
+} from 'lucide-react';
 
 const COMMITS_PER_PAGE = 13;
 
 const statusIcons: Record<DisplayStatus, React.ReactNode> = {
-  success: <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 transition-colors hover:text-green-700 dark:hover:text-green-300" />,
+  success: (
+    <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 transition-colors hover:text-green-700 dark:hover:text-green-300" />
+  ),
   failure: <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />,
-  in_progress: <Loader2 className="h-5 w-5 animate-spin text-yellow-600 dark:text-yellow-400" />,
+  in_progress: (
+    <Loader2 className="h-5 w-5 animate-spin text-yellow-600 dark:text-yellow-400" />
+  ),
   unknown: <GitBranch className="h-5 w-5 text-muted-foreground" />,
 };
 
@@ -40,7 +51,9 @@ function CommitRow({ commit }: { commit: CommitDetail }) {
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">{commit.message}</p>
         <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
-          <span className="font-mono text-muted-foreground/70">{commit.sha.slice(0, 7)}</span>
+          <span className="font-mono text-muted-foreground/70">
+            {commit.sha.slice(0, 7)}
+          </span>
           <span className="font-medium">{commit.author}</span>
           {commit.date && <span>{relativeTime(commit.date)}</span>}
         </div>
@@ -51,18 +64,28 @@ function CommitRow({ commit }: { commit: CommitDetail }) {
 }
 
 export default function BranchPage() {
-  const { owner, repo, "*": branch } = useParams<{ owner: string; repo: string; "*": string }>();
+  const {
+    owner,
+    repo,
+    '*': branch,
+  } = useParams<{ owner: string; repo: string; '*': string }>();
   const { data, token } = useApp();
-  const cacheKey = owner && repo && branch ? `${owner}/${repo}/${branch}` : null;
+  const cacheKey =
+    owner && repo && branch ? `${owner}/${repo}/${branch}` : null;
   const cached = cacheKey ? getCachedCommits(cacheKey) : null;
-  const [fetchState, setFetchState] = useState<{ key: string; commits: CommitDetail[] | null; error: string | null }>({
-    key: "",
+  const [fetchState, setFetchState] = useState<{
+    key: string;
+    commits: CommitDetail[] | null;
+    error: string | null;
+  }>({
+    key: '',
     commits: null,
     error: null,
   });
 
   const branchData = data.find(
-    (d) => d.key.owner === owner && d.key.repo === repo && d.key.branch === branch,
+    (d) =>
+      d.key.owner === owner && d.key.repo === repo && d.key.branch === branch,
   );
   const isGlass = useGlassActive();
 
@@ -76,17 +99,22 @@ export default function BranchPage() {
         setFetchState({ key: cacheKey, commits: result, error: null });
       })
       .catch((err: Error) => {
-        if (!ignore) setFetchState({ key: cacheKey, commits: null, error: err.message });
+        if (!ignore)
+          setFetchState({ key: cacheKey, commits: null, error: err.message });
       });
-    return () => { ignore = true; };
+    return () => {
+      ignore = true;
+    };
   }, [cacheKey, cached, owner, repo, branch, token]);
 
   const settledForKey = fetchState.key === cacheKey;
-  const commits = cached ?? (settledForKey ? fetchState.commits ?? [] : []);
+  const commits = cached ?? (settledForKey ? (fetchState.commits ?? []) : []);
   const error = settledForKey ? fetchState.error : null;
   const loading = cacheKey !== null && cached === null && !settledForKey;
 
-  const displayStatus = branchData ? getWorkflowDisplayStatus(branchData.workflow) : "unknown";
+  const displayStatus = branchData
+    ? getWorkflowDisplayStatus(branchData.workflow)
+    : 'unknown';
   const cfg = STATUS_META[displayStatus];
   const workflow = branchData?.workflow;
 
@@ -110,7 +138,10 @@ export default function BranchPage() {
             {branch}
           </Badge>
           {branchData && (
-            <Badge variant={cfg.variant} className={cn("gap-1.5", cfg.className)}>
+            <Badge
+              variant={cfg.variant}
+              className={cn('gap-1.5', cfg.className)}
+            >
               {statusIcons[displayStatus]}
               {cfg.label}
               {workflow?.url && (
@@ -135,7 +166,10 @@ export default function BranchPage() {
       {loading && (
         <div className="space-y-3">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className={`flex items-start gap-3 rounded-lg border p-4 ${cardClass(isGlass)}`}>
+            <div
+              key={i}
+              className={`flex items-start gap-3 rounded-lg border p-4 ${cardClass(isGlass)}`}
+            >
               <Skeleton className="mt-0.5 h-8 w-8 shrink-0 rounded-full" />
               <div className="flex-1 space-y-2">
                 <Skeleton className="h-4 w-3/4" />
@@ -147,7 +181,9 @@ export default function BranchPage() {
       )}
 
       {error && (
-        <p className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive">{error}</p>
+        <p className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {error}
+        </p>
       )}
 
       {!loading && !error && commits.length === 0 && (
