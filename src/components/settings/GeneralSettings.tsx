@@ -47,18 +47,10 @@ export function TokenSection() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSaveToken();
-          }}
-          className="flex flex-col gap-2 sm:flex-row"
-        >
-          <input type="text" name="username" autoComplete="username" className="hidden" aria-hidden="true" tabIndex={-1} />
+        <div className="flex flex-col gap-2 sm:flex-row">
           <div className="min-w-0 flex-1">
             <Input
               type="password"
-              autoComplete="current-password"
               placeholder={text.settings.tokenPlaceholder}
               value={tokenInput}
               onChange={(e) => {
@@ -69,7 +61,6 @@ export function TokenSection() {
           </div>
           <div className="flex gap-2">
             <Button
-              type="button"
               variant="outline"
               size="default"
               onClick={handleVerifyToken}
@@ -83,14 +74,14 @@ export function TokenSection() {
               {text.settings.verify}
             </Button>
             <Button
-              type="submit"
               variant="default"
               size="default"
+              onClick={handleSaveToken}
             >
               {text.settings.save}
             </Button>
           </div>
-        </form>
+        </div>
         {verifyResult && (
           <div
             className={`mt-2 flex items-center gap-1.5 text-sm ${

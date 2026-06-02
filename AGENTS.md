@@ -41,7 +41,6 @@ Always `npm run build` before committing; must pass type-check + build. Tests us
 - **Delete confirmation**: Inline icon swap (✓/✗). No browser `confirm()`.
 - **Fetching indicator**: Thin animated bar, `bg-primary`, fixed top of viewport.
 - **Scrollbar hidden**: `.scrollbar-hidden` utility in `index.css` hides scrollbar cross-browser.
-- **Password form**: Token input wrapped in `<form>` with hidden username field for a11y. Enter submits (saves token).
 - **Status icons**: `makeStatusIcons('sm'|'lg')` in `src/lib/status-icons.tsx` — factory returning CI/pointer/check/x/clock icons.
 - **Error boundaries**: `src/components/ErrorBoundary.tsx` wraps each `<Route>` individually.
 - **fetchJSON retry**: Retries 5xx once with 1s delay. Non-retryable errors throw immediately.
