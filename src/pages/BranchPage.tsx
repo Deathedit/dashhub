@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useApp } from '@/app-context';
 import { useGlassActive, cardClass } from '@/lib/glass';
-import { fetchCommits, getWorkflowDisplayStatus } from '@/services/github';
-import { getCachedCommits, setCachedCommits } from '@/services/cache';
-import type { CommitDetail } from '@/types';
+import { fetchCommits, fetchLatestWorkflowRun, getWorkflowDisplayStatus } from '@/services/github';
+import { getCachedCommits, setCachedCommits, getCachedWorkflow, setCachedWorkflow } from '@/services/cache';
+import type { CommitDetail, WorkflowStatus } from '@/types';
 import { text, relativeTime } from '@/text';
-import { STATUS_META, type DisplayStatus } from '@/lib/status';
+import { STATUS_META } from '@/lib/status';
+import { makeStatusIcons } from '@/lib/status-icons';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -14,24 +15,11 @@ import { cn } from '@/lib/utils';
 import {
   ArrowLeft,
   GitBranch,
-  CheckCircle2,
-  XCircle,
-  Loader2,
   ExternalLink,
 } from 'lucide-react';
 
 const COMMITS_PER_PAGE = 13;
-
-const statusIcons: Record<DisplayStatus, React.ReactNode> = {
-  success: (
-    <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 transition-colors hover:text-green-700 dark:hover:text-green-300" />
-  ),
-  failure: <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />,
-  in_progress: (
-    <Loader2 className="h-5 w-5 animate-spin text-yellow-600 dark:text-yellow-400" />
-  ),
-  unknown: <GitBranch className="h-5 w-5 text-muted-foreground" />,
-};
+const statusIcons = makeStatusIcons('lg');
 
 function CommitRow({ commit }: { commit: CommitDetail }) {
   const isGlass = useGlassActive();
@@ -82,6 +70,7 @@ export default function BranchPage() {
     commits: null,
     error: null,
   });
+  const [localWorkflow, setLocalWorkflow] = useState<WorkflowStatus | null | undefined>(undefined);
 
   const branchData = data.find(
     (d) =>
@@ -107,16 +96,32 @@ export default function BranchPage() {
     };
   }, [cacheKey, cached, owner, repo, branch, token]);
 
+  const shouldFetchWorkflow = branchData?.workflow === undefined && cacheKey !== null && !!owner && !!repo && !!branch && !!token;
+  const cachedWorkflowForPage = shouldFetchWorkflow && cacheKey ? getCachedWorkflow(cacheKey) : undefined;
+
+  useEffect(() => {
+    if (!shouldFetchWorkflow || cachedWorkflowForPage !== undefined) return;
+    let ignore = false;
+    fetchLatestWorkflowRun(owner!, repo!, branch!, token).then((wf) => {
+      if (ignore) return;
+      setCachedWorkflow(cacheKey!, wf);
+      setLocalWorkflow(wf);
+    }).catch(() => {
+      if (!ignore) setLocalWorkflow(null);
+    });
+    return () => { ignore = true; };
+  }, [cacheKey, owner, repo, branch, token, shouldFetchWorkflow, cachedWorkflowForPage]);
+
+  const resolvedWorkflow = branchData?.workflow ?? cachedWorkflowForPage ?? localWorkflow;
+
   const settledForKey = fetchState.key === cacheKey;
   const commits = cached ?? (settledForKey ? (fetchState.commits ?? []) : []);
   const error = settledForKey ? fetchState.error : null;
   const loading = cacheKey !== null && cached === null && !settledForKey;
 
-  const displayStatus = branchData
-    ? getWorkflowDisplayStatus(branchData.workflow)
-    : 'unknown';
+  const workflow = resolvedWorkflow;
+  const displayStatus = getWorkflowDisplayStatus(workflow ?? null);
   const cfg = STATUS_META[displayStatus];
-  const workflow = branchData?.workflow;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
@@ -137,7 +142,7 @@ export default function BranchPage() {
             <GitBranch className="h-3 w-3" />
             {branch}
           </Badge>
-          {branchData && (
+          {(workflow !== undefined) && (
             <Badge
               variant={cfg.variant}
               className={cn('gap-1.5', cfg.className)}

@@ -38,17 +38,23 @@ interface GitHubUser {
   login?: string;
 }
 
-async function fetchJSON<T>(url: string, token: string): Promise<T> {
+async function fetchJSON<T>(url: string, token: string, retries = 1): Promise<T> {
   const headers: Record<string, string> = {
     Accept: 'application/vnd.github+json',
   };
   if (token) headers.Authorization = `token ${token}`;
-  const res = await fetch(url, { headers });
-  if (!res.ok) {
-    const body = await res.text().catch(() => 'Unknown error');
-    throw new Error(`${text.errors.githubApiError} ${res.status}: ${body}`);
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(url, { headers });
+    if (!res.ok) {
+      const body = await res.text().catch(() => 'Unknown error');
+      if (res.status >= 500 && attempt < retries) {
+        await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, attempt)));
+        continue;
+      }
+      throw new Error(`${text.errors.githubApiError} ${res.status}: ${body}`);
+    }
+    return res.json() as Promise<T>;
   }
-  return res.json() as Promise<T>;
 }
 
 function parseCommit(c: GitHubCommitItem): CommitInfo {

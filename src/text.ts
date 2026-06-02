@@ -72,6 +72,8 @@ export const text = {
     alreadyTracked: 'This branch is already being tracked.',
     repoOrBranchNotFound: 'Repository or branch not found',
     addToken: 'Add a GitHub token',
+    unexpectedError: 'Something went wrong',
+    retry: 'Try again',
   },
 };
 

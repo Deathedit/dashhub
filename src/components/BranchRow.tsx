@@ -4,28 +4,14 @@ import type { BranchData } from '@/types';
 import { getWorkflowDisplayStatus } from '@/services/github';
 import { useGlassActive, cardClass } from '@/lib/glass';
 import { relativeTime, text } from '@/text';
-import { STATUS_META, type DisplayStatus } from '@/lib/status';
+import { STATUS_META } from '@/lib/status';
+import { makeStatusIcons } from '@/lib/status-icons';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
-import {
-  ExternalLink,
-  GitBranch,
-  CheckCircle2,
-  XCircle,
-  Loader2,
-} from 'lucide-react';
+import { ExternalLink, GitBranch } from 'lucide-react';
 
-const statusIcons: Record<DisplayStatus, React.ReactNode> = {
-  success: (
-    <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 transition-colors hover:text-green-700 dark:hover:text-green-300" />
-  ),
-  failure: <XCircle className="h-4 w-4 text-red-600 dark:text-red-400" />,
-  in_progress: (
-    <Loader2 className="h-4 w-4 animate-spin text-yellow-600 dark:text-yellow-400" />
-  ),
-  unknown: <GitBranch className="h-4 w-4 text-muted-foreground" />,
-};
+const statusIcons = makeStatusIcons('sm');
 
 function BranchRowInner({ branch }: { branch: BranchData }) {
   const { key, commit, workflow, error } = branch;

@@ -7,6 +7,7 @@ import { AppCtx, type AppContext } from '@/app-context';
 import { text } from '@/text';
 import Sidebar from '@/components/Sidebar';
 import Background from '@/components/Background';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import DashboardPage from '@/pages/DashboardPage';
 import SettingsPage from '@/pages/SettingsPage';
 import BranchPage from '@/pages/BranchPage';
@@ -29,7 +30,7 @@ function TokenRequired() {
           <p className="mb-6 text-sm text-muted-foreground">
             {text.app.tokenRequired.description}
           </p>
-          <Button render={<Link to="/settings" />}>
+          <Button render={<Link to="/settings" />} nativeButton={false}>
             <KeyRound className="h-4 w-4" />
             {text.app.tokenRequired.goToSettings}
           </Button>
@@ -66,8 +67,12 @@ export default function App() {
   const [token, setToken] = useLocalStorage<string>('dashhub-github-token', '');
 
   const hasToken = token.trim().length > 0;
+  const branchesForHook = useMemo(
+    () => (hasToken ? branches : []),
+    [hasToken, branches],
+  );
   const { data, isRefreshing } = useBranchData(
-    hasToken ? branches : [],
+    branchesForHook,
     autoRefresh ? 300000 : 0,
     token,
   );
@@ -145,14 +150,14 @@ export default function App() {
             >
               {hasToken ? (
                 <Routes>
-                  <Route path="/" element={<DashboardPage />} />
-                  <Route path="/settings" element={<SettingsPage />} />
-                  <Route path="/:owner/:repo/*" element={<BranchPage />} />
+                  <Route path="/" element={<ErrorBoundary><DashboardPage /></ErrorBoundary>} />
+                  <Route path="/settings" element={<ErrorBoundary><SettingsPage /></ErrorBoundary>} />
+                  <Route path="/:owner/:repo/*" element={<ErrorBoundary><BranchPage /></ErrorBoundary>} />
                 </Routes>
               ) : (
                 <Routes>
-                  <Route path="/settings" element={<SettingsPage />} />
-                  <Route path="*" element={<TokenRequired />} />
+                  <Route path="/settings" element={<ErrorBoundary><SettingsPage /></ErrorBoundary>} />
+                  <Route path="*" element={<ErrorBoundary><TokenRequired /></ErrorBoundary>} />
                 </Routes>
               )}
             </main>

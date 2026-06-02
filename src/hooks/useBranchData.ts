@@ -101,7 +101,7 @@ export function useBranchData(
   useEffect(() => {
     if (!branches.length) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setData([]);
+      setData((prev) => (prev.length === 0 ? prev : []));
       return;
     }
     if (prevTokenRef.current !== token) {
