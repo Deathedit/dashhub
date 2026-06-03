@@ -35,9 +35,7 @@ export default function DashboardPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
       <div className="space-y-3">
-        {sorted.map((branch) =>
-          branch.loading ? <BranchRowSkeleton key={branch.key.id} /> : <BranchRow key={branch.key.id} branch={branch} />,
-        )}
+        {sorted.map((branch) => (branch.loading ? <BranchRowSkeleton key={branch.key.id} /> : <BranchRow key={branch.key.id} branch={branch} />))}
       </div>
     </div>
   );

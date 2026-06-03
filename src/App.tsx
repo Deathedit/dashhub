@@ -99,11 +99,7 @@ export default function App() {
         <GlassProvider>
           <div className="min-h-screen">
             <Background variant={darkMode ? animatedBg : 'none'} />
-            <div
-              className={`fixed inset-x-0 top-0 z-[60] h-1 bg-primary transition-opacity duration-300 ${
-                isFetching ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
+            <div className={`fixed inset-x-0 top-0 z-[60] h-1 bg-primary transition-opacity duration-300 ${isFetching ? 'opacity-100' : 'opacity-0'}`}>
               <div className="h-full w-1/3 animate-pulse rounded-r-full bg-primary/70" />
             </div>
             <Sidebar />

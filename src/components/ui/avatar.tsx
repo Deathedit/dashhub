@@ -24,13 +24,7 @@ function Avatar({
 }
 
 function AvatarImage({ className, ...props }: AvatarPrimitive.Image.Props) {
-  return (
-    <AvatarPrimitive.Image
-      data-slot="avatar-image"
-      className={cn('aspect-square size-full rounded-full object-cover', className)}
-      {...props}
-    />
-  );
+  return <AvatarPrimitive.Image data-slot="avatar-image" className={cn('aspect-square size-full rounded-full object-cover', className)} {...props} />;
 }
 
 function AvatarFallback({ className, ...props }: AvatarPrimitive.Fallback.Props) {

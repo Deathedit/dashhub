@@ -96,8 +96,7 @@ export function BranchManager() {
             </Button>
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            {text.settings.branchHelpPrefix} <span className="font-mono">{text.settings.branchHelpFormat}</span>{' '}
-            {text.settings.branchHelpSuffix}
+            {text.settings.branchHelpPrefix} <span className="font-mono">{text.settings.branchHelpFormat}</span> {text.settings.branchHelpSuffix}
           </p>
           {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
         </CardContent>

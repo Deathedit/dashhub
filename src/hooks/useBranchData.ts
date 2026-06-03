@@ -46,9 +46,7 @@ export function useBranchData(branches: TrackedBranch[], autoRefreshInterval: nu
           if (workflowToCache) setCachedWorkflow(workflowToCache.key, workflowToCache.value);
         });
         setData((prev) =>
-          results.map((r) =>
-            isRefresh && r.data.error ? (prev.find((d) => d.key.id === r.data.key.id && !d.error && d.commit) ?? r.data) : r.data,
-          ),
+          results.map((r) => (isRefresh && r.data.error ? (prev.find((d) => d.key.id === r.data.key.id && !d.error && d.commit) ?? r.data) : r.data)),
         );
         if (isRefresh) setRefreshing(false);
       })

@@ -64,19 +64,13 @@ function parseCommit(c: GitHubCommitItem): CommitInfo {
 }
 
 export async function fetchLatestCommit(owner: string, repo: string, branch: string, token: string): Promise<CommitInfo> {
-  const data = await fetchJSON<GitHubCommitItem[]>(
-    `${API}/repos/${owner}/${repo}/commits?sha=${encodeURIComponent(branch)}&per_page=1`,
-    token,
-  );
+  const data = await fetchJSON<GitHubCommitItem[]>(`${API}/repos/${owner}/${repo}/commits?sha=${encodeURIComponent(branch)}&per_page=1`, token);
   if (!data.length) throw new Error(text.errors.noCommits);
   return parseCommit(data[0]);
 }
 
 export async function fetchLatestWorkflowRun(owner: string, repo: string, branch: string, token: string): Promise<WorkflowStatus | null> {
-  const data = await fetchJSON<GitHubRunsResponse>(
-    `${API}/repos/${owner}/${repo}/actions/runs?branch=${encodeURIComponent(branch)}&per_page=1`,
-    token,
-  );
+  const data = await fetchJSON<GitHubRunsResponse>(`${API}/repos/${owner}/${repo}/actions/runs?branch=${encodeURIComponent(branch)}&per_page=1`, token);
   const runs = data.workflow_runs;
   if (!runs || runs.length === 0) return null;
   const run = runs[0];
@@ -117,10 +111,7 @@ export async function verifyToken(token: string): Promise<{ valid: boolean; logi
 }
 
 export async function fetchCommits(owner: string, repo: string, branch: string, perPage: number, token: string): Promise<CommitDetail[]> {
-  const data = await fetchJSON<GitHubCommitItem[]>(
-    `${API}/repos/${owner}/${repo}/commits?sha=${encodeURIComponent(branch)}&per_page=${perPage}`,
-    token,
-  );
+  const data = await fetchJSON<GitHubCommitItem[]>(`${API}/repos/${owner}/${repo}/commits?sha=${encodeURIComponent(branch)}&per_page=${perPage}`, token);
   return data.map((c) => {
     const base = parseCommit(c);
     return {

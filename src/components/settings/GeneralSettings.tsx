@@ -62,15 +62,10 @@ export function TokenSection() {
           </div>
         </div>
         {verifyResult && (
-          <div
-            className={`mt-2 flex items-center gap-1.5 text-sm ${
-              verifyResult.valid ? 'text-green-600 dark:text-green-400' : 'text-destructive'
-            }`}
-          >
+          <div className={`mt-2 flex items-center gap-1.5 text-sm ${verifyResult.valid ? 'text-green-600 dark:text-green-400' : 'text-destructive'}`}>
             {verifyResult.valid ? (
               <>
-                <CheckCircle2 className="h-4 w-4" /> {text.settings.validAs}{' '}
-                <span className="font-mono font-medium">{verifyResult.login}</span>
+                <CheckCircle2 className="h-4 w-4" /> {text.settings.validAs} <span className="font-mono font-medium">{verifyResult.login}</span>
               </>
             ) : (
               <>
@@ -126,12 +121,7 @@ export function BackgroundSettings() {
       </CardHeader>
       <CardContent className="flex gap-2">
         {BG_OPTIONS.map((opt) => (
-          <Button
-            key={opt.value}
-            variant={animatedBg === opt.value ? 'default' : 'secondary'}
-            size="default"
-            onClick={() => setAnimatedBg(opt.value)}
-          >
+          <Button key={opt.value} variant={animatedBg === opt.value ? 'default' : 'secondary'} size="default" onClick={() => setAnimatedBg(opt.value)}>
             {opt.label}
           </Button>
         ))}
