@@ -9,9 +9,9 @@ import {
   X,
   GitBranch,
 } from 'lucide-react';
-import { useApp } from '@/app-context';
+import { useApp } from '@/contexts/app-context';
 import { useGlassActive, sidebarClass } from '@/lib/glass';
-import { text } from '@/text';
+import { text } from '@/constants/text';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 

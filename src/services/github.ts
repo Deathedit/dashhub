@@ -4,7 +4,7 @@ import type {
   WorkflowStatus,
   WorkflowStatusValue,
 } from '@/types';
-import { text } from '@/text';
+import { text } from '@/constants/text';
 
 const API = 'https://api.github.com';
 

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { useApp } from '@/app-context';
+import { useApp } from '@/contexts/app-context';
 import { parseGitHubUrl } from '@/types';
 import { useGlassActive, cardClass, subtleClass } from '@/lib/glass';
 import { fetchDefaultBranch } from '@/services/github';
-import { text } from '@/text';
+import { text } from '@/constants/text';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

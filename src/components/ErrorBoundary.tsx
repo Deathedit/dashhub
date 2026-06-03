@@ -1,5 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
-import { text } from '@/text';
+import { text } from '@/constants/text';
 import { Button } from '@/components/ui/button';
 
 interface Props {

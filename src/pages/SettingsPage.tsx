@@ -1,5 +1,5 @@
 import { useGlassActive } from '@/lib/glass';
-import { text } from '@/text';
+import { text } from '@/constants/text';
 import { GeneralSettings, BackgroundSettings, TokenSection } from '@/components/settings/GeneralSettings';
 import { BranchManager } from '@/components/settings/BranchManager';
 

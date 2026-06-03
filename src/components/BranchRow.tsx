@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import type { BranchData } from '@/types';
 import { getWorkflowDisplayStatus } from '@/services/github';
 import { useGlassActive, cardClass } from '@/lib/glass';
-import { relativeTime, text } from '@/text';
+import { relativeTime, text } from '@/constants/text';
 import { STATUS_META } from '@/lib/status';
 import { makeStatusIcons } from '@/lib/status-icons';
 import { Badge } from '@/components/ui/badge';

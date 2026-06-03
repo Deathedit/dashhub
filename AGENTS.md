@@ -20,11 +20,11 @@ Always `npm run build` before committing; must pass type-check + build. Tests us
 ## Architecture
 
 - **Routing**: `BrowserRouter` (react-router-dom). `/` (Dashboard), `/settings`, `/:owner/:repo/:branch`
-- **State**: `AppCtx` in `App.tsx`, consumed via `useApp()`. No external state lib.
+- **State**: `AppCtx` in `src/contexts/app-context.ts`, consumed via `useApp()`. No external state lib.
 - **Persistence**: `useLocalStorage` with `dashhub-` prefix. Keys: branches, auto-refresh, dark mode, sidebar collapsed, animated bg, token.
 - **Token gate**: `TokenRequired` shown unless `token` is set. Settings always accessible.
 - **API**: `fetchJSON(url, token)` in `src/services/github.ts`. Token always required.
-- **Text**: `src/text.ts` — all UI strings in `text` object, plus `relativeTime()` utility.
+- **Text**: `src/constants/text.ts` — all UI strings in `text` object, plus `relativeTime()` utility.
 - **Cache**: In-memory `Map` with 60min TTL (`src/services/cache.ts`). Clears on branch/token/refresh changes.
 - **Dashboard sort**: Priority-based: loading (0) → loaded with commit (1) → error/no-commit (2), tiebreak by commit date descending.
 - **Layout**: Dashboard & branch page `max-w-3xl`, settings `max-w-2xl`. Mobile: `pt-14` offset, sidebar overlay below `md:`.

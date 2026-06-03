@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { useApp } from '@/app-context';
-import { text } from '@/text';
+import { useApp } from '@/contexts/app-context';
+import { text } from '@/constants/text';
 import type { BranchData } from '@/types';
 import BranchRow from '@/components/BranchRow';
 import BranchRowSkeleton from '@/components/BranchRowSkeleton';

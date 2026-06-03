@@ -1,4 +1,4 @@
-import { text } from '@/text';
+import { text } from '@/constants/text';
 
 export type DisplayStatus = 'success' | 'failure' | 'in_progress' | 'unknown';
 

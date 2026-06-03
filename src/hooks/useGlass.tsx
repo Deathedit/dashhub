@@ -1,4 +1,4 @@
-import { useApp } from '@/app-context';
+import { useApp } from '@/contexts/app-context';
 import { GlassCtx } from '@/lib/glass';
 
 export function GlassProvider({ children }: { children: React.ReactNode }) {
