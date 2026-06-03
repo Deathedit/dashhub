@@ -7,15 +7,11 @@ export function useGlassActive() {
 }
 
 export function cardClass(isGlass: boolean) {
-  return isGlass
-    ? 'bg-card/75 backdrop-blur-md border-card/50 glass-card'
-    : 'bg-card border-card';
+  return isGlass ? 'bg-card/75 backdrop-blur-md border-card/50 glass-card' : 'bg-card border-card';
 }
 
 export function sidebarClass(isGlass: boolean) {
-  return isGlass
-    ? 'bg-sidebar/80 backdrop-blur-xl glass-sidebar'
-    : 'bg-sidebar border-sidebar';
+  return isGlass ? 'bg-sidebar/80 backdrop-blur-xl glass-sidebar' : 'bg-sidebar border-sidebar';
 }
 
 export function subtleClass(isGlass: boolean) {

@@ -28,7 +28,12 @@ function BranchRowInner({ branch }: { branch: BranchData }) {
       role="link"
       tabIndex={0}
       onClick={() => navigate(detailPath)}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(detailPath); } }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          navigate(detailPath);
+        }
+      }}
       className={`flex cursor-pointer items-start gap-3 rounded-lg border border-l-4 p-4 transition-shadow hover:shadow-md ${cfg.border} ${cardClass(isGlass)}`}
     >
       <div className="min-w-0 flex-1">
@@ -40,12 +45,7 @@ function BranchRowInner({ branch }: { branch: BranchData }) {
             <GitBranch className="h-3 w-3" />
             {key.branch}
           </Badge>
-          <span
-            className={cn(
-              'inline-flex items-center gap-1 text-xs font-medium',
-              cfg.className,
-            )}
-          >
+          <span className={cn('inline-flex items-center gap-1 text-xs font-medium', cfg.className)}>
             {statusIcons[displayStatus]}
             {cfg.label}
           </span>
@@ -58,11 +58,7 @@ function BranchRowInner({ branch }: { branch: BranchData }) {
             ) : error.includes('403') ? (
               <>
                 {text.errors.rateLimit}{' '}
-                <a
-                  href="/settings"
-                  onClick={(e) => e.stopPropagation()}
-                  className="underline hover:text-destructive/80"
-                >
+                <a href="/settings" onClick={(e) => e.stopPropagation()} className="underline hover:text-destructive/80">
                   {text.errors.addToken}
                 </a>{' '}
                 {text.errors.rateLimitSuffix}
@@ -76,20 +72,12 @@ function BranchRowInner({ branch }: { branch: BranchData }) {
         {commit && (
           <div className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
             <Avatar className="h-4 w-4">
-              {commit.avatarUrl && (
-                <AvatarImage src={commit.avatarUrl} alt="" />
-              )}
-              <AvatarFallback className="text-[8px]">
-                {commit.author.charAt(0).toUpperCase()}
-              </AvatarFallback>
+              {commit.avatarUrl && <AvatarImage src={commit.avatarUrl} alt="" />}
+              <AvatarFallback className="text-[8px]">{commit.author.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
-            <span className="truncate text-foreground">
-              {commit.message.split('\n')[0]}
-            </span>
+            <span className="truncate text-foreground">{commit.message.split('\n')[0]}</span>
             <span className="shrink-0 font-medium">{commit.author}</span>
-            {commit.date && (
-              <span className="shrink-0">{relativeTime(commit.date)}</span>
-            )}
+            {commit.date && <span className="shrink-0">{relativeTime(commit.date)}</span>}
           </div>
         )}
       </div>

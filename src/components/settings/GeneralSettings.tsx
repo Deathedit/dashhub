@@ -7,13 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { BG_OPTIONS } from '@/components/Background';
-import {
-  Moon,
-  Sun,
-  CheckCircle2,
-  XCircle,
-  Loader2,
-} from 'lucide-react';
+import { Moon, Sun, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 
 export function TokenSection() {
   const { token, setToken } = useApp();
@@ -42,9 +36,7 @@ export function TokenSection() {
   return (
     <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
       <CardHeader>
-        <CardTitle className="text-sm font-semibold tracking-wider uppercase">
-          {text.settings.tokenTitle}
-        </CardTitle>
+        <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.tokenTitle}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-2 sm:flex-row">
@@ -60,24 +52,11 @@ export function TokenSection() {
             />
           </div>
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="default"
-              onClick={handleVerifyToken}
-              disabled={!tokenInput.trim() || verifying}
-            >
-              {verifying ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <CheckCircle2 className="h-4 w-4" />
-              )}
+            <Button variant="outline" size="default" onClick={handleVerifyToken} disabled={!tokenInput.trim() || verifying}>
+              {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
               {text.settings.verify}
             </Button>
-            <Button
-              variant="default"
-              size="default"
-              onClick={handleSaveToken}
-            >
+            <Button variant="default" size="default" onClick={handleSaveToken}>
               {text.settings.save}
             </Button>
           </div>
@@ -85,17 +64,13 @@ export function TokenSection() {
         {verifyResult && (
           <div
             className={`mt-2 flex items-center gap-1.5 text-sm ${
-              verifyResult.valid
-                ? 'text-green-600 dark:text-green-400'
-                : 'text-destructive'
+              verifyResult.valid ? 'text-green-600 dark:text-green-400' : 'text-destructive'
             }`}
           >
             {verifyResult.valid ? (
               <>
                 <CheckCircle2 className="h-4 w-4" /> {text.settings.validAs}{' '}
-                <span className="font-mono font-medium">
-                  {verifyResult.login}
-                </span>
+                <span className="font-mono font-medium">{verifyResult.login}</span>
               </>
             ) : (
               <>
@@ -106,12 +81,7 @@ export function TokenSection() {
         )}
         <p className="mt-2 text-xs text-muted-foreground">
           {text.settings.tokenHelp}{' '}
-          <a
-            href={text.settings.createTokenUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary hover:underline"
-          >
+          <a href={text.settings.createTokenUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
             {text.settings.createToken}
           </a>
           .
@@ -122,33 +92,20 @@ export function TokenSection() {
 }
 
 export function GeneralSettings() {
-  const { autoRefresh, onToggleAutoRefresh, darkMode, onToggleDarkMode } =
-    useApp();
+  const { autoRefresh, onToggleAutoRefresh, darkMode, onToggleDarkMode } = useApp();
   const isGlass = useGlassActive();
 
   return (
     <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
       <CardHeader>
-        <CardTitle className="text-sm font-semibold tracking-wider uppercase">
-          {text.settings.general}
-        </CardTitle>
+        <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.general}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-3 sm:flex-row">
-        <Button
-          variant={autoRefresh ? 'default' : 'secondary'}
-          size="default"
-          onClick={onToggleAutoRefresh}
-        >
-          {autoRefresh
-            ? text.settings.autoRefreshOn
-            : text.settings.autoRefreshOff}
+        <Button variant={autoRefresh ? 'default' : 'secondary'} size="default" onClick={onToggleAutoRefresh}>
+          {autoRefresh ? text.settings.autoRefreshOn : text.settings.autoRefreshOff}
         </Button>
         <Button variant="secondary" size="default" onClick={onToggleDarkMode}>
-          {darkMode ? (
-            <Sun className="h-4 w-4" />
-          ) : (
-            <Moon className="h-4 w-4" />
-          )}
+          {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           {darkMode ? text.settings.lightMode : text.settings.darkMode}
         </Button>
       </CardContent>
@@ -165,9 +122,7 @@ export function BackgroundSettings() {
   return (
     <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
       <CardHeader>
-        <CardTitle className="text-sm font-semibold tracking-wider uppercase">
-          {text.settings.background}
-        </CardTitle>
+        <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.background}</CardTitle>
       </CardHeader>
       <CardContent className="flex gap-2">
         {BG_OPTIONS.map((opt) => (

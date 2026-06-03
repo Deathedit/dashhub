@@ -1,9 +1,4 @@
-import type {
-  CommitInfo,
-  CommitDetail,
-  WorkflowStatus,
-  WorkflowStatusValue,
-} from '@/types';
+import type { CommitInfo, CommitDetail, WorkflowStatus, WorkflowStatusValue } from '@/types';
 import { text } from '@/constants/text';
 
 const API = 'https://api.github.com';
@@ -68,12 +63,7 @@ function parseCommit(c: GitHubCommitItem): CommitInfo {
   };
 }
 
-export async function fetchLatestCommit(
-  owner: string,
-  repo: string,
-  branch: string,
-  token: string,
-): Promise<CommitInfo> {
+export async function fetchLatestCommit(owner: string, repo: string, branch: string, token: string): Promise<CommitInfo> {
   const data = await fetchJSON<GitHubCommitItem[]>(
     `${API}/repos/${owner}/${repo}/commits?sha=${encodeURIComponent(branch)}&per_page=1`,
     token,
@@ -82,12 +72,7 @@ export async function fetchLatestCommit(
   return parseCommit(data[0]);
 }
 
-export async function fetchLatestWorkflowRun(
-  owner: string,
-  repo: string,
-  branch: string,
-  token: string,
-): Promise<WorkflowStatus | null> {
+export async function fetchLatestWorkflowRun(owner: string, repo: string, branch: string, token: string): Promise<WorkflowStatus | null> {
   const data = await fetchJSON<GitHubRunsResponse>(
     `${API}/repos/${owner}/${repo}/actions/runs?branch=${encodeURIComponent(branch)}&per_page=1`,
     token,
@@ -103,55 +88,35 @@ export async function fetchLatestWorkflowRun(
   };
 }
 
-export function getWorkflowDisplayStatus(
-  workflow: WorkflowStatus | null,
-): 'success' | 'failure' | 'in_progress' | 'unknown' {
+export function getWorkflowDisplayStatus(workflow: WorkflowStatus | null): 'success' | 'failure' | 'in_progress' | 'unknown' {
   if (!workflow) return 'unknown';
   if (workflow.status === 'completed') {
     if (workflow.conclusion === 'success') return 'success';
-    if (
-      workflow.conclusion === 'cancelled' ||
-      workflow.conclusion === 'skipped' ||
-      workflow.conclusion === 'neutral'
-    )
-      return 'unknown';
+    if (workflow.conclusion === 'cancelled' || workflow.conclusion === 'skipped' || workflow.conclusion === 'neutral') return 'unknown';
     return 'failure';
   }
-  if (workflow.status === 'in_progress' || workflow.status === 'queued')
-    return 'in_progress';
+  if (workflow.status === 'in_progress' || workflow.status === 'queued') return 'in_progress';
   return 'unknown';
 }
 
-export async function fetchDefaultBranch(
-  owner: string,
-  repo: string,
-  token: string,
-): Promise<string> {
-  const data = await fetchJSON<GitHubRepo>(
-    `${API}/repos/${owner}/${repo}`,
-    token,
-  );
+export async function fetchDefaultBranch(owner: string, repo: string, token: string): Promise<string> {
+  const data = await fetchJSON<GitHubRepo>(`${API}/repos/${owner}/${repo}`, token);
   return data.default_branch ?? 'main';
 }
 
-export async function verifyToken(
-  token: string,
-): Promise<{ valid: boolean; login?: string; error?: string }> {
+export async function verifyToken(token: string): Promise<{ valid: boolean; login?: string; error?: string }> {
   try {
     const data = await fetchJSON<GitHubUser>(`${API}/user`, token);
     return { valid: true, login: data.login };
   } catch (err) {
-    return { valid: false, error: err instanceof Error ? err.message : String(err) };
+    return {
+      valid: false,
+      error: err instanceof Error ? err.message : String(err),
+    };
   }
 }
 
-export async function fetchCommits(
-  owner: string,
-  repo: string,
-  branch: string,
-  perPage: number,
-  token: string,
-): Promise<CommitDetail[]> {
+export async function fetchCommits(owner: string, repo: string, branch: string, perPage: number, token: string): Promise<CommitDetail[]> {
   const data = await fetchJSON<GitHubCommitItem[]>(
     `${API}/repos/${owner}/${repo}/commits?sha=${encodeURIComponent(branch)}&per_page=${perPage}`,
     token,

@@ -6,10 +6,7 @@ export function CommitListSkeleton() {
   return (
     <div className="space-y-3">
       {Array.from({ length: 8 }).map((_, i) => (
-        <div
-          key={i}
-          className={`flex items-start gap-3 rounded-lg border p-4 ${cardClass(isGlass)}`}
-        >
+        <div key={i} className={`flex items-start gap-3 rounded-lg border p-4 ${cardClass(isGlass)}`}>
           <Skeleton className="mt-0.5 h-8 w-8 shrink-0 rounded-full" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-3/4" />

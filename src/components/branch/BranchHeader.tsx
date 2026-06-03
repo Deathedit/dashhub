@@ -30,10 +30,7 @@ export function BranchHeader({ owner, repo, branch, workflow, workflowError }: B
           {branch}
         </Badge>
         {workflow !== undefined && !workflowError && (
-          <Badge
-            variant={cfg.variant}
-            className={cn('gap-1.5', cfg.className)}
-          >
+          <Badge variant={cfg.variant} className={cn('gap-1.5', cfg.className)}>
             {statusIcons[displayStatus]}
             {cfg.label}
             {workflow?.url && (

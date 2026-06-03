@@ -13,11 +13,7 @@ import { CommitListSkeleton } from '@/components/branch/CommitListSkeleton';
 const COMMITS_PER_PAGE = 13;
 
 export default function BranchPage() {
-  const {
-    owner,
-    repo,
-    '*': branch,
-  } = useParams<{ owner: string; repo: string; '*': string }>();
+  const { owner, repo, '*': branch } = useParams<{ owner: string; repo: string; '*': string }>();
   const { data, token } = useApp();
 
   const cacheKey = owner && repo && branch ? `${owner}/${repo}/${branch}` : '';
@@ -34,12 +30,7 @@ export default function BranchPage() {
   const [localWorkflow, setLocalWorkflow] = useState<WorkflowStatus | null | undefined>(undefined);
   const [workflowError, setWorkflowError] = useState(false);
 
-  const branchData = cacheKey
-    ? data.find(
-        (d) =>
-          d.key.owner === owner && d.key.repo === repo && d.key.branch === branch,
-      )
-    : undefined;
+  const branchData = cacheKey ? data.find((d) => d.key.owner === owner && d.key.repo === repo && d.key.branch === branch) : undefined;
 
   useEffect(() => {
     if (!cacheKey || cached) return;
@@ -51,13 +42,12 @@ export default function BranchPage() {
         setFetchState({ key: cacheKey, commits: result, error: null });
       })
       .catch((err: Error) => {
-        if (!ignore)
-          setFetchState({ key: cacheKey, commits: null, error: err.message });
+        if (!ignore) setFetchState({ key: cacheKey, commits: null, error: err.message });
       });
     return () => {
       ignore = true;
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cacheKey, cached, token]);
 
   const shouldFetchWorkflow = branchData?.workflow === undefined && !!cacheKey && !!owner && !!repo && !!branch && !!token;
@@ -66,19 +56,23 @@ export default function BranchPage() {
   useEffect(() => {
     if (!shouldFetchWorkflow || cachedWorkflowForPage !== undefined) return;
     let ignore = false;
-    fetchLatestWorkflowRun(owner!, repo!, branch!, token).then((wf) => {
-      if (ignore) return;
-      setCachedWorkflow(cacheKey, wf);
-      setLocalWorkflow(wf);
-      setWorkflowError(false);
-    }).catch(() => {
-      if (!ignore) {
-        setLocalWorkflow(null);
-        setWorkflowError(true);
-      }
-    });
-    return () => { ignore = true; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchLatestWorkflowRun(owner!, repo!, branch!, token)
+      .then((wf) => {
+        if (ignore) return;
+        setCachedWorkflow(cacheKey, wf);
+        setLocalWorkflow(wf);
+        setWorkflowError(false);
+      })
+      .catch(() => {
+        if (!ignore) {
+          setLocalWorkflow(null);
+          setWorkflowError(true);
+        }
+      });
+    return () => {
+      ignore = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cacheKey, shouldFetchWorkflow, cachedWorkflowForPage, token]);
 
   if (!owner || !repo || !branch) {
@@ -94,37 +88,20 @@ export default function BranchPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
-      <Link
-        to="/"
-        className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-      >
+      <Link to="/" className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground">
         <ArrowLeft className="h-4 w-4" />
         {text.branch.backToDashboard}
       </Link>
 
-      <BranchHeader
-        owner={owner}
-        repo={repo}
-        branch={branch}
-        workflow={resolvedWorkflow}
-        workflowError={workflowError}
-      />
+      <BranchHeader owner={owner} repo={repo} branch={branch} workflow={resolvedWorkflow} workflowError={workflowError} />
 
-      <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-        {text.branch.recentCommits}
-      </h2>
+      <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">{text.branch.recentCommits}</h2>
 
       {loading && <CommitListSkeleton />}
 
-      {error && (
-        <p className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          {error}
-        </p>
-      )}
+      {error && <p className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive">{error}</p>}
 
-      {!loading && !error && commits.length === 0 && (
-        <p className="text-sm text-muted-foreground">{text.branch.noCommits}</p>
-      )}
+      {!loading && !error && commits.length === 0 && <p className="text-sm text-muted-foreground">{text.branch.noCommits}</p>}
 
       {!loading && !error && commits.length > 0 && (
         <div className="space-y-3">

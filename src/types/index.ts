@@ -18,13 +18,7 @@ export interface CommitDetail extends CommitInfo {
 }
 
 export type AnimatedBg = 'none' | 'matrix';
-export type WorkflowStatusValue =
-  | 'queued'
-  | 'in_progress'
-  | 'completed'
-  | 'waiting'
-  | 'pending'
-  | 'requested';
+export type WorkflowStatusValue = 'queued' | 'in_progress' | 'completed' | 'waiting' | 'pending' | 'requested';
 
 export interface WorkflowStatus {
   status: WorkflowStatusValue;
@@ -41,9 +35,7 @@ export interface BranchData {
   error: string | null;
 }
 
-export function parseGitHubUrl(
-  input: string,
-): { owner: string; repo: string; branch: string | undefined } | null {
+export function parseGitHubUrl(input: string): { owner: string; repo: string; branch: string | undefined } | null {
   const trimmed = input.trim();
   const stripped = trimmed
     .replace(/^https?:\/\//, '')

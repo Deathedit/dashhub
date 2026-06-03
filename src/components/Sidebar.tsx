@@ -1,14 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import {
-  LayoutDashboard,
-  Settings,
-  ChevronsLeft,
-  ChevronsRight,
-  Menu,
-  X,
-  GitBranch,
-} from 'lucide-react';
+import { LayoutDashboard, Settings, ChevronsLeft, ChevronsRight, Menu, X, GitBranch } from 'lucide-react';
 import { useApp } from '@/contexts/app-context';
 import { useGlassActive, sidebarClass } from '@/lib/glass';
 import { text } from '@/constants/text';
@@ -31,27 +23,15 @@ export function Sidebar() {
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-      isActive
-        ? 'bg-primary/10 text-primary'
-        : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+      isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-accent hover:text-foreground'
     } ${collapsed && !mobileOpen ? 'justify-center' : ''}`;
 
   const sidebarContent = (
     <div className="flex h-full flex-col">
-      <div
-        className={`flex h-14 items-center gap-2.5 border-b border-border px-4 ${collapsed && !mobileOpen ? 'justify-center' : ''}`}
-      >
+      <div className={`flex h-14 items-center gap-2.5 border-b border-border px-4 ${collapsed && !mobileOpen ? 'justify-center' : ''}`}>
         <GitBranch className="h-6 w-6 shrink-0 text-primary" />
-        {(!collapsed || mobileOpen) && (
-          <h1 className="text-lg font-bold">{text.app.name}</h1>
-        )}
-        <Button
-          variant="ghost"
-          size="icon-xs"
-          onClick={() => setMobileOpen(false)}
-          className="ml-auto md:hidden"
-          aria-label="Close menu"
-        >
+        {(!collapsed || mobileOpen) && <h1 className="text-lg font-bold">{text.app.name}</h1>}
+        <Button variant="ghost" size="icon-xs" onClick={() => setMobileOpen(false)} className="ml-auto md:hidden" aria-label="Close menu">
           <X className="h-5 w-5" />
         </Button>
       </div>
@@ -85,16 +65,10 @@ export function Sidebar() {
             variant="ghost"
             size="icon"
             onClick={onToggleCollapse}
-            title={
-              collapsed ? text.nav.expandSidebar : text.nav.collapseSidebar
-            }
+            title={collapsed ? text.nav.expandSidebar : text.nav.collapseSidebar}
             className="w-full"
           >
-            {collapsed ? (
-              <ChevronsRight className="h-5 w-5" />
-            ) : (
-              <ChevronsLeft className="h-5 w-5" />
-            )}
+            {collapsed ? <ChevronsRight className="h-5 w-5" /> : <ChevronsLeft className="h-5 w-5" />}
           </Button>
         </div>
       </div>
@@ -104,12 +78,7 @@ export function Sidebar() {
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center gap-3 border-b border-bg px-4 md:hidden">
-        <Button
-          variant="ghost"
-          size="icon-xs"
-          onClick={() => setMobileOpen(true)}
-          aria-label="Open menu"
-        >
+        <Button variant="ghost" size="icon-xs" onClick={() => setMobileOpen(true)} aria-label="Open menu">
           <Menu className="h-5 w-5" />
         </Button>
         <span className="text-sm font-semibold">{text.app.name}</span>
@@ -119,7 +88,9 @@ export function Sidebar() {
         <div
           className="fixed inset-0 z-40 bg-black/50 md:hidden"
           onClick={() => setMobileOpen(false)}
-          onKeyDown={(e) => { if (e.key === 'Escape') setMobileOpen(false); }}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') setMobileOpen(false);
+          }}
           aria-hidden="true"
         />
       )}

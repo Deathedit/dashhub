@@ -7,35 +7,91 @@ describe('getWorkflowDisplayStatus', () => {
   });
 
   it('returns success for completed with success conclusion', () => {
-    expect(getWorkflowDisplayStatus({ status: 'completed', conclusion: 'success', name: 'CI', url: '' })).toBe('success');
+    expect(
+      getWorkflowDisplayStatus({
+        status: 'completed',
+        conclusion: 'success',
+        name: 'CI',
+        url: '',
+      }),
+    ).toBe('success');
   });
 
   it('returns failure for completed with failure conclusion', () => {
-    expect(getWorkflowDisplayStatus({ status: 'completed', conclusion: 'failure', name: 'CI', url: '' })).toBe('failure');
+    expect(
+      getWorkflowDisplayStatus({
+        status: 'completed',
+        conclusion: 'failure',
+        name: 'CI',
+        url: '',
+      }),
+    ).toBe('failure');
   });
 
   it('returns unknown for completed with cancelled conclusion', () => {
-    expect(getWorkflowDisplayStatus({ status: 'completed', conclusion: 'cancelled', name: 'CI', url: '' })).toBe('unknown');
+    expect(
+      getWorkflowDisplayStatus({
+        status: 'completed',
+        conclusion: 'cancelled',
+        name: 'CI',
+        url: '',
+      }),
+    ).toBe('unknown');
   });
 
   it('returns unknown for completed with skipped conclusion', () => {
-    expect(getWorkflowDisplayStatus({ status: 'completed', conclusion: 'skipped', name: 'CI', url: '' })).toBe('unknown');
+    expect(
+      getWorkflowDisplayStatus({
+        status: 'completed',
+        conclusion: 'skipped',
+        name: 'CI',
+        url: '',
+      }),
+    ).toBe('unknown');
   });
 
   it('returns unknown for completed with neutral conclusion', () => {
-    expect(getWorkflowDisplayStatus({ status: 'completed', conclusion: 'neutral', name: 'CI', url: '' })).toBe('unknown');
+    expect(
+      getWorkflowDisplayStatus({
+        status: 'completed',
+        conclusion: 'neutral',
+        name: 'CI',
+        url: '',
+      }),
+    ).toBe('unknown');
   });
 
   it('returns in_progress for running workflow', () => {
-    expect(getWorkflowDisplayStatus({ status: 'in_progress', conclusion: null, name: 'CI', url: '' })).toBe('in_progress');
+    expect(
+      getWorkflowDisplayStatus({
+        status: 'in_progress',
+        conclusion: null,
+        name: 'CI',
+        url: '',
+      }),
+    ).toBe('in_progress');
   });
 
   it('returns in_progress for queued workflow', () => {
-    expect(getWorkflowDisplayStatus({ status: 'queued', conclusion: null, name: 'CI', url: '' })).toBe('in_progress');
+    expect(
+      getWorkflowDisplayStatus({
+        status: 'queued',
+        conclusion: null,
+        name: 'CI',
+        url: '',
+      }),
+    ).toBe('in_progress');
   });
 
   it('returns unknown for unexpected status', () => {
-    expect(getWorkflowDisplayStatus({ status: 'waiting', conclusion: null, name: 'CI', url: '' })).toBe('unknown');
+    expect(
+      getWorkflowDisplayStatus({
+        status: 'waiting',
+        conclusion: null,
+        name: 'CI',
+        url: '',
+      }),
+    ).toBe('unknown');
   });
 });
 
@@ -68,7 +124,17 @@ describe('fetchJSON retry behavior', () => {
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve([{ sha: 'abc', commit: { message: 'test', author: { name: 'dev', date: '2024-01-01' } }, author: { login: 'dev' } }]),
+        json: () =>
+          Promise.resolve([
+            {
+              sha: 'abc',
+              commit: {
+                message: 'test',
+                author: { name: 'dev', date: '2024-01-01' },
+              },
+              author: { login: 'dev' },
+            },
+          ]),
       });
     vi.stubGlobal('fetch', mockFetch);
 

@@ -13,8 +13,7 @@ export const STATUS_META: Record<DisplayStatus, StatusMeta> = {
   success: {
     label: text.status.passing,
     variant: 'ghost',
-    className:
-      'text-green-600 dark:text-green-400 hover:bg-transparent hover:text-green-600 dark:hover:text-green-400',
+    className: 'text-green-600 dark:text-green-400 hover:bg-transparent hover:text-green-600 dark:hover:text-green-400',
     border: 'border-l-green-500 dark:border-l-green-400',
   },
   failure: {

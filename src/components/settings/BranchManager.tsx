@@ -61,10 +61,7 @@ export function BranchManager() {
       setError(text.errors.alreadyTracked);
       return;
     }
-    setBranches((prev) => [
-      ...prev,
-      { id, owner, repo, branch: resolvedBranch },
-    ]);
+    setBranches((prev) => [...prev, { id, owner, repo, branch: resolvedBranch }]);
     setInput('');
   };
 
@@ -76,9 +73,7 @@ export function BranchManager() {
     <>
       <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
         <CardHeader>
-          <CardTitle className="text-sm font-semibold tracking-wider uppercase">
-            {text.settings.addBranch}
-          </CardTitle>
+          <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.addBranch}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-2 sm:flex-row">
@@ -95,23 +90,13 @@ export function BranchManager() {
                 disabled={adding}
               />
             </div>
-            <Button
-              variant="default"
-              size="default"
-              onClick={handleAdd}
-              disabled={!input.trim() || adding}
-            >
-              {adding ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Plus className="h-4 w-4" />
-              )}
+            <Button variant="default" size="default" onClick={handleAdd} disabled={!input.trim() || adding}>
+              {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
               {adding ? text.settings.resolving : text.settings.add}
             </Button>
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            {text.settings.branchHelpPrefix}{' '}
-            <span className="font-mono">{text.settings.branchHelpFormat}</span>{' '}
+            {text.settings.branchHelpPrefix} <span className="font-mono">{text.settings.branchHelpFormat}</span>{' '}
             {text.settings.branchHelpSuffix}
           </p>
           {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
@@ -120,22 +105,13 @@ export function BranchManager() {
 
       <Card className={cardClass(isGlass)}>
         <CardHeader>
-          <CardTitle className="text-sm font-semibold tracking-wider uppercase">
-            {text.settings.trackedBranches(branches.length)}
-          </CardTitle>
+          <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.trackedBranches(branches.length)}</CardTitle>
         </CardHeader>
         <CardContent>
-          {branches.length === 0 && (
-            <p className="text-sm text-muted-foreground">
-              {text.settings.noBranches}
-            </p>
-          )}
+          {branches.length === 0 && <p className="text-sm text-muted-foreground">{text.settings.noBranches}</p>}
           <ul className="space-y-2 max-h-80 overflow-y-auto scrollbar-hidden">
             {branches.map((b) => (
-              <li
-                key={b.id}
-                className={`flex items-center justify-between rounded-md border p-3 ${subtleClass(isGlass)}`}
-              >
+              <li key={b.id} className={`flex items-center justify-between rounded-md border p-3 ${subtleClass(isGlass)}`}>
                 <span className="min-w-0 truncate text-sm">
                   <span className="font-medium">
                     {b.owner}/{b.repo}
@@ -156,12 +132,7 @@ export function BranchManager() {
                     >
                       <Check className="h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="icon-xs"
-                      onClick={() => setPendingDelete(null)}
-                      aria-label="Cancel delete"
-                    >
+                    <Button variant="outline" size="icon-xs" onClick={() => setPendingDelete(null)} aria-label="Cancel delete">
                       <X className="h-4 w-4" />
                     </Button>
                   </div>

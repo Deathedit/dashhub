@@ -7,8 +7,7 @@ const BG_OPTIONS: { value: AnimatedBg; label: string }[] = [
   { value: 'matrix', label: text.settings.bgMatrix },
 ];
 
-const MATRIX_CHARS =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ';
+const MATRIX_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ';
 const FRAME_MS = 65;
 
 interface Drop {
@@ -76,21 +75,13 @@ function MatrixRain() {
 
           ctx.fillStyle = '#3b82f6';
           ctx.globalAlpha = 0.3;
-          ctx.fillText(
-            MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)],
-            xPx,
-            yPx,
-          );
+          ctx.fillText(MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)], xPx, yPx);
 
           const headY = (drop.y + 1) * fontSize;
           if (headY < canvas.height && headY > 0) {
             ctx.fillStyle = '#93c5fd';
             ctx.globalAlpha = 0.6;
-            ctx.fillText(
-              MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)],
-              xPx,
-              headY,
-            );
+            ctx.fillText(MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)], xPx, headY);
           }
 
           ctx.globalAlpha = 1;
@@ -129,9 +120,7 @@ function MatrixRain() {
     };
   }, []);
 
-  return (
-    <canvas ref={canvasRef} className="bg-animated-matrix" aria-hidden="true" />
-  );
+  return <canvas ref={canvasRef} className="bg-animated-matrix" aria-hidden="true" />;
 }
 
 export function Background({ variant }: { variant: AnimatedBg }) {

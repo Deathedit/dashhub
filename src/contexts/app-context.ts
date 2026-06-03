@@ -3,9 +3,7 @@ import type { TrackedBranch, AnimatedBg, BranchData } from '@/types';
 
 export type AppContext = {
   branches: TrackedBranch[];
-  setBranches: (
-    value: TrackedBranch[] | ((prev: TrackedBranch[]) => TrackedBranch[]),
-  ) => void;
+  setBranches: (value: TrackedBranch[] | ((prev: TrackedBranch[]) => TrackedBranch[])) => void;
   data: BranchData[];
   collapsed: boolean;
   onToggleCollapse: () => void;
@@ -14,9 +12,7 @@ export type AppContext = {
   darkMode: boolean;
   onToggleDarkMode: () => void;
   animatedBg: AnimatedBg;
-  setAnimatedBg: (
-    value: AnimatedBg | ((prev: AnimatedBg) => AnimatedBg),
-  ) => void;
+  setAnimatedBg: (value: AnimatedBg | ((prev: AnimatedBg) => AnimatedBg)) => void;
   token: string;
   setToken: (value: string | ((prev: string) => string)) => void;
 };

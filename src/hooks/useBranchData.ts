@@ -1,17 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import type { TrackedBranch, BranchData } from '@/types';
 import { fetchBranchData } from '@/services/fetchBranchData';
-import {
-  setCachedCommitInfo,
-  setCachedWorkflow,
-  clearAllCache,
-} from '@/services/cache';
+import { setCachedCommitInfo, setCachedWorkflow, clearAllCache } from '@/services/cache';
 
-export function useBranchData(
-  branches: TrackedBranch[],
-  autoRefreshInterval: number,
-  token: string,
-) {
+export function useBranchData(branches: TrackedBranch[], autoRefreshInterval: number, token: string) {
   const [data, setData] = useState<BranchData[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
@@ -46,29 +38,23 @@ export function useBranchData(
         })),
       );
     }
-    Promise.all(branches.map((b) => fetchBranchData(b, token, isRefresh))).then(
-      (results) => {
+    Promise.all(branches.map((b) => fetchBranchData(b, token, isRefresh)))
+      .then((results) => {
         if (ignore) return;
         results.forEach(({ commitToCache, workflowToCache }) => {
-          if (commitToCache)
-            setCachedCommitInfo(commitToCache.key, commitToCache.value);
-          if (workflowToCache)
-            setCachedWorkflow(workflowToCache.key, workflowToCache.value);
+          if (commitToCache) setCachedCommitInfo(commitToCache.key, commitToCache.value);
+          if (workflowToCache) setCachedWorkflow(workflowToCache.key, workflowToCache.value);
         });
         setData((prev) =>
           results.map((r) =>
-            isRefresh && r.data.error
-              ? (prev.find(
-                  (d) => d.key.id === r.data.key.id && !d.error && d.commit,
-                ) ?? r.data)
-              : r.data,
+            isRefresh && r.data.error ? (prev.find((d) => d.key.id === r.data.key.id && !d.error && d.commit) ?? r.data) : r.data,
           ),
         );
         if (isRefresh) setRefreshing(false);
-      },
-    ).catch(() => {
-      if (isRefresh) setRefreshing(false);
-    });
+      })
+      .catch(() => {
+        if (isRefresh) setRefreshing(false);
+      });
     return () => {
       ignore = true;
     };

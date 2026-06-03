@@ -20,7 +20,16 @@ describe('commit detail cache', () => {
   });
 
   it('stores and retrieves commit details', () => {
-    const data = [{ sha: 'abc123', message: 'fix: bug', author: 'alice', date: '2024-01-01', avatarUrl: '', url: '' }];
+    const data = [
+      {
+        sha: 'abc123',
+        message: 'fix: bug',
+        author: 'alice',
+        date: '2024-01-01',
+        avatarUrl: '',
+        url: '',
+      },
+    ];
     setCachedCommits('owner/repo/branch', data);
     expect(getCachedCommits('owner/repo/branch')).toEqual(data);
   });
@@ -74,11 +83,21 @@ describe('workflow cache', () => {
 describe('cache isolation', () => {
   it('different caches do not interfere with each other', () => {
     setCachedCommits('k', []);
-    setCachedCommitInfo('k', { message: 'test', author: 'bob', date: '', avatarUrl: '' });
+    setCachedCommitInfo('k', {
+      message: 'test',
+      author: 'bob',
+      date: '',
+      avatarUrl: '',
+    });
     setCachedWorkflow('k', null);
 
     expect(getCachedCommits('k')).toEqual([]);
-    expect(getCachedCommitInfo('k')).toEqual({ message: 'test', author: 'bob', date: '', avatarUrl: '' });
+    expect(getCachedCommitInfo('k')).toEqual({
+      message: 'test',
+      author: 'bob',
+      date: '',
+      avatarUrl: '',
+    });
     expect(getCachedWorkflow('k')).toBeNull();
   });
 });

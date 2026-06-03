@@ -3,8 +3,7 @@ export const text = {
     name: 'DashHub',
     tokenRequired: {
       title: 'GitHub Token Required',
-      description:
-        'A Personal Access Token is required to use DashHub. Add one in Settings to get started.',
+      description: 'A Personal Access Token is required to use DashHub. Add one in Settings to get started.',
       goToSettings: 'Go to Settings',
     },
   },
@@ -45,8 +44,7 @@ export const text = {
     verify: 'Verify',
     save: 'Save',
     validAs: 'Valid — authenticated as',
-    tokenHelp:
-      'Required. A Personal Access Token is needed to access the GitHub API. No scopes are needed for public repos.',
+    tokenHelp: 'Required. A Personal Access Token is needed to access the GitHub API. No scopes are needed for public repos.',
     createToken: 'Create one here',
     createTokenUrl: 'https://github.com/settings/tokens/new',
     addBranch: 'Add Branch',

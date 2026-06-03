@@ -9,8 +9,7 @@ export default function DashboardPage() {
   const { branches, data } = useApp();
 
   const sorted = useMemo(() => {
-    const sortPriority = (b: BranchData): number =>
-      b.loading ? 0 : b.error || !b.commit ? 2 : 1;
+    const sortPriority = (b: BranchData): number => (b.loading ? 0 : b.error || !b.commit ? 2 : 1);
 
     return [...data].sort((a, b) => {
       const pa = sortPriority(a);
@@ -26,12 +25,8 @@ export default function DashboardPage() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <p className="mb-2 text-lg font-medium text-muted-foreground">
-            {text.dashboard.noBranchesTitle}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {text.dashboard.noBranchesSubtitle}
-          </p>
+          <p className="mb-2 text-lg font-medium text-muted-foreground">{text.dashboard.noBranchesTitle}</p>
+          <p className="text-sm text-muted-foreground">{text.dashboard.noBranchesSubtitle}</p>
         </div>
       </div>
     );
@@ -41,11 +36,7 @@ export default function DashboardPage() {
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
       <div className="space-y-3">
         {sorted.map((branch) =>
-          branch.loading ? (
-            <BranchRowSkeleton key={branch.key.id} />
-          ) : (
-            <BranchRow key={branch.key.id} branch={branch} />
-          ),
+          branch.loading ? <BranchRowSkeleton key={branch.key.id} /> : <BranchRow key={branch.key.id} branch={branch} />,
         )}
       </div>
     </div>
