@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useCallback } from 'react';
-import { HashRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useBranchData } from '@/hooks/useBranchData';
 import type { TrackedBranch, AnimatedBg } from '@/types';
@@ -130,7 +130,7 @@ export default function App() {
   );
 
   return (
-    <HashRouter>
+    <BrowserRouter>
       <AppCtx.Provider value={value}>
         <GlassProvider>
           <div className="min-h-screen">
@@ -164,6 +164,6 @@ export default function App() {
           </div>
         </GlassProvider>
       </AppCtx.Provider>
-    </HashRouter>
+    </BrowserRouter>
   );
 }

@@ -19,7 +19,7 @@ Always `npm run build` before committing; must pass type-check + build. Tests us
 
 ## Architecture
 
-- **Routing**: `HashRouter` (react-router-dom). `/#/` (Dashboard), `/#/settings`, `/#/:owner/:repo/:branch`
+- **Routing**: `BrowserRouter` (react-router-dom). `/` (Dashboard), `/settings`, `/:owner/:repo/:branch`
 - **State**: `AppCtx` in `App.tsx`, consumed via `useApp()`. No external state lib.
 - **Persistence**: `useLocalStorage` with `dashhub-` prefix. Keys: branches, auto-refresh, dark mode, sidebar collapsed, animated bg, token.
 - **Token gate**: `TokenRequired` shown unless `token` is set. Settings always accessible.
