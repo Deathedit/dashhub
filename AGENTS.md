@@ -26,6 +26,7 @@ Always `npm run build` before committing; must pass type-check + build. Tests us
 - **API**: `fetchJSON(url, token)` in `src/services/github.ts`. Token always required.
 - **Text**: `src/constants/text.ts` — all UI strings in `text` object, plus `relativeTime()` utility.
 - **Cache**: In-memory `Map` with 60min TTL (`src/services/cache.ts`). Clears on branch/token/refresh changes.
+- **Data fetching**: `fetchBranchData()` in `src/services/fetchBranchData.ts` — pure async function (parallel commit + workflow, cache reads). `useBranchData` hook in `src/hooks/useBranchData.ts` orchestrates calls + stale-data retention.
 - **Dashboard sort**: Priority-based: loading (0) → loaded with commit (1) → error/no-commit (2), tiebreak by commit date descending.
 - **Layout**: Dashboard & branch page `max-w-3xl`, settings `max-w-2xl`. Mobile: `pt-14` offset, sidebar overlay below `md:`.
 
