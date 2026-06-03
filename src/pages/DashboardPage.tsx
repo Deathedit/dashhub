@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import { useApp } from '@/contexts/app-context';
 import { text } from '@/constants/text';
 import type { BranchData } from '@/types';
-import BranchRow from '@/components/BranchRow';
-import BranchRowSkeleton from '@/components/BranchRowSkeleton';
+import { BranchRow } from '@/components/BranchRow';
+import { BranchRowSkeleton } from '@/components/BranchRowSkeleton';
 
 export default function DashboardPage() {
   const { branches, data } = useApp();

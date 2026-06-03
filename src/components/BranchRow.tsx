@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import type { BranchData } from '@/types';
 import { getWorkflowDisplayStatus } from '@/services/github';
 import { useGlassActive, cardClass } from '@/lib/glass';
@@ -18,14 +18,18 @@ function BranchRowInner({ branch }: { branch: BranchData }) {
   const displayStatus = getWorkflowDisplayStatus(workflow);
   const cfg = STATUS_META[displayStatus];
   const isGlass = useGlassActive();
+  const navigate = useNavigate();
 
   const detailPath = `/${key.owner}/${key.repo}/${key.branch}`;
   const githubUrl = `https://github.com/${key.owner}/${key.repo}/tree/${key.branch}`;
 
   return (
-    <Link
-      to={detailPath}
-      className={`flex items-start gap-3 rounded-lg border border-l-4 p-4 transition-shadow hover:shadow-md ${cfg.border} ${cardClass(isGlass)}`}
+    <div
+      role="link"
+      tabIndex={0}
+      onClick={() => navigate(detailPath)}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(detailPath); } }}
+      className={`flex cursor-pointer items-start gap-3 rounded-lg border border-l-4 p-4 transition-shadow hover:shadow-md ${cfg.border} ${cardClass(isGlass)}`}
     >
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
@@ -53,13 +57,14 @@ function BranchRowInner({ branch }: { branch: BranchData }) {
               text.errors.repoOrBranchNotFound
             ) : error.includes('403') ? (
               <>
-                {text.errors.rateLimitReached}{' '}
-                <Link
-                  to="/settings"
+                {text.errors.rateLimit}{' '}
+                <a
+                  href="/settings"
+                  onClick={(e) => e.stopPropagation()}
                   className="underline hover:text-destructive/80"
                 >
                   {text.errors.addToken}
-                </Link>{' '}
+                </a>{' '}
                 {text.errors.rateLimitSuffix}
               </>
             ) : (
@@ -89,24 +94,21 @@ function BranchRowInner({ branch }: { branch: BranchData }) {
         )}
       </div>
 
-      <span
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={(e) => e.stopPropagation()}
-        className="inline-flex shrink-0"
-      >
+      <span className="inline-flex shrink-0">
         <a
           href={githubUrl}
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
           className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           title={text.branch.openOnGitHub}
         >
           <ExternalLink className="h-4 w-4" />
         </a>
       </span>
-    </Link>
+    </div>
   );
 }
 
-export default memo(BranchRowInner);
+export const BranchRow = memo(BranchRowInner);

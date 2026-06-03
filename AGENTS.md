@@ -25,10 +25,11 @@ Always `npm run build` before committing; must pass type-check + build. Tests us
 - **Token gate**: `TokenRequired` shown unless `token` is set. Settings always accessible.
 - **API**: `fetchJSON(url, token)` in `src/services/github.ts`. Token always required.
 - **Text**: `src/constants/text.ts` — all UI strings in `text` object, plus `relativeTime()` utility.
-- **Cache**: In-memory `Map` with 60min TTL (`src/services/cache.ts`). Clears on branch/token/refresh changes.
+- **Cache**: In-memory `Map` with 60min TTL + 100-entry cap (`src/services/cache.ts`). Clears on branch/token/refresh changes.
 - **Data fetching**: `fetchBranchData()` in `src/services/fetchBranchData.ts` — pure async function (parallel commit + workflow, cache reads). `useBranchData` hook in `src/hooks/useBranchData.ts` orchestrates calls + stale-data retention.
 - **Dashboard sort**: Priority-based: loading (0) → loaded with commit (1) → error/no-commit (2), tiebreak by commit date descending.
 - **Layout**: Dashboard & branch page `max-w-3xl`, settings `max-w-2xl`. Mobile: `pt-14` offset, sidebar overlay below `md:`.
+- **Route guards**: `BranchPage` redirects to `/` if route params (`owner`/`repo`/`branch`) are undefined.
 
 ## Conventions
 
@@ -37,7 +38,7 @@ Always `npm run build` before committing; must pass type-check + build. Tests us
 - **Tailwind v4** + `@tailwindcss/vite`. Use semantic tokens (`bg-card`, `text-foreground`, `bg-primary`, `border`). Blue-accent oklch palette.
 - **shadcn/ui** base-nova style, `@base-ui/react` primitives. Uses `render` prop (not `asChild`). Add components: `npx shadcn@latest add <component>`.
 - **Path alias**: `@/*` → `./src/*` (vite.config.ts, tsconfig.json, tsconfig.app.json, components.json).
-- **Glassmorphism**: `GlassProvider` sets `.glass` class on root when `isGlass` (matrix bg + dark mode). Overrides `--card`, `--sidebar` etc. to translucent values. Use `cardClass(isGlass)`, `sidebarClass(isGlass)`, `subtleClass(isGlass)` from `useGlass.tsx`.
+- **Glassmorphism**: `GlassProvider` in `src/hooks/useGlass.tsx` sets `.glass` class on root when `isGlass` (matrix bg + dark mode). `GlassCtx` + `useGlassActive()` in `src/lib/glass.ts`. Overrides `--card`, `--sidebar` etc. to translucent values. Use `cardClass(isGlass)`, `sidebarClass(isGlass)`, `subtleClass(isGlass)` from `@/lib/glass`.
 - **Animated bg**: `AnimatedBg` type = `"none" | "matrix"`. Matrix is canvas-based. Restricted to dark mode only.
 - **Delete confirmation**: Inline icon swap (✓/✗). No browser `confirm()`.
 - **Fetching indicator**: Thin animated bar, `bg-primary`, fixed top of viewport.
@@ -45,6 +46,8 @@ Always `npm run build` before committing; must pass type-check + build. Tests us
 - **Status icons**: `makeStatusIcons('sm'|'lg')` in `src/lib/status-icons.tsx` — factory returning CI/pointer/check/x/clock icons.
 - **Error boundaries**: `src/components/ErrorBoundary.tsx` wraps each `<Route>` individually.
 - **fetchJSON retry**: Retries 5xx once with 1s delay. Non-retryable errors throw immediately.
+- **Components**: Named exports. Pages use default exports (React Router convention). `BranchRow` and `CommitRow` wrapped in `React.memo()`.
+- **Accessibility**: Sidebar has `aria-label`, mobile close/open buttons have `aria-label`, overlay dismisses on Escape. Icon buttons (delete confirm, etc.) have `aria-label`. `CommitRow` links have descriptive `aria-label`.
 
 ## Adding Features
 
@@ -60,6 +63,7 @@ Always `npm run build` before committing; must pass type-check + build. Tests us
 | `MAX_BRANCHES`        | `SettingsPage.tsx` | 50    |
 | `COMMITS_PER_PAGE`    | `BranchPage.tsx`   | 13    |
 | `CACHE_TTL_MS`        | `cache.ts`         | 60min |
+| `MAX_ENTRIES`         | `cache.ts`         | 100   |
 | Auto-refresh interval | `App.tsx`          | 5min  |
 
 ## Docker

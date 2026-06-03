@@ -25,6 +25,7 @@ function makeDrop(maxRow: number): Drop {
 
 function MatrixRain() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const pausedRef = useRef(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -59,7 +60,7 @@ function MatrixRain() {
     }
 
     function draw() {
-      if (!ctx || !canvas) return;
+      if (!ctx || !canvas || pausedRef.current) return;
       const maxRow = canvas.height / fontSize + 50 / fontSize;
 
       ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
@@ -103,8 +104,13 @@ function MatrixRain() {
       }
     }
 
+    function onVisibilityChange() {
+      pausedRef.current = document.hidden;
+    }
+
     resize();
     window.addEventListener('resize', resize);
+    document.addEventListener('visibilitychange', onVisibilityChange);
 
     let animId: number;
     let lastFrame = 0;
@@ -118,6 +124,7 @@ function MatrixRain() {
 
     return () => {
       window.removeEventListener('resize', resize);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       cancelAnimationFrame(animId);
     };
   }, []);
@@ -127,7 +134,7 @@ function MatrixRain() {
   );
 }
 
-export default function Background({ variant }: { variant: AnimatedBg }) {
+export function Background({ variant }: { variant: AnimatedBg }) {
   if (variant === 'matrix') {
     return <MatrixRain />;
   }

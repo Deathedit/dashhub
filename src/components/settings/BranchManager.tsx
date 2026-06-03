@@ -38,7 +38,7 @@ export function BranchManager() {
         resolvedBranch = await fetchDefaultBranch(owner, repo, token);
       } catch (err) {
         setAdding(false);
-        const msg = (err as Error).message ?? '';
+        const msg = err instanceof Error ? err.message : String(err);
         if (msg.includes('404')) {
           setError(text.errors.repoNotFound);
         } else if (msg.includes('403')) {
@@ -152,6 +152,7 @@ export function BranchManager() {
                         handleRemove(b.id);
                         setPendingDelete(null);
                       }}
+                      aria-label="Confirm delete"
                     >
                       <Check className="h-4 w-4" />
                     </Button>
@@ -159,6 +160,7 @@ export function BranchManager() {
                       variant="outline"
                       size="icon-xs"
                       onClick={() => setPendingDelete(null)}
+                      aria-label="Cancel delete"
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -169,6 +171,7 @@ export function BranchManager() {
                     size="icon-xs"
                     className="ml-3 shrink-0 text-muted-foreground hover:text-destructive"
                     onClick={() => setPendingDelete(b.id)}
+                    aria-label="Delete branch"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import { useApp } from '@/contexts/app-context';
 import { fetchCommits, fetchLatestWorkflowRun } from '@/services/github';
 import { getCachedCommits, setCachedCommits, getCachedWorkflow, setCachedWorkflow } from '@/services/cache';
@@ -19,8 +19,8 @@ export default function BranchPage() {
     '*': branch,
   } = useParams<{ owner: string; repo: string; '*': string }>();
   const { data, token } = useApp();
-  const cacheKey =
-    owner && repo && branch ? `${owner}/${repo}/${branch}` : null;
+
+  const cacheKey = owner && repo && branch ? `${owner}/${repo}/${branch}` : '';
   const cached = cacheKey ? getCachedCommits(cacheKey) : null;
   const [fetchState, setFetchState] = useState<{
     key: string;
@@ -32,11 +32,14 @@ export default function BranchPage() {
     error: null,
   });
   const [localWorkflow, setLocalWorkflow] = useState<WorkflowStatus | null | undefined>(undefined);
+  const [workflowError, setWorkflowError] = useState(false);
 
-  const branchData = data.find(
-    (d) =>
-      d.key.owner === owner && d.key.repo === repo && d.key.branch === branch,
-  );
+  const branchData = cacheKey
+    ? data.find(
+        (d) =>
+          d.key.owner === owner && d.key.repo === repo && d.key.branch === branch,
+      )
+    : undefined;
 
   useEffect(() => {
     if (!cacheKey || cached) return;
@@ -54,9 +57,10 @@ export default function BranchPage() {
     return () => {
       ignore = true;
     };
-  }, [cacheKey, cached, owner, repo, branch, token]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cacheKey, cached, token]);
 
-  const shouldFetchWorkflow = branchData?.workflow === undefined && cacheKey !== null && !!owner && !!repo && !!branch && !!token;
+  const shouldFetchWorkflow = branchData?.workflow === undefined && !!cacheKey && !!owner && !!repo && !!branch && !!token;
   const cachedWorkflowForPage = shouldFetchWorkflow && cacheKey ? getCachedWorkflow(cacheKey) : undefined;
 
   useEffect(() => {
@@ -64,20 +68,29 @@ export default function BranchPage() {
     let ignore = false;
     fetchLatestWorkflowRun(owner!, repo!, branch!, token).then((wf) => {
       if (ignore) return;
-      setCachedWorkflow(cacheKey!, wf);
+      setCachedWorkflow(cacheKey, wf);
       setLocalWorkflow(wf);
+      setWorkflowError(false);
     }).catch(() => {
-      if (!ignore) setLocalWorkflow(null);
+      if (!ignore) {
+        setLocalWorkflow(null);
+        setWorkflowError(true);
+      }
     });
     return () => { ignore = true; };
-  }, [cacheKey, owner, repo, branch, token, shouldFetchWorkflow, cachedWorkflowForPage]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cacheKey, shouldFetchWorkflow, cachedWorkflowForPage, token]);
+
+  if (!owner || !repo || !branch) {
+    return <Navigate to="/" replace />;
+  }
 
   const resolvedWorkflow = branchData?.workflow ?? cachedWorkflowForPage ?? localWorkflow;
 
   const settledForKey = fetchState.key === cacheKey;
   const commits = cached ?? (settledForKey ? (fetchState.commits ?? []) : []);
   const error = settledForKey ? fetchState.error : null;
-  const loading = cacheKey !== null && cached === null && !settledForKey;
+  const loading = cacheKey !== '' && cached === null && !settledForKey;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
@@ -90,10 +103,11 @@ export default function BranchPage() {
       </Link>
 
       <BranchHeader
-        owner={owner!}
-        repo={repo!}
-        branch={branch!}
+        owner={owner}
+        repo={repo}
+        branch={branch}
         workflow={resolvedWorkflow}
+        workflowError={workflowError}
       />
 
       <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">

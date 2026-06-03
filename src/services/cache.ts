@@ -1,6 +1,7 @@
 import type { CommitInfo, CommitDetail, WorkflowStatus } from '@/types';
 
 const CACHE_TTL_MS = 60 * 60 * 1000;
+const MAX_ENTRIES = 100;
 
 const commitDetailCache = new Map<
   string,
@@ -33,6 +34,10 @@ function set<T>(
   key: string,
   data: T,
 ): void {
+  if (map.size >= MAX_ENTRIES) {
+    const oldest = map.keys().next().value;
+    if (oldest !== undefined) map.delete(oldest);
+  }
   map.set(key, { data, timestamp: Date.now() });
 }
 

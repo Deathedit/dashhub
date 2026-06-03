@@ -10,8 +10,8 @@ export function useLocalStorage<T>(
     try {
       const item = window.localStorage.getItem(key);
       if (item) return JSON.parse(item) as T;
-    } catch {
-      void 0;
+    } catch (err) {
+      console.warn('useLocalStorage: failed to read', key, err);
     }
     return initialValue instanceof Function ? initialValue() : initialValue;
   });
@@ -22,8 +22,8 @@ export function useLocalStorage<T>(
         const nextValue = value instanceof Function ? value(prev) : value;
         try {
           window.localStorage.setItem(key, JSON.stringify(nextValue));
-        } catch {
-          void 0;
+        } catch (err) {
+          console.warn('useLocalStorage: failed to write', key, err);
         }
         return nextValue;
       });
@@ -41,8 +41,8 @@ export function useLocalStorage<T>(
             const iv = initialValueRef.current;
             setStoredValue(iv instanceof Function ? iv() : iv);
           }
-        } catch {
-          void 0;
+        } catch (err) {
+          console.warn('useLocalStorage: failed to sync storage event', key, err);
         }
       }
     };

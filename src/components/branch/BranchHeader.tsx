@@ -13,9 +13,10 @@ interface BranchHeaderProps {
   repo: string;
   branch: string;
   workflow: WorkflowStatus | null | undefined;
+  workflowError?: boolean;
 }
 
-export function BranchHeader({ owner, repo, branch, workflow }: BranchHeaderProps) {
+export function BranchHeader({ owner, repo, branch, workflow, workflowError }: BranchHeaderProps) {
   const displayStatus = getWorkflowDisplayStatus(workflow ?? null);
   const cfg = STATUS_META[displayStatus];
   return (
@@ -28,7 +29,7 @@ export function BranchHeader({ owner, repo, branch, workflow }: BranchHeaderProp
           <GitBranch className="h-3 w-3" />
           {branch}
         </Badge>
-        {workflow !== undefined && (
+        {workflow !== undefined && !workflowError && (
           <Badge
             variant={cfg.variant}
             className={cn('gap-1.5', cfg.className)}
@@ -41,10 +42,17 @@ export function BranchHeader({ owner, repo, branch, workflow }: BranchHeaderProp
                 target="_blank"
                 rel="noopener noreferrer"
                 className="ml-0.5 text-muted-foreground hover:text-foreground"
+                aria-label="View workflow on GitHub"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
               </a>
             )}
+          </Badge>
+        )}
+        {workflowError && (
+          <Badge variant="destructive" className="gap-1.5">
+            {statusIcons.failure}
+            CI unavailable
           </Badge>
         )}
       </div>

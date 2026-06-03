@@ -12,12 +12,8 @@ export interface CommitInfo {
   avatarUrl: string;
 }
 
-export interface CommitDetail {
+export interface CommitDetail extends CommitInfo {
   sha: string;
-  message: string;
-  author: string;
-  date: string;
-  avatarUrl: string;
   url: string;
 }
 

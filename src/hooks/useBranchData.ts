@@ -66,7 +66,9 @@ export function useBranchData(
         );
         if (isRefresh) setRefreshing(false);
       },
-    );
+    ).catch(() => {
+      if (isRefresh) setRefreshing(false);
+    });
     return () => {
       ignore = true;
     };

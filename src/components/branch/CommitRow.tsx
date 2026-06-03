@@ -1,16 +1,18 @@
+import { memo } from 'react';
 import type { CommitDetail } from '@/types';
 import { useGlassActive, cardClass } from '@/lib/glass';
 import { relativeTime } from '@/constants/text';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ExternalLink } from 'lucide-react';
 
-export function CommitRow({ commit }: { commit: CommitDetail }) {
+function CommitRowInner({ commit }: { commit: CommitDetail }) {
   const isGlass = useGlassActive();
   return (
     <a
       href={commit.url}
       target="_blank"
       rel="noopener noreferrer"
+      aria-label={`${commit.sha.slice(0, 7)} by ${commit.author}: ${commit.message.split('\n')[0]}`}
       className={`flex items-start gap-3 rounded-lg border p-4 transition-shadow hover:shadow-md ${cardClass(isGlass)}`}
     >
       <Avatar className="mt-0.5 h-8 w-8 shrink-0">
@@ -33,3 +35,5 @@ export function CommitRow({ commit }: { commit: CommitDetail }) {
     </a>
   );
 }
+
+export const CommitRow = memo(CommitRowInner);

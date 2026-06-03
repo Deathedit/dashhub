@@ -141,7 +141,7 @@ export async function verifyToken(
     const data = await fetchJSON<GitHubUser>(`${API}/user`, token);
     return { valid: true, login: data.login };
   } catch (err) {
-    return { valid: false, error: (err as Error).message };
+    return { valid: false, error: err instanceof Error ? err.message : String(err) };
   }
 }
 

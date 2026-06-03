@@ -62,9 +62,7 @@ export const text = {
   errors: {
     invalidFormat: 'Invalid format. Paste a GitHub URL or owner/repo/branch.',
     repoNotFound: 'Repository not found. Check the owner/repo name.',
-    rateLimit:
-      'GitHub API rate limit reached. Add a Personal Access Token above to continue.',
-    rateLimitReached: 'API rate limit reached.',
+    rateLimit: 'GitHub API rate limit reached.',
     rateLimitSuffix: 'to increase your limit.',
     githubApiError: 'GitHub API error',
     noCommits: 'No commits found',

@@ -15,7 +15,7 @@ import { text } from '@/constants/text';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
-export default function Sidebar() {
+export function Sidebar() {
   const { collapsed, onToggleCollapse } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
   const isGlass = useGlassActive();
@@ -28,6 +28,13 @@ export default function Sidebar() {
     mql.addEventListener('change', handler);
     return () => mql.removeEventListener('change', handler);
   }, []);
+
+  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+      isActive
+        ? 'bg-primary/10 text-primary'
+        : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+    } ${collapsed && !mobileOpen ? 'justify-center' : ''}`;
 
   const sidebarContent = (
     <div className="flex h-full flex-col">
@@ -43,6 +50,7 @@ export default function Sidebar() {
           size="icon-xs"
           onClick={() => setMobileOpen(false)}
           className="ml-auto md:hidden"
+          aria-label="Close menu"
         >
           <X className="h-5 w-5" />
         </Button>
@@ -52,13 +60,7 @@ export default function Sidebar() {
         <NavLink
           to="/"
           onClick={() => setMobileOpen(false)}
-          className={({ isActive }) =>
-            `flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-              isActive
-                ? 'bg-primary/10 text-primary'
-                : 'text-muted-foreground hover:bg-accent hover:text-foreground'
-            } ${collapsed && !mobileOpen ? 'justify-center' : ''}`
-          }
+          className={navLinkClass}
           title={collapsed && !mobileOpen ? text.nav.dashboard : undefined}
         >
           <LayoutDashboard className="h-5 w-5 shrink-0" />
@@ -72,13 +74,7 @@ export default function Sidebar() {
         <NavLink
           to="/settings"
           onClick={() => setMobileOpen(false)}
-          className={({ isActive }) =>
-            `flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-              isActive
-                ? 'bg-primary/10 text-primary'
-                : 'text-muted-foreground hover:bg-accent hover:text-foreground'
-            } ${collapsed && !mobileOpen ? 'justify-center' : ''}`
-          }
+          className={navLinkClass}
           title={collapsed && !mobileOpen ? text.nav.settings : undefined}
         >
           <Settings className="h-5 w-5 shrink-0" />
@@ -112,6 +108,7 @@ export default function Sidebar() {
           variant="ghost"
           size="icon-xs"
           onClick={() => setMobileOpen(true)}
+          aria-label="Open menu"
         >
           <Menu className="h-5 w-5" />
         </Button>
@@ -122,10 +119,13 @@ export default function Sidebar() {
         <div
           className="fixed inset-0 z-40 bg-black/50 md:hidden"
           onClick={() => setMobileOpen(false)}
+          onKeyDown={(e) => { if (e.key === 'Escape') setMobileOpen(false); }}
+          aria-hidden="true"
         />
       )}
 
       <aside
+        aria-label="Sidebar navigation"
         className={`fixed inset-y-0 left-0 z-50 shadow-xl transition-all duration-300 ease-in-out ${sidebarClass(isGlass)} ${
           mobileOpen ? 'w-72' : collapsed ? 'w-20' : 'w-72'
         } ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}

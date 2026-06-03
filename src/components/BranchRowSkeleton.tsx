@@ -25,4 +25,4 @@ function BranchRowSkeletonInner() {
   );
 }
 
-export default memo(BranchRowSkeletonInner);
+export const BranchRowSkeleton = memo(BranchRowSkeletonInner);
