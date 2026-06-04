@@ -120,7 +120,7 @@ function MatrixRain() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="bg-animated-matrix" aria-hidden="true" />;
+  return <canvas ref={canvasRef} className='bg-animated-matrix' aria-hidden='true' />;
 }
 
 export function Background({ variant }: { variant: AnimatedBg }) {

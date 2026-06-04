@@ -36,13 +36,13 @@ export function TokenSection() {
   return (
     <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
       <CardHeader>
-        <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.tokenTitle}</CardTitle>
+        <CardTitle className='text-sm font-semibold tracking-wider uppercase'>{text.settings.tokenTitle}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <div className="min-w-0 flex-1">
+        <div className='flex flex-col gap-2 sm:flex-row'>
+          <div className='min-w-0 flex-1'>
             <Input
-              type="password"
+              type='password'
               placeholder={text.settings.tokenPlaceholder}
               value={tokenInput}
               onChange={(e) => {
@@ -51,12 +51,12 @@ export function TokenSection() {
               }}
             />
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="default" onClick={handleVerifyToken} disabled={!tokenInput.trim() || verifying}>
-              {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+          <div className='flex gap-2'>
+            <Button variant='outline' size='default' onClick={handleVerifyToken} disabled={!tokenInput.trim() || verifying}>
+              {verifying ? <Loader2 className='h-4 w-4 animate-spin' /> : <CheckCircle2 className='h-4 w-4' />}
               {text.settings.verify}
             </Button>
-            <Button variant="default" size="default" onClick={handleSaveToken}>
+            <Button variant='default' size='default' onClick={handleSaveToken}>
               {text.settings.save}
             </Button>
           </div>
@@ -65,18 +65,18 @@ export function TokenSection() {
           <div className={`mt-2 flex items-center gap-1.5 text-sm ${verifyResult.valid ? 'text-green-600 dark:text-green-400' : 'text-destructive'}`}>
             {verifyResult.valid ? (
               <>
-                <CheckCircle2 className="h-4 w-4" /> {text.settings.validAs} <span className="font-mono font-medium">{verifyResult.login}</span>
+                <CheckCircle2 className='h-4 w-4' /> {text.settings.validAs} <span className='font-mono font-medium'>{verifyResult.login}</span>
               </>
             ) : (
               <>
-                <XCircle className="h-4 w-4" /> {verifyResult.error}
+                <XCircle className='h-4 w-4' /> {verifyResult.error}
               </>
             )}
           </div>
         )}
-        <p className="mt-2 text-xs text-muted-foreground">
+        <p className='mt-2 text-xs text-muted-foreground'>
           {text.settings.tokenHelp}{' '}
-          <a href={text.settings.createTokenUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+          <a href={text.settings.createTokenUrl} target='_blank' rel='noopener noreferrer' className='text-primary hover:underline'>
             {text.settings.createToken}
           </a>
           .
@@ -93,14 +93,14 @@ export function GeneralSettings() {
   return (
     <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
       <CardHeader>
-        <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.general}</CardTitle>
+        <CardTitle className='text-sm font-semibold tracking-wider uppercase'>{text.settings.general}</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3 sm:flex-row">
-        <Button variant={autoRefresh ? 'default' : 'secondary'} size="default" onClick={onToggleAutoRefresh}>
+      <CardContent className='flex flex-col gap-3 sm:flex-row'>
+        <Button variant={autoRefresh ? 'default' : 'secondary'} size='default' onClick={onToggleAutoRefresh}>
           {autoRefresh ? text.settings.autoRefreshOn : text.settings.autoRefreshOff}
         </Button>
-        <Button variant="secondary" size="default" onClick={onToggleDarkMode}>
-          {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+        <Button variant='secondary' size='default' onClick={onToggleDarkMode}>
+          {darkMode ? <Sun className='h-4 w-4' /> : <Moon className='h-4 w-4' />}
           {darkMode ? text.settings.lightMode : text.settings.darkMode}
         </Button>
       </CardContent>
@@ -117,11 +117,11 @@ export function BackgroundSettings() {
   return (
     <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
       <CardHeader>
-        <CardTitle className="text-sm font-semibold tracking-wider uppercase">{text.settings.background}</CardTitle>
+        <CardTitle className='text-sm font-semibold tracking-wider uppercase'>{text.settings.background}</CardTitle>
       </CardHeader>
-      <CardContent className="flex gap-2">
+      <CardContent className='flex gap-2'>
         {BG_OPTIONS.map((opt) => (
-          <Button key={opt.value} variant={animatedBg === opt.value ? 'default' : 'secondary'} size="default" onClick={() => setAnimatedBg(opt.value)}>
+          <Button key={opt.value} variant={animatedBg === opt.value ? 'default' : 'secondary'} size='default' onClick={() => setAnimatedBg(opt.value)}>
             {opt.label}
           </Button>
         ))}

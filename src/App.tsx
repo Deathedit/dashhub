@@ -20,14 +20,14 @@ import { KeyRound } from 'lucide-react';
 function TokenRequired() {
   const isGlass = useGlassActive();
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 pt-14 md:pt-0">
+    <div className='flex min-h-screen items-center justify-center px-4 pt-14 md:pt-0'>
       <Card className={`mx-auto max-w-md ${cardClass(isGlass)}`}>
-        <CardContent className="p-8 text-center">
-          <KeyRound className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-          <h2 className="mb-2 text-xl font-bold">{text.app.tokenRequired.title}</h2>
-          <p className="mb-6 text-sm text-muted-foreground">{text.app.tokenRequired.description}</p>
-          <Button render={<Link to="/settings" />} nativeButton={false}>
-            <KeyRound className="h-4 w-4" />
+        <CardContent className='p-8 text-center'>
+          <KeyRound className='mx-auto mb-4 h-12 w-12 text-muted-foreground' />
+          <h2 className='mb-2 text-xl font-bold'>{text.app.tokenRequired.title}</h2>
+          <p className='mb-6 text-sm text-muted-foreground'>{text.app.tokenRequired.description}</p>
+          <Button render={<Link to='/settings' />} nativeButton={false}>
+            <KeyRound className='h-4 w-4' />
             {text.app.tokenRequired.goToSettings}
           </Button>
         </CardContent>
@@ -97,17 +97,17 @@ export default function App() {
     <BrowserRouter>
       <AppCtx.Provider value={value}>
         <GlassProvider>
-          <div className="min-h-screen">
+          <div className='min-h-screen'>
             <Background variant={darkMode ? animatedBg : 'none'} />
             <div className={`fixed inset-x-0 top-0 z-[60] h-1 bg-primary transition-opacity duration-300 ${isFetching ? 'opacity-100' : 'opacity-0'}`}>
-              <div className="h-full w-1/3 animate-pulse rounded-r-full bg-primary/70" />
+              <div className='h-full w-1/3 animate-pulse rounded-r-full bg-primary/70' />
             </div>
             <Sidebar />
             <main className={`pt-14 transition-[margin] duration-300 md:pt-0 ${collapsed ? 'md:ml-20' : 'md:ml-72'}`}>
               {hasToken ? (
                 <Routes>
                   <Route
-                    path="/"
+                    path='/'
                     element={
                       <ErrorBoundary>
                         <DashboardPage />
@@ -115,7 +115,7 @@ export default function App() {
                     }
                   />
                   <Route
-                    path="/settings"
+                    path='/settings'
                     element={
                       <ErrorBoundary>
                         <SettingsPage />
@@ -123,7 +123,7 @@ export default function App() {
                     }
                   />
                   <Route
-                    path="/:owner/:repo/*"
+                    path='/:owner/:repo/*'
                     element={
                       <ErrorBoundary>
                         <BranchPage />
@@ -134,7 +134,7 @@ export default function App() {
               ) : (
                 <Routes>
                   <Route
-                    path="/settings"
+                    path='/settings'
                     element={
                       <ErrorBoundary>
                         <SettingsPage />
@@ -142,7 +142,7 @@ export default function App() {
                     }
                   />
                   <Route
-                    path="*"
+                    path='*'
                     element={
                       <ErrorBoundary>
                         <TokenRequired />

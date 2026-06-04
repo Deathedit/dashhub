@@ -25,7 +25,7 @@ function BranchRowInner({ branch }: { branch: BranchData }) {
 
   return (
     <div
-      role="link"
+      role='link'
       tabIndex={0}
       onClick={() => navigate(detailPath)}
       onKeyDown={(e) => {
@@ -36,13 +36,13 @@ function BranchRowInner({ branch }: { branch: BranchData }) {
       }}
       className={`flex cursor-pointer items-start gap-3 rounded-lg border border-l-4 p-4 transition-shadow hover:shadow-md ${cfg.border} ${cardClass(isGlass)}`}
     >
-      <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="truncate text-sm font-semibold">
+      <div className='min-w-0 flex-1'>
+        <div className='flex flex-wrap items-center gap-2'>
+          <span className='truncate text-sm font-semibold'>
             {key.owner}/{key.repo}
           </span>
-          <Badge variant="secondary" className="gap-1">
-            <GitBranch className="h-3 w-3" />
+          <Badge variant='secondary' className='gap-1'>
+            <GitBranch className='h-3 w-3' />
             {key.branch}
           </Badge>
           <span className={cn('inline-flex items-center gap-1 text-xs font-medium', cfg.className)}>
@@ -52,13 +52,13 @@ function BranchRowInner({ branch }: { branch: BranchData }) {
         </div>
 
         {error && (
-          <p className="mt-1.5 text-sm text-destructive">
+          <p className='mt-1.5 text-sm text-destructive'>
             {error.includes('404') ? (
               text.errors.repoOrBranchNotFound
             ) : error.includes('403') ? (
               <>
                 {text.errors.rateLimit}{' '}
-                <a href="/settings" onClick={(e) => e.stopPropagation()} className="underline hover:text-destructive/80">
+                <a href='/settings' onClick={(e) => e.stopPropagation()} className='underline hover:text-destructive/80'>
                   {text.errors.addToken}
                 </a>{' '}
                 {text.errors.rateLimitSuffix}
@@ -70,29 +70,29 @@ function BranchRowInner({ branch }: { branch: BranchData }) {
         )}
 
         {commit && (
-          <div className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
-            <Avatar className="h-4 w-4">
-              {commit.avatarUrl && <AvatarImage src={commit.avatarUrl} alt="" />}
-              <AvatarFallback className="text-[8px]">{commit.author.charAt(0).toUpperCase()}</AvatarFallback>
+          <div className='mt-1.5 flex items-center gap-2 text-xs text-muted-foreground'>
+            <Avatar className='h-4 w-4'>
+              {commit.avatarUrl && <AvatarImage src={commit.avatarUrl} alt='' />}
+              <AvatarFallback className='text-[8px]'>{commit.author.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
-            <span className="truncate text-foreground">{commit.message.split('\n')[0]}</span>
-            <span className="shrink-0 font-medium">{commit.author}</span>
-            {commit.date && <span className="shrink-0">{relativeTime(commit.date)}</span>}
+            <span className='truncate text-foreground'>{commit.message.split('\n')[0]}</span>
+            <span className='shrink-0 font-medium'>{commit.author}</span>
+            {commit.date && <span className='shrink-0'>{relativeTime(commit.date)}</span>}
           </div>
         )}
       </div>
 
-      <span className="inline-flex shrink-0">
+      <span className='inline-flex shrink-0'>
         <a
           href={githubUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+          target='_blank'
+          rel='noopener noreferrer'
           onClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => e.stopPropagation()}
-          className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          className='rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground'
           title={text.branch.openOnGitHub}
         >
-          <ExternalLink className="h-4 w-4" />
+          <ExternalLink className='h-4 w-4' />
         </a>
       </span>
     </div>

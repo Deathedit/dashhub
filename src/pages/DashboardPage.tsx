@@ -23,18 +23,18 @@ export default function DashboardPage() {
 
   if (branches.length === 0) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
-        <div className="flex flex-col items-center justify-center py-24 text-center">
-          <p className="mb-2 text-lg font-medium text-muted-foreground">{text.dashboard.noBranchesTitle}</p>
-          <p className="text-sm text-muted-foreground">{text.dashboard.noBranchesSubtitle}</p>
+      <div className='mx-auto max-w-3xl px-4 py-6 sm:px-6'>
+        <div className='flex flex-col items-center justify-center py-24 text-center'>
+          <p className='mb-2 text-lg font-medium text-muted-foreground'>{text.dashboard.noBranchesTitle}</p>
+          <p className='text-sm text-muted-foreground'>{text.dashboard.noBranchesSubtitle}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
-      <div className="space-y-3">
+    <div className='mx-auto max-w-3xl px-4 py-6 sm:px-6'>
+      <div className='space-y-3'>
         {sorted.map((branch) => (branch.loading ? <BranchRowSkeleton key={branch.key.id} /> : <BranchRow key={branch.key.id} branch={branch} />))}
       </div>
     </div>

@@ -20,13 +20,13 @@ export function BranchHeader({ owner, repo, branch, workflow, workflowError }: B
   const displayStatus = getWorkflowDisplayStatus(workflow ?? null);
   const cfg = STATUS_META[displayStatus];
   return (
-    <div className="mb-6">
-      <div className="flex flex-wrap items-center gap-3">
-        <h1 className="text-xl font-bold sm:text-2xl">
+    <div className='mb-6'>
+      <div className='flex flex-wrap items-center gap-3'>
+        <h1 className='text-xl font-bold sm:text-2xl'>
           {owner}/{repo}
         </h1>
-        <Badge variant="secondary" className="gap-1.5">
-          <GitBranch className="h-3 w-3" />
+        <Badge variant='secondary' className='gap-1.5'>
+          <GitBranch className='h-3 w-3' />
           {branch}
         </Badge>
         {workflow !== undefined && !workflowError && (
@@ -36,18 +36,18 @@ export function BranchHeader({ owner, repo, branch, workflow, workflowError }: B
             {workflow?.url && (
               <a
                 href={workflow.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="ml-0.5 text-muted-foreground hover:text-foreground"
-                aria-label="View workflow on GitHub"
+                target='_blank'
+                rel='noopener noreferrer'
+                className='ml-0.5 text-muted-foreground hover:text-foreground'
+                aria-label='View workflow on GitHub'
               >
-                <ExternalLink className="h-3.5 w-3.5" />
+                <ExternalLink className='h-3.5 w-3.5' />
               </a>
             )}
           </Badge>
         )}
         {workflowError && (
-          <Badge variant="destructive" className="gap-1.5">
+          <Badge variant='destructive' className='gap-1.5'>
             {statusIcons.failure}
             CI unavailable
           </Badge>

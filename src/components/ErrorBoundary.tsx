@@ -28,10 +28,10 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.error) {
       return (
-        <div className="flex min-h-[50vh] items-center justify-center px-4">
-          <div className="mx-auto max-w-md text-center">
-            <p className="mb-2 text-lg font-bold text-destructive">{text.errors.unexpectedError}</p>
-            <p className="mb-6 text-sm text-muted-foreground">{this.state.error.message}</p>
+        <div className='flex min-h-[50vh] items-center justify-center px-4'>
+          <div className='mx-auto max-w-md text-center'>
+            <p className='mb-2 text-lg font-bold text-destructive'>{text.errors.unexpectedError}</p>
+            <p className='mb-6 text-sm text-muted-foreground'>{this.state.error.message}</p>
             <Button onClick={this.handleRetry}>{text.errors.retry}</Button>
           </div>
         </div>

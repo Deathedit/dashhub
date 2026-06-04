@@ -76,7 +76,7 @@ export default function BranchPage() {
   }, [cacheKey, shouldFetchWorkflow, cachedWorkflowForPage, token]);
 
   if (!owner || !repo || !branch) {
-    return <Navigate to="/" replace />;
+    return <Navigate to='/' replace />;
   }
 
   const resolvedWorkflow = branchData?.workflow ?? cachedWorkflowForPage ?? localWorkflow;
@@ -87,24 +87,24 @@ export default function BranchPage() {
   const loading = cacheKey !== '' && cached === null && !settledForKey;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
-      <Link to="/" className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground">
-        <ArrowLeft className="h-4 w-4" />
+    <div className='mx-auto max-w-3xl px-4 py-6 sm:px-6'>
+      <Link to='/' className='mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground'>
+        <ArrowLeft className='h-4 w-4' />
         {text.branch.backToDashboard}
       </Link>
 
       <BranchHeader owner={owner} repo={repo} branch={branch} workflow={resolvedWorkflow} workflowError={workflowError} />
 
-      <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">{text.branch.recentCommits}</h2>
+      <h2 className='mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground'>{text.branch.recentCommits}</h2>
 
       {loading && <CommitListSkeleton />}
 
-      {error && <p className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive">{error}</p>}
+      {error && <p className='rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive'>{error}</p>}
 
-      {!loading && !error && commits.length === 0 && <p className="text-sm text-muted-foreground">{text.branch.noCommits}</p>}
+      {!loading && !error && commits.length === 0 && <p className='text-sm text-muted-foreground'>{text.branch.noCommits}</p>}
 
       {!loading && !error && commits.length > 0 && (
-        <div className="space-y-3">
+        <div className='space-y-3'>
           {commits.map((c) => (
             <CommitRow key={c.sha} commit={c} />
           ))}
