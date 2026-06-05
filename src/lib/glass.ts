@@ -6,8 +6,14 @@ export function useGlassActive() {
   return useContext(GlassCtx);
 }
 
+export const cardTitleClass = 'text-sm font-semibold tracking-wider uppercase';
+
 export function cardClass(isGlass: boolean) {
   return isGlass ? 'bg-card/75 backdrop-blur-md border-card/50 glass-card' : 'bg-card border-card';
+}
+
+export function cardWithMarginClass(isGlass: boolean) {
+  return `mb-6 sm:mb-8 ${cardClass(isGlass)}`;
 }
 
 export function sidebarClass(isGlass: boolean) {

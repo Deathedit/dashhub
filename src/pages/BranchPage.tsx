@@ -9,6 +9,7 @@ import { ArrowLeft } from 'lucide-react';
 import { CommitRow } from '@/components/branch/CommitRow';
 import { BranchHeader } from '@/components/branch/BranchHeader';
 import { CommitListSkeleton } from '@/components/branch/CommitListSkeleton';
+import { branchKey } from '@/lib/utils';
 
 const COMMITS_PER_PAGE = 13;
 
@@ -16,7 +17,7 @@ export default function BranchPage() {
   const { owner, repo, '*': branch } = useParams<{ owner: string; repo: string; '*': string }>();
   const { data, token } = useApp();
 
-  const cacheKey = owner && repo && branch ? `${owner}/${repo}/${branch}` : '';
+  const cacheKey = owner && repo && branch ? branchKey(owner, repo, branch) : '';
   const cached = cacheKey ? getCachedCommits(cacheKey) : null;
   const [fetchState, setFetchState] = useState<{
     key: string;

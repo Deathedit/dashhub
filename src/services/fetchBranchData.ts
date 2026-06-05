@@ -1,6 +1,7 @@
 import type { TrackedBranch, BranchData, CommitInfo, WorkflowStatus } from '@/types';
 import { fetchLatestCommit, fetchLatestWorkflowRun } from '@/services/github';
 import { getCachedCommitInfo, getCachedWorkflow } from '@/services/cache';
+import { branchKey } from '@/lib/utils';
 
 export type FetchResult = {
   data: BranchData;
@@ -16,7 +17,7 @@ export function fetchBranchData(branch: TrackedBranch, token: string, force = fa
     loading: true,
     error: null,
   };
-  const cacheKey = `${branch.owner}/${branch.repo}/${branch.branch}`;
+  const cacheKey = branchKey(branch.owner, branch.repo, branch.branch);
   const cachedCommit = force ? undefined : getCachedCommitInfo(cacheKey);
   const cachedWorkflow = force ? undefined : getCachedWorkflow(cacheKey);
   if (cachedCommit !== undefined && cachedWorkflow !== undefined) {

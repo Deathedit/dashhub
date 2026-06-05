@@ -3,7 +3,7 @@ import { getWorkflowDisplayStatus } from '@/services/github';
 import { STATUS_META } from '@/lib/status';
 import { makeStatusIcons } from '@/lib/status-icons';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { cn, EXTERNAL_LINK_ATTRS } from '@/lib/utils';
 import { GitBranch, ExternalLink } from 'lucide-react';
 
 const statusIcons = makeStatusIcons('lg');
@@ -36,8 +36,7 @@ export function BranchHeader({ owner, repo, branch, workflow, workflowError }: B
             {workflow?.url && (
               <a
                 href={workflow.url}
-                target='_blank'
-                rel='noopener noreferrer'
+                {...EXTERNAL_LINK_ATTRS}
                 className='ml-0.5 text-muted-foreground hover:text-foreground'
                 aria-label='View workflow on GitHub'
               >

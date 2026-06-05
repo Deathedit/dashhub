@@ -8,7 +8,7 @@ import { STATUS_META } from '@/lib/status';
 import { makeStatusIcons } from '@/lib/status-icons';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { cn } from '@/lib/utils';
+import { cn, branchKey, getAuthorInitial, EXTERNAL_LINK_ATTRS } from '@/lib/utils';
 import { ExternalLink, GitBranch } from 'lucide-react';
 
 const statusIcons = makeStatusIcons('sm');
@@ -20,7 +20,7 @@ function BranchRowInner({ branch }: { branch: BranchData }) {
   const isGlass = useGlassActive();
   const navigate = useNavigate();
 
-  const detailPath = `/${key.owner}/${key.repo}/${key.branch}`;
+  const detailPath = `/${branchKey(key.owner, key.repo, key.branch)}`;
   const githubUrl = `https://github.com/${key.owner}/${key.repo}/tree/${key.branch}`;
 
   return (
@@ -73,7 +73,7 @@ function BranchRowInner({ branch }: { branch: BranchData }) {
           <div className='mt-1.5 flex items-center gap-2 text-xs text-muted-foreground'>
             <Avatar className='h-4 w-4'>
               {commit.avatarUrl && <AvatarImage src={commit.avatarUrl} alt='' />}
-              <AvatarFallback className='text-[8px]'>{commit.author.charAt(0).toUpperCase()}</AvatarFallback>
+              <AvatarFallback className='text-[8px]'>{getAuthorInitial(commit.author)}</AvatarFallback>
             </Avatar>
             <span className='truncate text-foreground'>{commit.message.split('\n')[0]}</span>
             <span className='shrink-0 font-medium'>{commit.author}</span>
@@ -85,8 +85,7 @@ function BranchRowInner({ branch }: { branch: BranchData }) {
       <span className='inline-flex shrink-0'>
         <a
           href={githubUrl}
-          target='_blank'
-          rel='noopener noreferrer'
+          {...EXTERNAL_LINK_ATTRS}
           onClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => e.stopPropagation()}
           className='rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground'

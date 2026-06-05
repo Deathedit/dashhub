@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useApp } from '@/contexts/app-context';
-import { useGlassActive, cardClass } from '@/lib/glass';
+import { useGlassActive, cardTitleClass, cardWithMarginClass } from '@/lib/glass';
+import { EXTERNAL_LINK_ATTRS } from '@/lib/utils';
 import { verifyToken } from '@/services/github';
 import { text } from '@/constants/text';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,9 +35,9 @@ export function TokenSection() {
   };
 
   return (
-    <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
+    <Card className={cardWithMarginClass(isGlass)}>
       <CardHeader>
-        <CardTitle className='text-sm font-semibold tracking-wider uppercase'>{text.settings.tokenTitle}</CardTitle>
+        <CardTitle className={cardTitleClass}>{text.settings.tokenTitle}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className='flex flex-col gap-2 sm:flex-row'>
@@ -76,7 +77,7 @@ export function TokenSection() {
         )}
         <p className='mt-2 text-xs text-muted-foreground'>
           {text.settings.tokenHelp}{' '}
-          <a href={text.settings.createTokenUrl} target='_blank' rel='noopener noreferrer' className='text-primary hover:underline'>
+          <a href={text.settings.createTokenUrl} {...EXTERNAL_LINK_ATTRS} className='text-primary hover:underline'>
             {text.settings.createToken}
           </a>
           .
@@ -91,9 +92,9 @@ export function GeneralSettings() {
   const isGlass = useGlassActive();
 
   return (
-    <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
+    <Card className={cardWithMarginClass(isGlass)}>
       <CardHeader>
-        <CardTitle className='text-sm font-semibold tracking-wider uppercase'>{text.settings.general}</CardTitle>
+        <CardTitle className={cardTitleClass}>{text.settings.general}</CardTitle>
       </CardHeader>
       <CardContent className='flex flex-col gap-3 sm:flex-row'>
         <Button variant={autoRefresh ? 'default' : 'secondary'} size='default' onClick={onToggleAutoRefresh}>
@@ -115,9 +116,9 @@ export function BackgroundSettings() {
   if (!darkMode) return null;
 
   return (
-    <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
+    <Card className={cardWithMarginClass(isGlass)}>
       <CardHeader>
-        <CardTitle className='text-sm font-semibold tracking-wider uppercase'>{text.settings.background}</CardTitle>
+        <CardTitle className={cardTitleClass}>{text.settings.background}</CardTitle>
       </CardHeader>
       <CardContent className='flex gap-2'>
         {BG_OPTIONS.map((opt) => (

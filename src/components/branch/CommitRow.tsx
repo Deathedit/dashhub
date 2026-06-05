@@ -2,6 +2,7 @@ import { memo } from 'react';
 import type { CommitDetail } from '@/types';
 import { useGlassActive, cardClass } from '@/lib/glass';
 import { relativeTime } from '@/constants/text';
+import { getAuthorInitial, EXTERNAL_LINK_ATTRS } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ExternalLink } from 'lucide-react';
 
@@ -10,14 +11,13 @@ function CommitRowInner({ commit }: { commit: CommitDetail }) {
   return (
     <a
       href={commit.url}
-      target='_blank'
-      rel='noopener noreferrer'
+      {...EXTERNAL_LINK_ATTRS}
       aria-label={`${commit.sha.slice(0, 7)} by ${commit.author}: ${commit.message.split('\n')[0]}`}
       className={`flex items-start gap-3 rounded-lg border p-4 transition-shadow hover:shadow-md ${cardClass(isGlass)}`}
     >
       <Avatar className='mt-0.5 h-8 w-8 shrink-0'>
         {commit.avatarUrl && <AvatarImage src={commit.avatarUrl} alt='' />}
-        <AvatarFallback className='text-xs font-medium'>{commit.author.charAt(0).toUpperCase()}</AvatarFallback>
+        <AvatarFallback className='text-xs font-medium'>{getAuthorInitial(commit.author)}</AvatarFallback>
       </Avatar>
       <div className='min-w-0 flex-1'>
         <p className='truncate text-sm font-medium'>{commit.message}</p>

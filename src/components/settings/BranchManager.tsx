@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useApp } from '@/contexts/app-context';
 import { parseGitHubUrl } from '@/types';
-import { useGlassActive, cardClass, subtleClass } from '@/lib/glass';
+import { useGlassActive, cardClass, subtleClass, cardTitleClass, cardWithMarginClass } from '@/lib/glass';
+import { branchKey } from '@/lib/utils';
 import { fetchDefaultBranch } from '@/services/github';
 import { text } from '@/constants/text';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -56,7 +57,7 @@ export function BranchManager() {
       return;
     }
 
-    const id = `${owner}/${repo}/${resolvedBranch}`;
+    const id = branchKey(owner, repo, resolvedBranch);
     if (branches.some((b) => b.id === id)) {
       setError(text.errors.alreadyTracked);
       return;
@@ -71,9 +72,9 @@ export function BranchManager() {
 
   return (
     <>
-      <Card className={`mb-6 sm:mb-8 ${cardClass(isGlass)}`}>
+      <Card className={cardWithMarginClass(isGlass)}>
         <CardHeader>
-          <CardTitle className='text-sm font-semibold tracking-wider uppercase'>{text.settings.addBranch}</CardTitle>
+          <CardTitle className={cardTitleClass}>{text.settings.addBranch}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className='flex flex-col gap-2 sm:flex-row'>
@@ -104,7 +105,7 @@ export function BranchManager() {
 
       <Card className={cardClass(isGlass)}>
         <CardHeader>
-          <CardTitle className='text-sm font-semibold tracking-wider uppercase'>{text.settings.trackedBranches(branches.length)}</CardTitle>
+          <CardTitle className={cardTitleClass}>{text.settings.trackedBranches(branches.length)}</CardTitle>
         </CardHeader>
         <CardContent>
           {branches.length === 0 && <p className='text-sm text-muted-foreground'>{text.settings.noBranches}</p>}
