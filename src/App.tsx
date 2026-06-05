@@ -2,6 +2,7 @@ import { useEffect, useMemo, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useBranchData } from '@/hooks/useBranchData';
+import { setCacheTtlMs } from '@/services/cache';
 import type { TrackedBranch, AnimatedBg } from '@/types';
 import { AppCtx, type AppContext } from '@/contexts/app-context';
 import { text } from '@/constants/text';
@@ -39,6 +40,8 @@ function TokenRequired() {
 export default function App() {
   const [branches, setBranches] = useLocalStorage<TrackedBranch[]>('dashhub-branches', []);
   const [autoRefresh, setAutoRefresh] = useLocalStorage<boolean>('dashhub-auto-refresh', false);
+  const [refreshInterval, setRefreshInterval] = useLocalStorage<number>('dashhub-refresh-interval', 5);
+  const [cacheTtl, setCacheTtl] = useLocalStorage<number>('dashhub-cache-ttl', 60);
   const [darkMode, setDarkMode] = useLocalStorage<boolean>('dashhub-dark-mode', () => {
     if (typeof window === 'undefined') return false;
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -49,12 +52,18 @@ export default function App() {
 
   const hasToken = token.trim().length > 0;
   const branchesForHook = useMemo(() => (hasToken ? branches : []), [hasToken, branches]);
-  const { data, isRefreshing, refreshTick } = useBranchData(branchesForHook, autoRefresh ? 300000 : 0, token);
+  const refreshMs = Math.min(60, Math.max(1, refreshInterval)) * 60000;
+  const ttlMinutes = Math.min(360, Math.max(5, cacheTtl));
+  const { data, isRefreshing, refreshTick } = useBranchData(branchesForHook, autoRefresh ? refreshMs : 0, token);
   const isFetching = (data.length > 0 && data.some((d) => d.loading)) || isRefreshing;
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
   }, [darkMode]);
+
+  useEffect(() => {
+    setCacheTtlMs(ttlMinutes * 60000);
+  }, [ttlMinutes]);
 
   const onToggleCollapse = useCallback(() => setCollapsed((c) => !c), [setCollapsed]);
   const onToggleAutoRefresh = useCallback(() => setAutoRefresh((a) => !a), [setAutoRefresh]);
@@ -70,6 +79,10 @@ export default function App() {
       onToggleCollapse,
       autoRefresh,
       onToggleAutoRefresh,
+      refreshInterval,
+      setRefreshInterval,
+      cacheTtl,
+      setCacheTtl,
       darkMode,
       onToggleDarkMode,
       animatedBg,
@@ -86,6 +99,10 @@ export default function App() {
       onToggleCollapse,
       autoRefresh,
       onToggleAutoRefresh,
+      refreshInterval,
+      setRefreshInterval,
+      cacheTtl,
+      setCacheTtl,
       darkMode,
       onToggleDarkMode,
       animatedBg,

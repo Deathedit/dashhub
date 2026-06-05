@@ -87,8 +87,24 @@ export function TokenSection() {
   );
 }
 
+const REFRESH_OPTIONS: { value: number; label: string }[] = [
+  { value: 1, label: '1m' },
+  { value: 2, label: '2m' },
+  { value: 5, label: '5m' },
+  { value: 15, label: '15m' },
+  { value: 30, label: '30m' },
+];
+
+const CACHE_TTL_OPTIONS: { value: number; label: string }[] = [
+  { value: 5, label: '5m' },
+  { value: 15, label: '15m' },
+  { value: 30, label: '30m' },
+  { value: 60, label: '1h' },
+  { value: 120, label: '2h' },
+];
+
 export function GeneralSettings() {
-  const { autoRefresh, onToggleAutoRefresh, darkMode, onToggleDarkMode } = useApp();
+  const { autoRefresh, onToggleAutoRefresh, refreshInterval, setRefreshInterval, cacheTtl, setCacheTtl, darkMode, onToggleDarkMode } = useApp();
   const isGlass = useGlassActive();
 
   return (
@@ -96,14 +112,41 @@ export function GeneralSettings() {
       <CardHeader>
         <CardTitle className={cardTitleClass}>{text.settings.general}</CardTitle>
       </CardHeader>
-      <CardContent className='flex flex-col gap-3 sm:flex-row'>
-        <Button variant={autoRefresh ? 'default' : 'secondary'} size='default' onClick={onToggleAutoRefresh}>
-          {autoRefresh ? text.settings.autoRefreshOn : text.settings.autoRefreshOff}
-        </Button>
-        <Button variant='secondary' size='default' onClick={onToggleDarkMode}>
-          {darkMode ? <Sun className='h-4 w-4' /> : <Moon className='h-4 w-4' />}
-          {darkMode ? text.settings.lightMode : text.settings.darkMode}
-        </Button>
+      <CardContent className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-3 sm:flex-row'>
+          <Button variant={autoRefresh ? 'default' : 'secondary'} size='default' onClick={onToggleAutoRefresh}>
+            {autoRefresh ? text.settings.autoRefreshOn : text.settings.autoRefreshOff}
+          </Button>
+          <Button variant='secondary' size='default' onClick={onToggleDarkMode}>
+            {darkMode ? <Sun className='h-4 w-4' /> : <Moon className='h-4 w-4' />}
+            {darkMode ? text.settings.lightMode : text.settings.darkMode}
+          </Button>
+        </div>
+        <div className='flex flex-col gap-1.5'>
+          <span className='text-xs font-medium text-muted-foreground'>{text.settings.autoRefreshInterval}</span>
+          <div className='flex flex-wrap gap-2'>
+            {REFRESH_OPTIONS.map((opt) => (
+              <Button
+                key={opt.value}
+                variant={refreshInterval === opt.value ? 'default' : 'secondary'}
+                size='default'
+                onClick={() => setRefreshInterval(opt.value)}
+              >
+                {opt.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+        <div className='flex flex-col gap-1.5'>
+          <span className='text-xs font-medium text-muted-foreground'>{text.settings.cacheLifetime}</span>
+          <div className='flex flex-wrap gap-2'>
+            {CACHE_TTL_OPTIONS.map((opt) => (
+              <Button key={opt.value} variant={cacheTtl === opt.value ? 'default' : 'secondary'} size='default' onClick={() => setCacheTtl(opt.value)}>
+                {opt.label}
+              </Button>
+            ))}
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

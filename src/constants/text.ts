@@ -34,6 +34,8 @@ export const text = {
     general: 'General',
     autoRefreshOn: 'Auto-refresh: On',
     autoRefreshOff: 'Auto-refresh: Off',
+    autoRefreshInterval: 'Auto-refresh interval',
+    cacheLifetime: 'Cache lifetime',
     lightMode: 'Light Mode',
     darkMode: 'Dark Mode',
     background: 'Background',

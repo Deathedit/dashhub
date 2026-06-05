@@ -23,7 +23,7 @@ Tests use Vitest + Testing Library (jsdom), all under `src/tests/` (setup: `src/
 
 - **Routing**: `HashRouter` (react-router-dom). `/#/` (Dashboard), `/#/settings`, `/#/:owner/:repo/*` (wildcard so branch names with slashes work)
 - **State**: `AppCtx` + `useApp()` live in `src/app-context.ts` (kept out of `App.tsx` so the component file only exports components — Fast Refresh). `App.tsx` builds the value. No external state lib.
-- **Persistence**: `useLocalStorage` with `dashhub-` prefix. Keys: branches, auto-refresh, dark mode, sidebar collapsed, animated bg, token.
+- **Persistence**: `useLocalStorage` with `dashhub-` prefix. Keys: branches, auto-refresh, refresh-interval, cache-ttl, dark mode, sidebar collapsed, animated bg, token.
 - **Token gate**: `TokenRequired` shown unless `token` is set. Settings always accessible.
 - **API**: `fetchJSON(url, token)` in `src/services/github.ts`. Token always required.
 - **Text**: `src/text.ts` — all UI strings in `text` object, plus `relativeTime()` utility.
@@ -60,8 +60,8 @@ Tests use Vitest + Testing Library (jsdom), all under `src/tests/` (setup: `src/
 | ---------------------------- | ------------------ | ----- |
 | `MAX_BRANCHES`               | `SettingsPage.tsx` | 50    |
 | `COMMITS_PER_PAGE`           | `BranchPage.tsx`   | 13    |
-| `CACHE_TTL_MS`               | `cache.ts`         | 60min |
-| Auto-refresh interval        | `App.tsx`          | 5min  |
+| `CACHE_TTL_MS`               | `cache.ts`         | 60min default; user-configurable in Settings (5–360min) via `setCacheTtlMs` |
+| Auto-refresh interval        | `App.tsx`          | 5min default; user-configurable in Settings (1–60min) |
 | `FRAME_MS` (matrix throttle) | `Background.tsx`   | 65ms  |
 
 ## Docker

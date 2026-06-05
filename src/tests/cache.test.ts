@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
   getCachedCommits,
   setCachedCommits,
@@ -7,6 +7,7 @@ import {
   getCachedWorkflow,
   setCachedWorkflow,
   clearAllCache,
+  setCacheTtlMs,
 } from '@/services/cache';
 import type { CommitInfo, WorkflowStatus } from '@/types';
 
@@ -77,6 +78,28 @@ describe('workflow cache', () => {
   it('stores null workflow', () => {
     setCachedWorkflow('owner/repo/branch', null);
     expect(getCachedWorkflow('owner/repo/branch')).toBeNull();
+  });
+});
+
+describe('configurable cache TTL', () => {
+  const DEFAULT_TTL_MS = 60 * 60 * 1000;
+
+  afterEach(() => {
+    setCacheTtlMs(DEFAULT_TTL_MS);
+  });
+
+  it('expires entries once they exceed the configured TTL', async () => {
+    setCacheTtlMs(0);
+    setCachedCommits('owner/repo/branch', []);
+    await new Promise((r) => setTimeout(r, 1));
+    expect(getCachedCommits('owner/repo/branch')).toBeNull();
+  });
+
+  it('retains entries while within the configured TTL', () => {
+    setCacheTtlMs(60_000);
+    const info: CommitInfo = { message: 'm', author: 'a', date: '', avatarUrl: '' };
+    setCachedCommitInfo('k', info);
+    expect(getCachedCommitInfo('k')).toEqual(info);
   });
 });
 

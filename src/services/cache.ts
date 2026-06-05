@@ -1,7 +1,13 @@
 import type { CommitInfo, CommitDetail, WorkflowStatus } from '@/types';
 
-const CACHE_TTL_MS = 60 * 60 * 1000;
+const DEFAULT_CACHE_TTL_MS = 60 * 60 * 1000;
 const MAX_ENTRIES = 100;
+
+let cacheTtlMs = DEFAULT_CACHE_TTL_MS;
+
+export function setCacheTtlMs(ms: number): void {
+  cacheTtlMs = ms;
+}
 
 const commitDetailCache = new Map<string, { data: CommitDetail[]; timestamp: number }>();
 const commitInfoCache = new Map<string, { data: CommitInfo; timestamp: number }>();
@@ -10,7 +16,7 @@ const workflowCache = new Map<string, { data: WorkflowStatus | null; timestamp: 
 function get<T>(map: Map<string, { data: T; timestamp: number }>, key: string): T | undefined {
   const entry = map.get(key);
   if (!entry) return undefined;
-  if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
+  if (Date.now() - entry.timestamp > cacheTtlMs) {
     map.delete(key);
     return undefined;
   }

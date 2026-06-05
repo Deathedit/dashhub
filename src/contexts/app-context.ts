@@ -10,6 +10,10 @@ export type AppContext = {
   onToggleCollapse: () => void;
   autoRefresh: boolean;
   onToggleAutoRefresh: () => void;
+  refreshInterval: number;
+  setRefreshInterval: (value: number | ((prev: number) => number)) => void;
+  cacheTtl: number;
+  setCacheTtl: (value: number | ((prev: number) => number)) => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
   animatedBg: AnimatedBg;
