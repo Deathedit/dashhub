@@ -5,6 +5,7 @@ export type AppContext = {
   branches: TrackedBranch[];
   setBranches: (value: TrackedBranch[] | ((prev: TrackedBranch[]) => TrackedBranch[])) => void;
   data: BranchData[];
+  refreshTick: number;
   collapsed: boolean;
   onToggleCollapse: () => void;
   autoRefresh: boolean;

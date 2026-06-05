@@ -49,7 +49,7 @@ export default function App() {
 
   const hasToken = token.trim().length > 0;
   const branchesForHook = useMemo(() => (hasToken ? branches : []), [hasToken, branches]);
-  const { data, isRefreshing } = useBranchData(branchesForHook, autoRefresh ? 300000 : 0, token);
+  const { data, isRefreshing, refreshTick } = useBranchData(branchesForHook, autoRefresh ? 300000 : 0, token);
   const isFetching = (data.length > 0 && data.some((d) => d.loading)) || isRefreshing;
 
   useEffect(() => {
@@ -65,6 +65,7 @@ export default function App() {
       branches,
       setBranches,
       data,
+      refreshTick,
       collapsed,
       onToggleCollapse,
       autoRefresh,
@@ -80,6 +81,7 @@ export default function App() {
       branches,
       setBranches,
       data,
+      refreshTick,
       collapsed,
       onToggleCollapse,
       autoRefresh,

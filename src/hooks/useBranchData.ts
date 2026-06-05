@@ -71,5 +71,5 @@ export function useBranchData(branches: TrackedBranch[], autoRefreshInterval: nu
     };
   }, [autoRefreshInterval]);
 
-  return { data, isRefreshing: refreshing };
+  return { data, isRefreshing: refreshing, refreshTick: refreshKey };
 }

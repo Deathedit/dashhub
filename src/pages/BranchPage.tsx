@@ -15,7 +15,7 @@ const COMMITS_PER_PAGE = 13;
 
 export default function BranchPage() {
   const { owner, repo, '*': branch } = useParams<{ owner: string; repo: string; '*': string }>();
-  const { data, token } = useApp();
+  const { data, token, refreshTick } = useApp();
 
   const cacheKey = owner && repo && branch ? branchKey(owner, repo, branch) : '';
   const cached = cacheKey ? getCachedCommits(cacheKey) : null;
@@ -50,6 +50,22 @@ export default function BranchPage() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cacheKey, cached, token]);
+
+  useEffect(() => {
+    if (refreshTick === 0 || !cacheKey || !owner || !repo || !branch || !token) return;
+    let ignore = false;
+    fetchCommits(owner, repo, branch, COMMITS_PER_PAGE, token)
+      .then((result) => {
+        if (ignore) return;
+        setCachedCommits(cacheKey, result);
+        setFetchState({ key: cacheKey, commits: result, error: null });
+      })
+      .catch(() => {});
+    return () => {
+      ignore = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshTick]);
 
   const shouldFetchWorkflow = branchData?.workflow === undefined && !!cacheKey && !!owner && !!repo && !!branch && !!token;
   const cachedWorkflowForPage = shouldFetchWorkflow && cacheKey ? getCachedWorkflow(cacheKey) : undefined;
