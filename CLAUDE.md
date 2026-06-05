@@ -11,11 +11,13 @@ npm run dev       # Vite dev server + HMR
 npm run build     # tsc -b && vite build (type-check + prod)
 npm run lint      # ESLint
 npm run preview   # Preview prod build
+npm test          # vitest run (one-shot)
+npm run test:watch # vitest (watch mode)
 ```
 
 Add shadcn components: `npx shadcn@latest add <component>`
 
-No tests. Always `npm run build` before committing; must pass type-check + build.
+Tests use Vitest + Testing Library (jsdom), all under `src/tests/` (setup: `src/tests/test-setup.ts`, wired via `vite.config.ts`). Always `npm run build` before committing; must pass type-check + build.
 
 ## Architecture
 
