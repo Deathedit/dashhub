@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
+import { useEffect, useMemo, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useBranchData } from '@/hooks/useBranchData';
@@ -6,28 +6,16 @@ import type { TrackedBranch, AnimatedBg } from '@/types';
 import { AppCtx, type AppContext } from '@/contexts/app-context';
 import { text } from '@/constants/text';
 import { Sidebar } from '@/components/Sidebar';
-import { BranchRowSkeleton } from '@/components/BranchRowSkeleton';
+import { Background } from '@/components/Background';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import DashboardPage from '@/pages/DashboardPage';
+import SettingsPage from '@/pages/SettingsPage';
+import BranchPage from '@/pages/BranchPage';
 import { GlassProvider } from '@/hooks/useGlass';
 import { useGlassActive, cardClass } from '@/lib/glass';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { KeyRound } from 'lucide-react';
-
-const Background = lazy(() => import('@/components/Background').then((m) => ({ default: m.Background })));
-const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
-const SettingsPage = lazy(() => import('@/pages/SettingsPage'));
-const BranchPage = lazy(() => import('@/pages/BranchPage'));
-
-function RouteFallback() {
-  return (
-    <div className='mx-auto max-w-3xl space-y-3 p-4 md:p-8'>
-      <BranchRowSkeleton />
-      <BranchRowSkeleton />
-      <BranchRowSkeleton />
-    </div>
-  );
-}
 
 function TokenRequired() {
   const isGlass = useGlassActive();
@@ -110,63 +98,59 @@ export default function App() {
       <AppCtx.Provider value={value}>
         <GlassProvider>
           <div className='min-h-screen'>
-            <Suspense fallback={null}>
-              <Background variant={darkMode ? animatedBg : 'none'} />
-            </Suspense>
+            <Background variant={darkMode ? animatedBg : 'none'} />
             <div className={`fixed inset-x-0 top-0 z-[60] h-1 bg-primary transition-opacity duration-300 ${isFetching ? 'opacity-100' : 'opacity-0'}`}>
               <div className='h-full w-1/3 animate-pulse rounded-r-full bg-primary/70' />
             </div>
             <Sidebar />
             <main className={`pt-14 transition-[margin] duration-300 md:pt-0 ${collapsed ? 'md:ml-20' : 'md:ml-72'}`}>
-              <Suspense fallback={<RouteFallback />}>
-                {hasToken ? (
-                  <Routes>
-                    <Route
-                      path='/'
-                      element={
-                        <ErrorBoundary>
-                          <DashboardPage />
-                        </ErrorBoundary>
-                      }
-                    />
-                    <Route
-                      path='/settings'
-                      element={
-                        <ErrorBoundary>
-                          <SettingsPage />
-                        </ErrorBoundary>
-                      }
-                    />
-                    <Route
-                      path='/:owner/:repo/*'
-                      element={
-                        <ErrorBoundary>
-                          <BranchPage />
-                        </ErrorBoundary>
-                      }
-                    />
-                  </Routes>
-                ) : (
-                  <Routes>
-                    <Route
-                      path='/settings'
-                      element={
-                        <ErrorBoundary>
-                          <SettingsPage />
-                        </ErrorBoundary>
-                      }
-                    />
-                    <Route
-                      path='*'
-                      element={
-                        <ErrorBoundary>
-                          <TokenRequired />
-                        </ErrorBoundary>
-                      }
-                    />
-                  </Routes>
-                )}
-              </Suspense>
+              {hasToken ? (
+                <Routes>
+                  <Route
+                    path='/'
+                    element={
+                      <ErrorBoundary>
+                        <DashboardPage />
+                      </ErrorBoundary>
+                    }
+                  />
+                  <Route
+                    path='/settings'
+                    element={
+                      <ErrorBoundary>
+                        <SettingsPage />
+                      </ErrorBoundary>
+                    }
+                  />
+                  <Route
+                    path='/:owner/:repo/*'
+                    element={
+                      <ErrorBoundary>
+                        <BranchPage />
+                      </ErrorBoundary>
+                    }
+                  />
+                </Routes>
+              ) : (
+                <Routes>
+                  <Route
+                    path='/settings'
+                    element={
+                      <ErrorBoundary>
+                        <SettingsPage />
+                      </ErrorBoundary>
+                    }
+                  />
+                  <Route
+                    path='*'
+                    element={
+                      <ErrorBoundary>
+                        <TokenRequired />
+                      </ErrorBoundary>
+                    }
+                  />
+                </Routes>
+              )}
             </main>
           </div>
         </GlassProvider>
